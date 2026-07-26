@@ -27,13 +27,11 @@ slorber:
 aulia:
   name: Aulia Syarif Aziz
   title: Dosen Prodi Pendidikan Teknologi Informasi, Universitas Islam Neger Ar-Raniry Banda Aceh
-  url: https://sebastienlorber.com
-  image_url: https://github.com/slorber.png
+  url: https://initial-as.github.io
+  image_url: https://github.com/initial-as.png
   page:
     # customize the url of the author page at /blog/authors/<permalink>
-    permalink: '/all-sebastien-lorber-articles'
+    permalink: '/all-aulia-articles'
   socials:
-    x: sebastienlorber
-    linkedin: sebastienlorber
-    github: slorber
-    newsletter: https://thisweekinreact.com
+    linkedin: aulia-syarif
+    github: initial-as
