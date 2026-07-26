@@ -24,14 +24,14 @@ slorber:
     github: slorber
     newsletter: https://thisweekinreact.com
 
-# aulia:
-#   name: Aulia Syarif Aziz
-#   title: Dosen Prodi Pendidikan Teknologi Informasi, Universitas Islam Neger Ar-Raniry Banda Aceh
-#   url: https://initial-as.github.io
-#   image_url: https://github.com/initial-as.png
-#   page:
-#     # customize the url of the author page at /blog/authors/<permalink>
-#     permalink: '/all-aulia-articles'
-#   socials:
-#     linkedin: aulia-syarif
-#     github: initial-as
+aulia:
+  name: Aulia Syarif Aziz
+  title: Dosen Prodi Pendidikan Teknologi Informasi, Universitas Islam Neger Ar-Raniry Banda Aceh
+  url: https://initial-as.github.io
+  image_url: https://github.com/initial-as.png
+  page:
+    # customize the url of the author page at /blog/authors/<permalink>
+    permalink: '/all-aulia-articles'
+  socials:
+    linkedin: aulia-syarif
+    github: initial-as
