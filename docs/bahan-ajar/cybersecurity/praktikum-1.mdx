@@ -1,0 +1,262 @@
+---
+title: "1. Membangun Laboratorium Cybersecurity Virtual"
+---
+
+# Membangun Laboratorium Cybersecurity Virtual
+
+- Durasi: 1 Pertemuan (3 x 50 menit)
+- Tingkat: Dasar
+
+---
+
+## Capaian Pembelajaran Praktikum
+
+Setelah menyelesaikan praktikum ini mahasiswa mampu:
+
+1. Menjelaskan konsep Cybersecurity Laboratory.
+2. Menginstal VirtualBox sebagai platform virtualisasi.
+3. Membuat Virtual Machine.
+4. Menginstal Ubuntu Server.
+5. Menginstal Kali Linux.
+6. Menginstal Windows Client (opsional).
+7. Mengonfigurasi jaringan virtual.
+8. Melakukan komunikasi antar virtual machine.
+
+---
+
+## Dasar Teori
+
+### 1. Laboratorium Cybersecurity
+
+Laboratorium Cybersecurity merupakan lingkungan terisolasi yang digunakan untuk melakukan simulasi serangan, pertahanan, monitoring, dan investigasi keamanan tanpa mempengaruhi jaringan sebenarnya. Pada mata kuliah ini, seluruh aktivitas akan dilakukan di dalam Virtual Machine.
+
+---
+
+### 2. Virtualisasi
+
+Virtualisasi memungkinkan satu komputer menjalankan beberapa sistem operasi secara bersamaan. Keuntungan virtualisasi:
+
+* hemat biaya
+* aman
+* mudah melakukan snapshot
+* mudah dikembalikan ketika terjadi kesalahan
+
+Software virtualisasi yang umum digunakan:
+
+* Oracle VirtualBox (ini yang akan kita gunakan)
+* VMware Workstation Player
+
+---
+
+### 3. Arsitektur Praktikum
+
+Diagram berikut menunjukkan arsitektur laboratorium yang akan dibangun dalam praktikum ini.
+
+```text
+                 Internet
+                     │
+                 NAT Network
+                 (Adapter 1)
+                     │
+        ┌────────────┴─────────────┐
+        │                          │
+   Ubuntu Server             Windows Client
+        │                          │
+        └────────────┬─────────────┘
+                     │
+                Host Only Network
+                     │
+                 Kali Linux
+```
+
+**Konfigurasi Adapter**
+
+| Virtual Machine | Adapter 1 | Adapter 2 |
+| --------------- | --------- | --------- |
+| Ubuntu Server   | NAT       | Host-Only |
+| Windows Client  | NAT       | Host-Only |
+| Kali Linux      | Host-Only | -         |
+
+
+---
+
+## Software yang Digunakan
+
+| Software                | Fungsi                         |
+| ----------------------- | ------------------------------ |
+| VirtualBox              | Virtualisasi                   |
+| Ubuntu Server 24.04 LTS | Target Server                  |
+| Kali Linux              | Simulasi serangan dan analisis |
+| Windows 11 Evaluation   | Client                         |
+| PuTTY (opsional)        | Remote SSH                     |
+
+---
+
+## Spesifikasi Minimum
+
+| Komponen   | Minimum       |
+| ---------- | ------------- |
+| CPU        | 4 Core        |
+| RAM        | 16 GB         |
+| SSD        | 200 GB kosong |
+| VirtualBox | Versi terbaru |
+
+---
+
+## Langkah Praktikum
+
+### A. Instalasi VirtualBox
+
+1. Download VirtualBox.
+2. Install dengan konfigurasi default.
+3. Restart komputer jika diminta.
+
+---
+
+### B. Membuat Host-Only Network
+
+Buka Oracle VirtualBox, klik menu File → Tools → Network Manager (atau gunakan tombol pintas <kbd>Ctrl</kbd> + <kbd>H</kbd>). Pada tab Host-only Networks, tambahkan jaringan:
+
+```
+192.168.56.1/24
+```
+
+DHCP dapat dinonaktifkan agar konfigurasi IP dilakukan secara manual.
+
+---
+
+### C. Membuat Ubuntu Server
+
+Spesifikasi
+
+| Parameter         | Nilai     |
+| ----------------- | --------- |
+| CPU               | 2 Core    |
+| RAM               | 4096 MB   |
+| Disk              | 30 GB     |
+| Network Adapter 1 | NAT       |
+| Network Adapter 2 | Host Only |
+
+Install Ubuntu Server.
+
+- Hostname: ```server```
+- User: ```student```
+- Password: ```Cyber123!```
+
+---
+
+### D. Membuat Kali Linux
+
+Konfigurasi
+
+| Parameter | Nilai     |
+| --------- | --------- |
+| CPU       | 2 Core    |
+| RAM       | 4096 MB   |
+| Disk      | 40 GB     |
+| Adapter 1 | Host Only |
+
+Hostname: ```kali```
+
+---
+
+### E. Membuat Windows Client
+
+Konfigurasi
+
+| Parameter | Nilai     |
+| --------- | --------- |
+| CPU       | 2 Core    |
+| RAM       | 4096 MB   |
+| Disk      | 60 GB     |
+| Adapter   | Host Only |
+
+---
+
+## Konfigurasi IP
+
+- Ubuntu: ```192.168.56.10```
+- Kali: ```192.168.56.20```
+- Windows: ```192.168.56.30```
+- Subnet: ```255.255.255.0```
+- Gateway: Kosong (Host-Only)
+
+---
+
+## Pengujian Koneksi
+
+Dari Kali
+
+```bash
+ping 192.168.56.10
+```
+
+Dari Ubuntu
+
+```bash
+ping 192.168.56.20
+```
+
+Dari Windows
+
+```cmd
+ping 192.168.56.10
+```
+
+Seluruh perangkat harus dapat saling berkomunikasi.
+
+---
+
+## Snapshot
+
+Setelah seluruh VM berhasil dibuat, buat snapshot dengan nama
+
+```
+Praktikum-1
+```
+
+Snapshot ini akan digunakan sebelum memulai praktikum berikutnya.
+
+---
+
+## Tugas Praktikum
+
+1. Buatlah diagram topologi jaringan lab virtual yang digunakan dalam praktikum ini menggunakan aplikasi diagram (misalnya draw.io). **JANGAN DIBUAT DENGAN AI !!**
+
+2. Jelaskan fungsi masing-masing mesin virtual berikut.
+
+    * Ubuntu Server
+    * Kali Linux
+    * Windows Client
+
+3. Lakukan pengujian konektivitas antar seluruh virtual machine menggunakan perintah `ping` dan dokumentasikan hasilnya dalam bentuk tangkapan layar.
+
+4. Bandingkan fungsi jaringan **NAT**, **Host-Only**, dan **Bridged Adapter** pada VirtualBox. Jelaskan kapan masing-masing mode jaringan lebih tepat digunakan dalam lingkungan laboratorium keamanan siber.
+
+---
+
+## Laporan Praktikum
+
+Laporan harus memuat:
+
+1. Tujuan praktikum.
+2. Spesifikasi komputer yang digunakan.
+3. Konfigurasi setiap virtual machine (CPU, RAM, Disk, dan Adapter Jaringan).
+4. Diagram topologi jaringan virtual.
+5. Hasil konfigurasi alamat IP.
+6. Hasil pengujian konektivitas antar mesin virtual beserta tangkapan layar.
+7. Analisis perbedaan mode jaringan NAT, Host-Only, dan Bridged.
+8. Kesimpulan.
+
+---
+
+## Rubrik Penilaian
+
+| Aspek                              | Bobot |
+| ---------------------------------- | ----: |
+| Instalasi VirtualBox               |   10% |
+| Pembuatan VM                       |   20% |
+| Konfigurasi jaringan               |   20% |
+| Pengujian konektivitas             |   20% |
+| Dokumentasi dan laporan            |   20% |
+| Kerapian dan ketepatan konfigurasi |   10% |

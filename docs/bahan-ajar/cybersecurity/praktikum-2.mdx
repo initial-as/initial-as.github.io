@@ -1,0 +1,462 @@
+---
+title: "2. Analisis Lalu Lintas Jaringan Menggunakan Wireshark"
+---
+
+# Analisis Lalu Lintas Jaringan Menggunakan Wireshark
+
+- Durasi: 1 Pertemuan (3 x 50 menit)
+- Tingkat: Dasar
+
+---
+
+## Capaian Pembelajaran Praktikum
+
+Setelah menyelesaikan praktikum ini, mahasiswa mampu:
+
+1. Menjelaskan konsep packet sniffing.
+2. Menggunakan Wireshark untuk menangkap paket jaringan.
+3. Menganalisis komunikasi TCP/IP.
+4. Mengidentifikasi berbagai protokol jaringan.
+5. Menjelaskan proses komunikasi client-server.
+6. Mengidentifikasi aktivitas jaringan yang berpotensi mencurigakan.
+
+---
+
+## Dasar Teori
+
+### 1. Monitoring Jaringan
+
+Monitoring jaringan merupakan proses mengamati seluruh aktivitas komunikasi yang terjadi pada jaringan komputer. Tujuan monitoring:
+
+* mengetahui kondisi jaringan
+* mendeteksi gangguan
+* menemukan aktivitas abnormal
+* membantu investigasi insiden keamanan
+
+---
+
+### 2. Packet Sniffing
+
+Packet sniffing adalah proses menangkap paket data yang melewati suatu interface jaringan. Informasi yang dapat diperoleh antara lain:
+
+* Source IP
+* Destination IP
+* Port
+* Protocol
+* Payload (jika tidak terenkripsi)
+* Timestamp
+
+---
+
+### 3. Wireshark
+
+Wireshark merupakan perangkat lunak open source yang digunakan untuk melakukan analisis paket jaringan (*packet analyzer*). Kemampuan utama:
+
+* menangkap paket secara real-time
+* memfilter paket
+* mengikuti aliran komunikasi (*Follow TCP Stream*)
+* menganalisis ratusan protokol jaringan
+
+---
+
+### 4. TCP Three-Way Handshake
+
+Proses pembentukan koneksi TCP terdiri dari tiga tahap:
+
+```text
+Client                     Server
+
+SYN ------------------------>
+
+        <------------------- SYN ACK
+
+ACK ------------------------>
+```
+
+Jika tiga tahapan tersebut berhasil maka koneksi TCP terbentuk.
+
+---
+
+### 5. Protokol yang Akan Diamati
+
+| Protokol | Fungsi               |
+| -------- | -------------------- |
+| ARP      | Resolusi alamat MAC  |
+| ICMP     | Ping                 |
+| DNS      | Resolusi nama domain |
+| TCP      | Transport            |
+| HTTP     | Web                  |
+| HTTPS    | Web terenkripsi      |
+| SSH      | Remote login         |
+
+---
+
+## Peralatan
+
+Menggunakan VM dari Praktikum 1.
+
+* Kali Linux
+* Ubuntu Server
+* Windows Client
+
+Software:
+
+* Wireshark
+* Browser
+* Terminal Linux
+
+---
+
+## Topologi
+
+Praktikum ini menggunakan topologi yang sama dengan yang telah disiapkan pada praktikum sebelumnya.
+
+```text
+                 Internet
+                     │
+                 NAT Network
+                 (Adapter 1)
+                     │
+        ┌────────────┴─────────────┐
+        │                          │
+   Ubuntu Server             Windows Client
+        │                          │
+        └────────────┬─────────────┘
+                     │
+                Host Only Network
+                     │
+                 Kali Linux
+```
+
+**Konfigurasi Adapter**
+
+| Virtual Machine | Adapter 1 | Adapter 2 |
+| --------------- | --------- | --------- |
+| Ubuntu Server   | NAT       | Host-Only |
+| Windows Client  | NAT       | Host-Only |
+| Kali Linux      | Host-Only | -         |
+
+---
+
+## Langkah Praktikum
+
+### A. Instalasi Wireshark
+
+Pada Kali Linux jalankan:
+
+```bash
+sudo apt update
+sudo apt install wireshark -y
+```
+
+:::tip[Tips]
+
+Pastikan Kali terhubung ke Internet agar proses instalasi Wireshark berjalan lancar. Wireshark juga bisa dijalankan di Ubuntu maupun Windows, tidak harus di Kali.
+
+:::
+
+---
+
+### B. Menjalankan Capture
+
+1. Buka Wireshark.
+2. Pilih interface Host-Only.
+3. Klik **Start Capture**.
+
+---
+
+### C. Praktikum 1 – Analisis ICMP
+
+Pada Windows lakukan:
+
+```cmd
+ping 192.168.56.10
+```
+
+Kemudian pada Wireshark gunakan filter:
+
+```text
+icmp
+```
+
+**Amati**
+
+* Echo Request
+* Echo Reply
+* Source IP
+* Destination IP
+* TTL
+* Timestamp
+
+---
+
+### D. Praktikum 2 – Analisis ARP
+
+Hapus cache ARP.
+
+Windows:
+
+```cmd
+arp -d *
+```
+
+Lakukan kembali:
+
+```cmd
+ping 192.168.56.10
+```
+
+Filter:
+
+```text
+arp
+```
+
+**Amati**
+
+* Who has...
+* MAC Address
+* Broadcast
+
+---
+
+### E. Praktikum 3 – Analisis TCP
+
+Dari Windows lakukan koneksi SSH.
+
+Jika SSH belum tersedia, cukup lakukan:
+
+```cmd
+telnet 192.168.56.10 22
+```
+
+Filter:
+
+```text
+tcp
+```
+
+**Amati**
+
+* SYN
+* SYN ACK
+* ACK
+
+Identifikasi proses three-way handshake.
+
+---
+
+### F. Praktikum 4 – Analisis DNS
+
+Pada Kali:
+
+```bash
+nslookup google.com
+```
+
+Filter:
+
+```text
+dns
+```
+
+Amati:
+
+* Query
+* Response
+* Record Type
+* TTL
+
+---
+
+### G. Praktikum 5 – Analisis HTTP
+
+Buka browser menuju:
+
+```text
+http://neverssl.com
+```
+
+Filter:
+
+```text
+http
+```
+
+Perhatikan:
+
+* GET
+* Response
+* Status Code
+* Header
+
+---
+
+### H. Praktikum 6 – Analisis HTTPS
+
+Buka:
+
+```text
+https://example.com
+```
+
+Filter:
+
+```text
+tls
+```
+
+Bandingkan dengan HTTP.
+
+Diskusikan:
+
+* Mengapa isi data tidak dapat dibaca?
+* Informasi apa saja yang masih dapat diamati?
+
+---
+
+### I. Follow TCP Stream
+
+Klik salah satu paket HTTP.
+
+Pilih:
+
+```
+Follow
+→ TCP Stream
+```
+
+Amati:
+
+* Header HTTP
+* Request
+* Response
+
+---
+
+# Analisis Serangan Sederhana
+
+Dari Kali lakukan:
+
+```bash
+ping -c 100 192.168.56.10
+```
+
+Amati:
+
+* jumlah paket
+* waktu
+* grafik paket
+
+Diskusikan:
+
+Apakah aktivitas tersebut dapat dibedakan dengan aktivitas pengguna biasa?
+
+---
+
+## Latihan Filter Wireshark
+
+Lengkapi tabel berikut.
+
+| Tujuan | Filter     |
+| ------ | ---------- |
+| Ping   | __________ |
+| DNS    | __________ |
+| HTTP   | __________ |
+| HTTPS  | __________ |
+| TCP    | __________ |
+| SSH    | __________ |
+| ARP    | __________ |
+
+---
+
+## Studi Kasus
+
+Administrator menerima laporan bahwa server lambat.
+
+Mahasiswa diminta menganalisis hasil capture dan menjawab:
+
+1. Protokol apa yang paling banyak muncul?
+2. Siapa alamat IP pengirim?
+3. Siapa alamat IP tujuan?
+4. Apakah ditemukan paket ICMP dalam jumlah besar?
+5. Apakah terdapat komunikasi HTTP?
+6. Apakah terdapat komunikasi HTTPS?
+7. Jelaskan kesimpulan hasil monitoring.
+
+---
+
+## Tugas Praktikum
+
+### Tugas 1
+
+Lakukan *capture* lalu lintas jaringan selama minimal lima menit saat melakukan aktivitas berikut:
+
+* membuka situs HTTP,
+* membuka situs HTTPS,
+* melakukan *ping* ke Ubuntu Server.
+
+Simpan hasil *capture* dalam format **.pcapng**.
+
+---
+
+### Tugas 2
+
+Isi tabel berikut berdasarkan hasil analisis.
+
+| Parameter          | Hasil    |
+| ------------------ | -------- |
+| Jumlah paket       |          |
+| Protokol terbanyak |          |
+| Source IP          |          |
+| Destination IP     |          |
+| HTTP ditemukan     | Ya/Tidak |
+| HTTPS ditemukan    | Ya/Tidak |
+| DNS ditemukan      | Ya/Tidak |
+
+---
+
+### Tugas 3
+
+Bandingkan karakteristik lalu lintas **HTTP** dan **HTTPS** berdasarkan:
+
+* informasi yang dapat dilihat pada Wireshark,
+* tingkat keamanan,
+* risiko terhadap kerahasiaan data.
+
+---
+
+### Tugas 4 (HOTS)
+
+Sebuah organisasi hanya melakukan pemantauan lalu lintas jaringan menggunakan Wireshark tanpa menerapkan sistem deteksi intrusi (IDS) atau platform SIEM. Menurut Anda, apa kelebihan dan keterbatasan pendekatan tersebut? Jelaskan alasan Anda.
+
+---
+
+## Laporan Praktikum
+
+Laporan memuat:
+
+1. Tujuan praktikum.
+2. Dasar teori singkat.
+3. Topologi jaringan.
+4. Hasil tangkapan layar setiap percobaan (ICMP, ARP, TCP, DNS, HTTP, HTTPS).
+5. Analisis *three-way handshake*.
+6. Hasil identifikasi protokol.
+7. Jawaban studi kasus.
+8. Kesimpulan.
+
+---
+
+# Rubrik Penilaian
+
+| Komponen                            | Bobot |
+| ----------------------------------- | ----: |
+| Instalasi dan konfigurasi Wireshark |   10% |
+| Keberhasilan menangkap paket        |   20% |
+| Analisis protokol                   |   30% |
+| Penyelesaian studi kasus            |   20% |
+| Laporan praktikum                   |   20% |
+
+## Catatan
+
+Praktikum ini menjadi jembatan menuju **Praktikum 5 (Wazuh)**. Pada modul ini mahasiswa belajar melakukan analisis paket secara manual menggunakan Wireshark. Di modul-modul berikutnya, praktikum akan beralih ke pemantauan berbasis log dan *Security Information and Event Management* (SIEM), sehingga memahami perbedaan antara **packet-level monitoring** dan **log/event-level monitoring**, dua kemampuan yang saling melengkapi dalam operasional seorang Keamanan Siber Muda (_Associate Cyber Security_).
