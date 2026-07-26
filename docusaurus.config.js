@@ -86,7 +86,7 @@ const config = {
         title: 'Catatan Aulia',
         logo: {
           alt: 'Logo',
-          src: 'img/logo.svg',
+          src: 'img/as-logo.png',
         },
         items: [
           {
