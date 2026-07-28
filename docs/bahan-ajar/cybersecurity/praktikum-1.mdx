@@ -53,29 +53,28 @@ Software virtualisasi yang umum digunakan:
 Diagram berikut menunjukkan arsitektur laboratorium yang akan dibangun dalam praktikum ini.
 
 ```text
-                 Internet
-                     │
-                 NAT Network
-                 (Adapter 1)
-                     │
-        ┌────────────┴─────────────┐
-        │                          │
-   Ubuntu Server             Windows Client
-        │                          │
-        └────────────┬─────────────┘
-                     │
-                Host Only Network
-                     │
-                 Kali Linux
+                     Internet
+                         │
+                VirtualBox NAT Network
+                         │
+      ┌──────────────────┴──────────────────┐
+      │                                     │
+ Ubuntu Server                         Kali Linux
+      │                                     │
+      └──────────────────┬──────────────────┘
+                         │
+              VirtualBox Host-Only Network
+                         │
+                  Windows Host
 ```
 
 **Konfigurasi Adapter**
 
-| Virtual Machine | Adapter 1 | Adapter 2 |
-| --------------- | --------- | --------- |
-| Ubuntu Server   | NAT       | Host-Only |
-| Windows Client  | NAT       | Host-Only |
-| Kali Linux      | Host-Only | -         |
+| Mesin                            | Adapter 1                                                | Adapter 2 |
+| -------------------------------- | -------------------------------------------------------- | --------- |
+| Ubuntu Server                    | NAT                                                      | Host-Only |
+| Kali Linux                       | NAT                                                      | Host-Only |
+| Windows Host                     | Adapter fisik ke Internet + VirtualBox Host-Only Adapter ||
 
 
 ---
@@ -84,21 +83,23 @@ Diagram berikut menunjukkan arsitektur laboratorium yang akan dibangun dalam pra
 
 | Software                | Fungsi                         |
 | ----------------------- | ------------------------------ |
-| VirtualBox              | Virtualisasi                   |
-| Ubuntu Server 24.04 LTS | Target Server                  |
-| Kali Linux              | Simulasi serangan dan analisis |
-| Windows 11 Evaluation   | Client                         |
+| VirtualBox 7.2.14       | Menjalankan mesin virtual      |
+| Windows 11              | Host VirtualBox                |
+| Ubuntu Server 26.04 LTS | Target Server                  |
+| Kali Linux 2026.2       | Simulasi serangan dan analisis |
 | PuTTY (opsional)        | Remote SSH                     |
 
 ---
 
 ## Spesifikasi Minimum
 
+Agar semua program dapat berjalan lancar, komputer host disarankan memiliki spesifikasi sebagai berikut:
+
 | Komponen   | Minimum       |
 | ---------- | ------------- |
 | CPU        | 4 Core        |
 | RAM        | 16 GB         |
-| SSD        | 200 GB kosong |
+| Storage    | 200 GB kosong |
 | VirtualBox | Versi terbaru |
 
 ---
@@ -115,7 +116,7 @@ Diagram berikut menunjukkan arsitektur laboratorium yang akan dibangun dalam pra
 
 ### B. Membuat Host-Only Network
 
-Buka Oracle VirtualBox, klik menu File → Tools → Network Manager (atau gunakan tombol pintas <kbd>Ctrl</kbd> + <kbd>H</kbd>). Pada tab Host-only Networks, tambahkan jaringan:
+Buka Oracle VirtualBox, klik menu File → Tools → Network (atau gunakan tombol pintas <kbd>Ctrl</kbd> + <kbd>H</kbd>). Pada tab Host-only Networks, tambahkan jaringan:
 
 ```
 192.168.56.1/24
@@ -139,7 +140,7 @@ Spesifikasi
 
 Install Ubuntu Server.
 
-- Hostname: ```server```
+- Hostname: ```ubuntu-server```
 - User: ```student```
 - Password: ```Cyber123!```
 
@@ -160,24 +161,11 @@ Hostname: ```kali```
 
 ---
 
-### E. Membuat Windows Client
-
-Konfigurasi
-
-| Parameter | Nilai     |
-| --------- | --------- |
-| CPU       | 2 Core    |
-| RAM       | 4096 MB   |
-| Disk      | 60 GB     |
-| Adapter   | Host Only |
-
----
-
 ## Konfigurasi IP
 
+- Windows: ```192.168.56.1```
 - Ubuntu: ```192.168.56.10```
 - Kali: ```192.168.56.20```
-- Windows: ```192.168.56.30```
 - Subnet: ```255.255.255.0```
 - Gateway: Kosong (Host-Only)
 
@@ -185,25 +173,25 @@ Konfigurasi
 
 ## Pengujian Koneksi
 
-Dari Kali
-
-```bash
-ping 192.168.56.10
-```
-
-Dari Ubuntu
-
-```bash
-ping 192.168.56.20
-```
-
-Dari Windows
-
-```cmd
-ping 192.168.56.10
-```
-
 Seluruh perangkat harus dapat saling berkomunikasi.
+
+- Dari Windows
+    ```cmd
+    ping 192.168.56.10
+    ping 192.168.56.20
+    ```
+
+- Dari Kali
+    ```bash
+    ping 192.168.56.1
+    ping 192.168.56.10
+    ```
+
+- Dari Ubuntu
+    ```bash
+    ping 192.168.56.1
+    ping 192.168.56.20
+    ```
 
 ---
 
@@ -221,17 +209,11 @@ Snapshot ini akan digunakan sebelum memulai praktikum berikutnya.
 
 ## Tugas Praktikum
 
-1. Buatlah diagram topologi jaringan lab virtual yang digunakan dalam praktikum ini menggunakan aplikasi diagram (misalnya draw.io). **JANGAN DIBUAT DENGAN AI !!**
+1. Buatlah diagram topologi jaringan lab virtual yang digunakan dalam praktikum ini menggunakan aplikasi diagram (misalnya draw.io). Gambarkan lengkap dengan alamat IP masing-masing host.<br />**TOPOLOGINYA JANGAN DI-GENERATE DENGAN AI !!**
 
-2. Jelaskan fungsi masing-masing mesin virtual berikut.
+2. Lakukan pengujian konektivitas antar seluruh virtual machine menggunakan perintah `ping` dan dokumentasikan hasilnya dalam bentuk tangkapan layar.
 
-    * Ubuntu Server
-    * Kali Linux
-    * Windows Client
-
-3. Lakukan pengujian konektivitas antar seluruh virtual machine menggunakan perintah `ping` dan dokumentasikan hasilnya dalam bentuk tangkapan layar.
-
-4. Bandingkan fungsi jaringan **NAT**, **Host-Only**, dan **Bridged Adapter** pada VirtualBox. Jelaskan kapan masing-masing mode jaringan lebih tepat digunakan dalam lingkungan laboratorium keamanan siber.
+3. Bandingkan fungsi jaringan NAT, Host-Only, dan Bridged Adapter pada VirtualBox. Jelaskan kapan masing-masing mode jaringan lebih tepat digunakan dalam lingkungan laboratorium keamanan siber.
 
 ---
 
