@@ -1,0 +1,438 @@
+---
+title: "3. Hardening Sistem dan Pengendalian Akses"
+---
+
+# Hardening Sistem dan Pengendalian Akses
+
+- Durasi: 1 Pertemuan (3 x 50 menit)
+- Tingkat: Dasar
+
+---
+
+# Capaian Pembelajaran Praktikum
+
+Setelah menyelesaikan praktikum ini, mahasiswa mampu:
+
+1. Menjelaskan konsep hardening sistem.
+2. Menerapkan prinsip *least privilege*.
+3. Mengelola akun pengguna dan grup pada Linux.
+4. Mengkonfigurasi SSH agar lebih aman.
+5. Mengkonfigurasi firewall menggunakan UFW.
+6. Memverifikasi konfigurasi keamanan yang telah diterapkan.
+7. Menganalisis dampak konfigurasi keamanan terhadap akses pengguna.
+
+---
+
+## Dasar Teori
+
+### 1. System Hardening
+
+System Hardening adalah proses mengurangi risiko keamanan dengan menonaktifkan layanan yang tidak diperlukan, memperkuat konfigurasi sistem, serta membatasi hak akses pengguna. Tujuan hardening:
+
+* mengurangi attack surface,
+* mencegah akses tidak sah,
+* meningkatkan keamanan sistem,
+* memenuhi kebijakan keamanan.
+
+---
+
+### 2. Principle of Least Privilege
+
+Setiap pengguna hanya diberikan hak akses yang diperlukan untuk menjalankan tugasnya. Contoh:
+
+* Administrator memiliki hak penuh.
+* Operator hanya dapat mengakses layanan tertentu.
+* Pengguna biasa tidak dapat mengubah konfigurasi sistem.
+
+---
+
+### 3. Authentication dan Authorization
+
+* **Authentication** menjawab pertanyaan **"Siapa Anda?"**
+* **Authorization** menjawab pertanyaan **"Apa yang boleh Anda lakukan?"**
+
+---
+
+### 4. SSH (Secure Shell)
+
+SSH digunakan untuk administrasi server secara aman melalui jaringan menggunakan enkripsi. Port default yang digunakan oleh SSH adalah port 22 dengan protokol TCP.
+
+---
+
+### 5. UFW (Uncomplicated Firewall)
+
+UFW merupakan antarmuka sederhana untuk mengelola firewall Linux berbasis iptables/nftables. Contoh aturan:
+
+* mengizinkan SSH,
+* mengizinkan HTTP,
+* menolak akses ke port tertentu.
+
+---
+
+## Peralatan
+
+* Windows Host
+* Ubuntu Server (VM)
+* Kali Linux (VM)
+
+Software:
+
+* OpenSSH Server
+* UFW
+* OpenSSH Client / PuTTY
+
+---
+
+## Topologi
+
+Praktikum ini menggunakan topologi yang sama dengan yang telah disiapkan pada praktikum sebelumnya.
+
+```text
+                     Internet
+                         │
+                VirtualBox NAT Network
+                         │
+      ┌──────────────────┴──────────────────┐
+      │                                     │
+ Ubuntu Server                          Kali
+ 192.168.56.10                          192.168.56.20
+      │                                     │
+      └──────────────────┬──────────────────┘
+                         │
+              VirtualBox Host-Only Network
+                         │
+                  Windows Host
+                  192.168.56.1
+```
+
+---
+
+## Langkah Praktikum
+
+### A. Memperbarui Sistem
+
+Pada Ubuntu:
+
+```bash
+sudo apt update
+sudo apt upgrade -y
+```
+
+Periksa versi sistem:
+
+```bash
+lsb_release -a
+```
+
+---
+
+### B. Membuat Pengguna Baru
+
+Lihat daftar pengguna:
+
+```bash
+cat /etc/passwd
+```
+
+Buat pengguna baru:
+
+```bash
+sudo adduser operator
+```
+
+Tambahkan pengguna ke grup:
+
+```bash
+sudo usermod -aG sudo operator
+```
+
+Verifikasi:
+
+```bash
+groups operator
+```
+
+---
+
+### C. Pengujian Hak Akses
+
+Masuk menggunakan akun baru:
+
+```bash
+su - operator
+```
+
+Uji:
+
+```bash
+sudo apt update
+```
+
+Diskusikan mengapa pengguna harus memasukkan password kembali?
+
+---
+
+### D. Menonaktifkan Login Root melalui SSH
+
+Pastikan OpenSSH telah terpasang:
+
+```bash
+sudo systemctl status ssh
+```
+
+Edit konfigurasi:
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+Ubah:
+
+```text
+PermitRootLogin no
+```
+
+Pastikan:
+
+```text
+PasswordAuthentication yes
+```
+
+Restart layanan:
+
+```bash
+sudo systemctl restart ssh
+```
+
+---
+
+### E. Mengubah Port SSH
+
+Edit kembali:
+
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+Ubah:
+
+```text
+Port 2222
+```
+
+Restart:
+
+```bash
+sudo systemctl restart ssh
+```
+
+Verifikasi:
+
+```bash
+sudo ss -tlnp
+```
+
+---
+
+### F. Konfigurasi Firewall
+
+Aktifkan UFW:
+
+```bash
+sudo ufw enable
+```
+
+Izinkan SSH pada port baru:
+
+```bash
+sudo ufw allow 2222/tcp
+```
+
+Izinkan HTTP:
+
+```bash
+sudo ufw allow 80/tcp
+```
+
+Lihat aturan:
+
+```bash
+sudo ufw status numbered
+```
+
+---
+
+### G. Pengujian Koneksi
+
+Dari Windows Host:
+
+```bash
+ssh operator@192.168.56.10 -p 2222
+```
+
+Pastikan koneksi berhasil.
+
+---
+
+### H. Menutup Port yang Tidak Diperlukan
+
+Lihat port aktif:
+
+```bash
+sudo ss -tuln
+```
+
+Diskusikan:
+
+* Port mana yang benar-benar dibutuhkan?
+* Port mana yang dapat ditutup?
+
+---
+
+### I. Mengamankan Password
+
+Edit:
+
+```bash
+sudo nano /etc/login.defs
+```
+
+Perhatikan parameter:
+
+* PASS_MAX_DAYS
+* PASS_MIN_DAYS
+* PASS_WARN_AGE
+
+Diskusikan fungsi masing-masing.
+
+---
+
+## J. Audit Konfigurasi
+
+Periksa:
+
+Firewall:
+
+```bash
+sudo ufw status verbose
+```
+
+SSH:
+
+```bash
+sudo systemctl status ssh
+```
+
+Port:
+
+```bash
+sudo ss -tuln
+```
+
+User:
+
+```bash
+cat /etc/passwd
+```
+
+---
+
+## Studi Kasus
+
+Administrator menemukan bahwa server masih mengizinkan:
+
+* login root melalui SSH,
+* penggunaan port 22,
+* firewall belum aktif.
+
+Diskusikan:
+
+1. Apa risiko dari masing-masing konfigurasi?
+2. Bagaimana langkah hardening yang telah dilakukan dapat mengurangi risiko tersebut?
+3. Apa potensi dampak operasional yang perlu dipertimbangkan sebelum menerapkan perubahan pada server produksi?
+
+---
+
+## Tugas Praktikum
+
+### Tugas 1
+
+Buat akun pengguna berikut.
+
+| Username | Hak Akses      |
+| -------- | -------------- |
+| adminlab | Administrator  |
+| operator | Administrator  |
+| auditor  | Pengguna biasa |
+
+Verifikasi hak akses masing-masing akun.
+
+---
+
+### Tugas 2
+
+Konfigurasikan SSH sehingga:
+
+* login root dinonaktifkan,
+* menggunakan port 2222,
+* hanya akun `adminlab` dan `operator` yang diizinkan login melalui SSH (petunjuk: gunakan direktif `AllowUsers` pada `sshd_config`).
+
+Lakukan pengujian menggunakan ketiga akun tersebut dan dokumentasikan hasilnya.
+
+---
+
+### Tugas 3
+
+Konfigurasikan UFW sehingga:
+
+* mengizinkan SSH (2222),
+* mengizinkan HTTP (80),
+* menolak seluruh koneksi masuk lainnya.
+
+Sertakan keluaran perintah:
+
+```bash
+sudo ufw status verbose
+```
+
+---
+
+## Laporan Praktikum
+
+Laporan memuat:
+
+1. Tujuan praktikum.
+2. Dasar teori singkat.
+3. Langkah konfigurasi pengguna dan grup.
+4. Konfigurasi SSH sebelum dan sesudah hardening.
+5. Konfigurasi firewall beserta tangkapan layar.
+6. Hasil pengujian akses SSH menggunakan masing-masing akun.
+7. Analisis studi kasus.
+8. Jawaban tugas praktikum.
+9. Kesimpulan.
+
+---
+
+## Rubrik Penilaian
+
+| Komponen                    | Bobot |
+| --------------------------- | ----: |
+| Manajemen pengguna dan grup |   20% |
+| Hardening SSH               |   25% |
+| Konfigurasi firewall        |   25% |
+| Analisis studi kasus        |   15% |
+| Laporan praktikum           |   15% |
+
+---
+
+## Persiapan untuk Praktikum 4
+
+Pada akhir praktikum, pastikan kondisi berikut telah terpenuhi:
+
+* Ubuntu Server telah diperbarui (`apt update` dan `apt upgrade`).
+* OpenSSH Server berjalan pada port 2222.
+* Firewall UFW aktif dengan aturan yang sesuai.
+* Apache2 telah diinstal (jika belum, lakukan `sudo apt install apache2 -y`) sebagai persiapan instalasi SafeLine WAF pada praktikum berikutnya.
+* **Buat snapshot VirtualBox** dengan nama Praktikum-3 agar konfigurasi hardening dapat dipulihkan apabila terjadi kesalahan pada praktikum selanjutnya.
+
+Dengan demikian, lingkungan laboratorium akan siap digunakan untuk implementasi **Web Application Firewall (WAF)** pada Praktikum 4, sekaligus memperkuat kompetensi pengendalian akses dan penerapan kontrol keamanan yang menjadi bagian dari profil **Keamanan Siber Muda**.

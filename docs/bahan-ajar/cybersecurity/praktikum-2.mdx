@@ -95,15 +95,14 @@ Jika tiga tahapan tersebut berhasil maka koneksi TCP terbentuk.
 
 Menggunakan VM dari Praktikum 1.
 
-* Kali Linux
-* Ubuntu Server
-* Windows Client
+* Windows Host
+* Kali Linux (VM)
+* Ubuntu Server (VM)
 
 Software:
 
 * Wireshark
-* Browser
-* Terminal Linux
+* Web browser
 
 ---
 
@@ -112,29 +111,22 @@ Software:
 Praktikum ini menggunakan topologi yang sama dengan yang telah disiapkan pada praktikum sebelumnya.
 
 ```text
-                 Internet
-                     │
-                 NAT Network
-                 (Adapter 1)
-                     │
-        ┌────────────┴─────────────┐
-        │                          │
-   Ubuntu Server             Windows Client
-        │                          │
-        └────────────┬─────────────┘
-                     │
-                Host Only Network
-                     │
-                 Kali Linux
+                     Internet
+                         │
+                VirtualBox NAT Network
+                         │
+      ┌──────────────────┴──────────────────┐
+      │                                     │
+ Ubuntu Server                          Kali
+ 192.168.56.10                          192.168.56.20
+      │                                     │
+      └──────────────────┬──────────────────┘
+                         │
+              VirtualBox Host-Only Network
+                         │
+                  Windows Host
+                  192.168.56.1
 ```
-
-**Konfigurasi Adapter**
-
-| Virtual Machine | Adapter 1 | Adapter 2 |
-| --------------- | --------- | --------- |
-| Ubuntu Server   | NAT       | Host-Only |
-| Windows Client  | NAT       | Host-Only |
-| Kali Linux      | Host-Only | -         |
 
 ---
 
@@ -149,9 +141,9 @@ sudo apt update
 sudo apt install wireshark -y
 ```
 
-:::tip[Tips]
+:::tip
 
-Pastikan Kali terhubung ke Internet agar proses instalasi Wireshark berjalan lancar. Wireshark juga bisa dijalankan di Ubuntu maupun Windows, tidak harus di Kali.
+Biasanya Wireshark sudah terpasang di Kali sudah secara langsung. Namun jika diperlukan instalasi, pastikan Kali terhubung ke Internet (pada topologi yang digunakan sekarang, Kali terhubung ke Internet melalui adapter 1 (NAT)). Wireshark juga bisa dijalankan di Windows maupun Ubuntu Server.
 
 :::
 
@@ -194,6 +186,11 @@ icmp
 
 Hapus cache ARP.
 
+Ubuntu / Kali:
+```bash
+sudo ip neigh flush all
+```
+
 Windows:
 
 ```cmd
@@ -206,7 +203,7 @@ Lakukan kembali:
 ping 192.168.56.10
 ```
 
-Filter:
+Filter Wireshark:
 
 ```text
 arp
@@ -222,13 +219,12 @@ arp
 
 ### E. Praktikum 3 – Analisis TCP
 
-Dari Windows lakukan koneksi SSH.
+Buka Terminal Windows, kemudian lakukan koneksi SSH ke Ubuntu Server.
 
-Jika SSH belum tersedia, cukup lakukan:
-
-```cmd
-telnet 192.168.56.10 22
+```bash
+ssh student@192.168.56.10
 ```
+Masukkan password `Cyber123!`, kemudian jalankan beberapa perintah agar Wireshark menangkap paket datanya.
 
 Filter:
 
@@ -242,19 +238,19 @@ tcp
 * SYN ACK
 * ACK
 
-Identifikasi proses three-way handshake.
+Identifikasi proses *three-way handshake*.
 
 ---
 
 ### F. Praktikum 4 – Analisis DNS
 
-Pada Kali:
+Jalankan perintah berikut pada Ubuntu Server atau Windows:
 
 ```bash
 nslookup google.com
 ```
 
-Filter:
+Filter Wireshark:
 
 ```text
 dns
@@ -267,6 +263,8 @@ Amati:
 * Record Type
 * TTL
 
+TTL hanya bisa ditemukan di dalam peket respons DNS. Agar pencarian lebih mudah, gunakan filter `dns.flags.response==1` di Wireshark.
+
 ---
 
 ### G. Praktikum 5 – Analisis HTTP
@@ -277,7 +275,11 @@ Buka browser menuju:
 http://neverssl.com
 ```
 
-Filter:
+:::warning
+Pastikan Anda mengetikkan protokol http:// agar tidak diarahkan ke https://
+:::
+
+Filter Wireshark:
 
 ```text
 http
@@ -292,30 +294,7 @@ Perhatikan:
 
 ---
 
-### H. Praktikum 6 – Analisis HTTPS
-
-Buka:
-
-```text
-https://example.com
-```
-
-Filter:
-
-```text
-tls
-```
-
-Bandingkan dengan HTTP.
-
-Diskusikan:
-
-* Mengapa isi data tidak dapat dibaca?
-* Informasi apa saja yang masih dapat diamati?
-
----
-
-### I. Follow TCP Stream
+### H. Praktikum 6 - Follow TCP Stream
 
 Klik salah satu paket HTTP.
 
@@ -334,12 +313,33 @@ Amati:
 
 ---
 
+### I. Praktikum 7 – Analisis HTTPS
+
+Buka:
+
+```text
+https://example.com
+```
+
+Filter:
+
+```text
+tls
+```
+
+Bandingkan dengan HTTP. Diskusikan:
+
+* Mengapa isi data tidak dapat dibaca?
+* Informasi apa saja yang masih dapat diamati?
+
+---
+
 # Analisis Serangan Sederhana
 
 Dari Kali lakukan:
 
 ```bash
-ping -c 100 192.168.56.10
+ping -c 50 192.168.56.10
 ```
 
 Amati:
@@ -348,9 +348,7 @@ Amati:
 * waktu
 * grafik paket
 
-Diskusikan:
-
-Apakah aktivitas tersebut dapat dibedakan dengan aktivitas pengguna biasa?
+Diskusikan apakah aktivitas tersebut dapat dibedakan dengan aktivitas pengguna biasa?
 
 ---
 
@@ -358,15 +356,15 @@ Apakah aktivitas tersebut dapat dibedakan dengan aktivitas pengguna biasa?
 
 Lengkapi tabel berikut.
 
-| Tujuan | Filter     |
-| ------ | ---------- |
-| Ping   | __________ |
-| DNS    | __________ |
-| HTTP   | __________ |
-| HTTPS  | __________ |
-| TCP    | __________ |
-| SSH    | __________ |
-| ARP    | __________ |
+| Tujuan | Filter    |
+| ------ | --------- |
+| Ping   |    ...    |
+| DNS    |    ...    |
+| HTTP   |    ...    |
+| HTTPS  |    ...    |
+| TCP    |    ...    |
+| SSH    |    ...    |
+| ARP    |    ...    |
 
 ---
 
@@ -394,15 +392,9 @@ Lakukan *capture* lalu lintas jaringan selama minimal lima menit saat melakukan 
 
 * membuka situs HTTP,
 * membuka situs HTTPS,
-* melakukan *ping* ke Ubuntu Server.
+* melakukan ping.
 
-Simpan hasil *capture* dalam format **.pcapng**.
-
----
-
-### Tugas 2
-
-Isi tabel berikut berdasarkan hasil analisis.
+Simpan hasil capture dalam format .pcapng kemudian isi tabel berikut berdasarkan hasil analisis.
 
 | Parameter          | Hasil    |
 | ------------------ | -------- |
@@ -414,23 +406,21 @@ Isi tabel berikut berdasarkan hasil analisis.
 | HTTPS ditemukan    | Ya/Tidak |
 | DNS ditemukan      | Ya/Tidak |
 
+:::tip[Tips]
+
+Gunakan menu Statistics → Protocol Hierarchy dan Statistics → Endpoints.
+
+:::
+
 ---
 
-### Tugas 3
+### Tugas 2
 
 Bandingkan karakteristik lalu lintas **HTTP** dan **HTTPS** berdasarkan:
 
 * informasi yang dapat dilihat pada Wireshark,
 * tingkat keamanan,
 * risiko terhadap kerahasiaan data.
-
----
-
-### Tugas 4 (HOTS)
-
-Sebuah organisasi hanya melakukan pemantauan lalu lintas jaringan menggunakan Wireshark tanpa menerapkan sistem deteksi intrusi (IDS) atau platform SIEM. Menurut Anda, apa kelebihan dan keterbatasan pendekatan tersebut? Jelaskan alasan Anda.
-
----
 
 ## Laporan Praktikum
 
@@ -447,7 +437,7 @@ Laporan memuat:
 
 ---
 
-# Rubrik Penilaian
+## Rubrik Penilaian
 
 | Komponen                            | Bobot |
 | ----------------------------------- | ----: |

@@ -18,9 +18,8 @@ Setelah menyelesaikan praktikum ini mahasiswa mampu:
 3. Membuat Virtual Machine.
 4. Menginstal Ubuntu Server.
 5. Menginstal Kali Linux.
-6. Menginstal Windows Client (opsional).
-7. Mengonfigurasi jaringan virtual.
-8. Melakukan komunikasi antar virtual machine.
+6. Mengonfigurasi jaringan virtual.
+7. Melakukan komunikasi antar virtual machine.
 
 ---
 
@@ -68,26 +67,17 @@ Diagram berikut menunjukkan arsitektur laboratorium yang akan dibangun dalam pra
                   Windows Host
 ```
 
-**Konfigurasi Adapter**
-
-| Mesin                            | Adapter 1                                                | Adapter 2 |
-| -------------------------------- | -------------------------------------------------------- | --------- |
-| Ubuntu Server                    | NAT                                                      | Host-Only |
-| Kali Linux                       | NAT                                                      | Host-Only |
-| Windows Host                     | Adapter fisik ke Internet + VirtualBox Host-Only Adapter ||
-
-
 ---
 
 ## Software yang Digunakan
 
-| Software                | Fungsi                         |
-| ----------------------- | ------------------------------ |
-| VirtualBox 7.2.14       | Menjalankan mesin virtual      |
-| Windows 11              | Host VirtualBox                |
-| Ubuntu Server 26.04 LTS | Target Server                  |
-| Kali Linux 2026.2       | Simulasi serangan dan analisis |
-| PuTTY (opsional)        | Remote SSH                     |
+| Software                | Fungsi                         | Tautan Unduhan                   |
+| ----------------------- | ------------------------------ | -------------------------------- |
+| VirtualBox 7.2.14       | Menjalankan mesin virtual      | [Unduh VirtualBox 7.2.14](https://download.virtualbox.org/virtualbox/7.2.14/VirtualBox-7.2.14-174565-Win.exe "Download VirtualBox 7.2.14") |
+| Ubuntu Server 26.04 LTS | Target Server                  | [Unduh Ubuntu Server 26.04 LTS](https://ubuntu.com/download/server/thank-you?version=26.04&architecture=amd64&lts=true "Download Ubuntu Server 26.04 LTS") |
+| Kali Linux 2026.2       | Simulasi serangan dan analisis | [Unduh Kali Linux 2026.2](https://cdimage.kali.org/kali-2026.2/kali-linux-2026.2-virtualbox-amd64.7z "Unduh Kali Linux 2026.2") |
+| PuTTY (opsional)        | Remote SSH                     | [Unduh PuTTY 0.84](https://the.earth.li/~sgtatham/putty/latest/w64/putty-64bit-0.84-installer.msi "Unduh PuTTY 0.84") |
+| Windows 11              | Host VirtualBox                | -                                |
 
 ---
 
@@ -100,7 +90,6 @@ Agar semua program dapat berjalan lancar, komputer host disarankan memiliki spes
 | CPU        | 4 Core        |
 | RAM        | 16 GB         |
 | Storage    | 200 GB kosong |
-| VirtualBox | Versi terbaru |
 
 ---
 
@@ -122,7 +111,7 @@ Buka Oracle VirtualBox, klik menu File → Tools → Network (atau gunakan tombo
 192.168.56.1/24
 ```
 
-DHCP dapat dinonaktifkan agar konfigurasi IP dilakukan secara manual.
+Jika jaringan tersebut sudah ada terlebih dahulu, maka tidak perlu ditambahkan lagi. DHCP dapat dinonaktifkan agar konfigurasi IP dilakukan secara manual.
 
 ---
 
@@ -161,13 +150,46 @@ Hostname: ```kali```
 
 ---
 
-## Konfigurasi IP
+## Konfigurasi Jaringan
 
-- Windows: ```192.168.56.1```
-- Ubuntu: ```192.168.56.10```
-- Kali: ```192.168.56.20```
-- Subnet: ```255.255.255.0```
-- Gateway: Kosong (Host-Only)
+**Konfigurasi Adapter**
+
+| Host               | Adapter 1                                                | Adapter 2 |
+| ------------------ | -------------------------------------------------------- | --------- |
+| Ubuntu Server (VM) | NAT                                                      | Host-Only |
+| Kali Linux (VM)    | NAT                                                      | Host-Only |
+| Windows (Host)     | Adapter fisik ke Internet + VirtualBox Host-Only Adapter ||
+
+**Konfigurasi Alamat IP**
+
+| Host          | Alamat IP (Host-Only) |
+| ------------- | --------------------- |
+| Windows       | 192.168.56.1          |
+| Ubuntu Server | 192.168.56.10         |
+| Kali          | 192.168.56.20         |
+
+Semua host menggunakan subnet mask: ```255.255.255.0``` serta tidak memerlukan IP gateway/routes.
+
+**Cara Konfigurasi IP**
+
+1. Windows<br />
+    Pengaturan IP untuk Windows dilakukan di VirtualBox (<kbd>Ctrl</kbd> + <kbd>H</kbd>), gunakan IP ```192.168.56.1```
+2. Ubuntu
+    - Ketik perintah ```ip a```. Kemudian cari interface adapter 2 berdasarkan MAC Address (misalnya interface enp0s8 memiliki MAC Address yang sama dengan adapter 2).
+    - Gunakan nano untuk mengubah konfigurasi IP: `sudo nano /etc/netplan/00-installer-config.yaml`
+    - Gunakan konfigurasi berikut, letakkan di interface yang sesuai (pada contoh di bawah digunakan interface enp0s8):
+        ```yaml title="/etc/netplan/00-installer-config.yaml"
+            network:
+            enp0s8:
+                dhcp4: false
+                addresses:
+                - 192.168.56.10/24
+        ```
+    - Lakukan validasi konfigurasi jaringan dengan perintah `sudo netplan try`, jika tidak ada error yang muncul, tekan <kbd>Enter</kbd>.
+    - Ketik perintah `sudo netplan apply` untuk menerapkan konfigurasi jaringan yang telah dibuat.
+    - Ketik perintah `ip a` lalu pastikan IP sudah berubah menjadi `192.168.56.10`.
+3. Kali<br />
+    Pengaturan IP di Kali dapat dilakukan melalui Advanced Network Configuraion yang bisa diakses dari tombol start.
 
 ---
 
