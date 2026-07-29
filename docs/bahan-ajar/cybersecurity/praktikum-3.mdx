@@ -9,17 +9,24 @@ title: "3. Hardening Sistem dan Pengendalian Akses"
 
 ---
 
-# Capaian Pembelajaran Praktikum
+## Capaian Pembelajaran
 
-Setelah menyelesaikan praktikum ini, mahasiswa mampu:
+Setelah menyelesaikan praktikum ini mahasiswa mampu:
 
-1. Menjelaskan konsep hardening sistem.
-2. Menerapkan prinsip *least privilege*.
+1. Menjelaskan konsep *System Hardening*.
+2. Menerapkan prinsip *Least Privilege*.
 3. Mengelola akun pengguna dan grup pada Linux.
-4. Mengkonfigurasi SSH agar lebih aman.
-5. Mengkonfigurasi firewall menggunakan UFW.
-6. Memverifikasi konfigurasi keamanan yang telah diterapkan.
-7. Menganalisis dampak konfigurasi keamanan terhadap akses pengguna.
+4. Mengelola kepemilikan file dan direktori.
+5. Mengatur hak akses file dan direktori menggunakan `chmod`.
+6. Mengkonfigurasi akses SSH secara aman.
+7. Mengkonfigurasi firewall menggunakan UFW.
+8. Memverifikasi konfigurasi keamanan yang telah diterapkan.
+
+---
+
+## Tujuan Praktikum
+
+Mahasiswa mampu menerapkan mekanisme pengendalian akses pada sistem operasi Linux sehingga hanya pengguna yang berwenang dapat mengakses sumber daya sistem.
 
 ---
 
@@ -27,9 +34,9 @@ Setelah menyelesaikan praktikum ini, mahasiswa mampu:
 
 ### 1. System Hardening
 
-System Hardening adalah proses mengurangi risiko keamanan dengan menonaktifkan layanan yang tidak diperlukan, memperkuat konfigurasi sistem, serta membatasi hak akses pengguna. Tujuan hardening:
+System Hardening merupakan proses mengurangi risiko keamanan dengan menghilangkan konfigurasi yang tidak diperlukan serta memperkuat konfigurasi keamanan sistem. Tujuan hardening:
 
-* mengurangi attack surface,
+* mengurangi *attack surface*,
 * mencegah akses tidak sah,
 * meningkatkan keamanan sistem,
 * memenuhi kebijakan keamanan.
@@ -38,48 +45,78 @@ System Hardening adalah proses mengurangi risiko keamanan dengan menonaktifkan l
 
 ### 2. Principle of Least Privilege
 
-Setiap pengguna hanya diberikan hak akses yang diperlukan untuk menjalankan tugasnya. Contoh:
+Prinsip **Least Privilege** menyatakan bahwa setiap pengguna hanya diberikan hak akses minimum yang diperlukan untuk menjalankan pekerjaannya. Contoh:
 
 * Administrator memiliki hak penuh.
-* Operator hanya dapat mengakses layanan tertentu.
-* Pengguna biasa tidak dapat mengubah konfigurasi sistem.
+* Operator hanya dapat mengelola layanan tertentu.
+* Pengguna biasa hanya dapat membaca data yang diizinkan serta tidak dapat mengubah konfigurasi sistem.
 
 ---
 
-### 3. Authentication dan Authorization
+## 3. Authentication dan Authorization
 
 * **Authentication** menjawab pertanyaan **"Siapa Anda?"**
 * **Authorization** menjawab pertanyaan **"Apa yang boleh Anda lakukan?"**
 
 ---
 
-### 4. SSH (Secure Shell)
+## 4. Ownership pada Linux
 
-SSH digunakan untuk administrasi server secara aman melalui jaringan menggunakan enkripsi. Port default yang digunakan oleh SSH adalah port 22 dengan protokol TCP.
+Setiap file memiliki tiga atribut utama:
+
+* Owner
+* Group
+* Permission
+
+Contoh:
+
+```text
+-rw-r----- 1 student student laporan.txt
+```
+
+Keterangan:
+
+| Bagian          | Arti       |
+| --------------- | ---------- |
+| student pertama | Owner      |
+| student kedua   | Group      |
+| rw-r-----       | Permission |
 
 ---
 
-### 5. UFW (Uncomplicated Firewall)
+## 5. Permission Linux
 
-UFW merupakan antarmuka sederhana untuk mengelola firewall Linux berbasis iptables/nftables. Contoh aturan:
+Permission terdiri atas:
 
-* mengizinkan SSH,
-* mengizinkan HTTP,
-* menolak akses ke port tertentu.
+* Read (r)
+* Write (w)
+* Execute (x)
+
+Untuk:
+
+* Owner
+* Group
+* Others
+
+Contoh:
+
+```text
+-rwxr-x---
+```
 
 ---
 
 ## Peralatan
 
 * Windows Host
-* Ubuntu Server (VM)
-* Kali Linux (VM)
+* Ubuntu Server
+* Kali Linux
 
 Software:
 
 * OpenSSH Server
+* OpenSSH Client / PuTTY / Terminal
 * UFW
-* OpenSSH Client / PuTTY
 
 ---
 
@@ -109,41 +146,43 @@ Praktikum ini menggunakan topologi yang sama dengan yang telah disiapkan pada pr
 
 ## Langkah Praktikum
 
-### A. Memperbarui Sistem
-
-Pada Ubuntu:
+### A. Update Sistem
 
 ```bash
 sudo apt update
 sudo apt upgrade -y
 ```
 
-Periksa versi sistem:
-
-```bash
-lsb_release -a
-```
-
 ---
 
-### B. Membuat Pengguna Baru
+### B. Membuat User
 
-Lihat daftar pengguna:
+Lihat user:
 
 ```bash
 cat /etc/passwd
 ```
 
-Buat pengguna baru:
+Buat user:
 
 ```bash
 sudo adduser operator
 ```
 
-Tambahkan pengguna ke grup:
+```bash
+sudo adduser auditor
+```
+
+Buat grup:
 
 ```bash
-sudo usermod -aG sudo operator
+sudo groupadd adminlab
+```
+
+Masukkan user:
+
+```bash
+sudo usermod -aG adminlab operator
 ```
 
 Verifikasi:
@@ -156,25 +195,150 @@ groups operator
 
 ### C. Pengujian Hak Akses
 
-Masuk menggunakan akun baru:
+Masuk sebagai:
 
 ```bash
 su - operator
 ```
 
-Uji:
+Coba jalankan:
 
 ```bash
 sudo apt update
 ```
 
-Diskusikan mengapa pengguna harus memasukkan password kembali?
+Diskusikan hasilnya.
 
 ---
 
-### D. Menonaktifkan Login Root melalui SSH
+### D. Ownership File
 
-Pastikan OpenSSH telah terpasang:
+Buat folder:
+
+```bash
+mkdir praktikum3
+```
+
+Buat file:
+
+```bash
+touch praktikum3/rahasia.txt
+```
+
+Lihat ownership:
+
+```bash
+ls -l praktikum3
+```
+
+Ubah owner:
+
+```bash
+sudo chown operator praktikum3/rahasia.txt
+```
+
+Ubah owner dan group:
+
+```bash
+sudo chown operator:adminlab praktikum3/rahasia.txt
+```
+
+Verifikasi:
+
+```bash
+ls -l praktikum3
+```
+
+---
+
+### E. Permission File
+
+Atur permission berikut.
+
+```bash
+chmod 600 praktikum3/rahasia.txt
+```
+
+Login menggunakan user lain.
+
+Apakah file dapat dibaca?
+
+---
+
+Ubah menjadi
+
+```bash
+chmod 644 praktikum3/rahasia.txt
+```
+
+Lakukan pengujian kembali.
+
+---
+
+Ubah menjadi
+
+```bash
+chmod 777 praktikum3/rahasia.txt
+```
+
+Diskusikan:
+
+Apakah konfigurasi tersebut aman?
+
+Mengapa?
+
+---
+
+### F. Permission Direktori
+
+Buat direktori:
+
+```bash
+mkdir data
+```
+
+Atur:
+
+```bash
+chmod 700 data
+```
+
+Masuk sebagai user lain.
+
+Apakah direktori dapat dibuka?
+
+---
+
+Ubah menjadi
+
+```bash
+chmod 755 data
+```
+
+Bandingkan hasilnya.
+
+---
+
+### G. Tabel Permission
+
+Lengkapi tabel berikut.
+
+| Permission | Nilai |
+| ---------- | ----- |
+| rwx        |       |
+| rw-        |       |
+| r-x        |       |
+| r--        |       |
+| -wx        |       |
+| -w-        |       |
+| --x        |       |
+| ---        |       |
+
+---
+
+### H. Hardening SSH
+
+Periksa status:
 
 ```bash
 sudo systemctl status ssh
@@ -192,32 +356,16 @@ Ubah:
 PermitRootLogin no
 ```
 
-Pastikan:
-
-```text
-PasswordAuthentication yes
-```
-
-Restart layanan:
-
-```bash
-sudo systemctl restart ssh
-```
-
----
-
-### E. Mengubah Port SSH
-
-Edit kembali:
-
-```bash
-sudo nano /etc/ssh/sshd_config
-```
-
 Ubah:
 
 ```text
 Port 2222
+```
+
+Tambahkan:
+
+```text
+AllowUsers operator
 ```
 
 Restart:
@@ -232,84 +380,59 @@ Verifikasi:
 sudo ss -tlnp
 ```
 
+Pengujian dari Windows Host:
+
+```bash
+ssh operator@192.168.56.10
+```
+
+Lakukan percobaan login menggunakan akun lain dan amati hasilnya.
+
 ---
 
-### F. Konfigurasi Firewall
+### I. Firewall
 
-Aktifkan UFW:
+Aktifkan UFW.
 
 ```bash
 sudo ufw enable
 ```
 
-Izinkan SSH pada port baru:
+Izinkan SSH.
 
 ```bash
-sudo ufw allow 2222/tcp
+sudo ufw allow ssh
 ```
 
-Izinkan HTTP:
+Izinkan HTTP.
 
 ```bash
 sudo ufw allow 80/tcp
 ```
 
-Lihat aturan:
+Lihat aturan.
 
 ```bash
-sudo ufw status numbered
+sudo ufw status verbose
 ```
 
 ---
 
-### G. Pengujian Koneksi
+### J. Audit Keamanan
 
-Dari Windows Host:
+Periksa:
+
+User:
 
 ```bash
-ssh operator@192.168.56.10 -p 2222
+cat /etc/passwd
 ```
 
-Pastikan koneksi berhasil.
-
----
-
-### H. Menutup Port yang Tidak Diperlukan
-
-Lihat port aktif:
+Port:
 
 ```bash
 sudo ss -tuln
 ```
-
-Diskusikan:
-
-* Port mana yang benar-benar dibutuhkan?
-* Port mana yang dapat ditutup?
-
----
-
-### I. Mengamankan Password
-
-Edit:
-
-```bash
-sudo nano /etc/login.defs
-```
-
-Perhatikan parameter:
-
-* PASS_MAX_DAYS
-* PASS_MIN_DAYS
-* PASS_WARN_AGE
-
-Diskusikan fungsi masing-masing.
-
----
-
-## J. Audit Konfigurasi
-
-Periksa:
 
 Firewall:
 
@@ -323,33 +446,30 @@ SSH:
 sudo systemctl status ssh
 ```
 
-Port:
-
-```bash
-sudo ss -tuln
-```
-
-User:
-
-```bash
-cat /etc/passwd
-```
-
 ---
 
 ## Studi Kasus
 
-Administrator menemukan bahwa server masih mengizinkan:
+Sebuah server memiliki konfigurasi berikut:
 
-* login root melalui SSH,
-* penggunaan port 22,
-* firewall belum aktif.
+```text
+-rwxrwxrwx database.sql
+```
 
-Diskusikan:
+Jawablah:
 
-1. Apa risiko dari masing-masing konfigurasi?
-2. Bagaimana langkah hardening yang telah dilakukan dapat mengurangi risiko tersebut?
-3. Apa potensi dampak operasional yang perlu dipertimbangkan sebelum menerapkan perubahan pada server produksi?
+1. Apa risiko konfigurasi tersebut?
+2. Permission berapa yang lebih tepat? Apa alasannya?
+
+---
+
+Administrator juga menemukan file berikut:
+
+```text
+-rwx------ id_rsa
+```
+
+Apakah konfigurasi tersebut sudah sesuai? Apa alasannya?
 
 ---
 
@@ -357,43 +477,62 @@ Diskusikan:
 
 ### Tugas 1
 
-Buat akun pengguna berikut.
+Buat tiga akun berikut.
 
-| Username | Hak Akses      |
-| -------- | -------------- |
-| adminlab | Administrator  |
-| operator | Administrator  |
-| auditor  | Pengguna biasa |
+| Username | Hak Akses     |
+| -------- | ------------- |
+| adminlab | Administrator |
+| operator | Operator      |
+| auditor  | User biasa    |
 
-Verifikasi hak akses masing-masing akun.
+Verifikasi grup masing-masing.
 
 ---
 
 ### Tugas 2
 
-Konfigurasikan SSH sehingga:
+Buat struktur direktori seperti berikut:
 
-* login root dinonaktifkan,
-* menggunakan port 2222,
-* hanya akun `adminlab` dan `operator` yang diizinkan login melalui SSH (petunjuk: gunakan direktif `AllowUsers` pada `sshd_config`).
+```text
+/home/operator/
+    └──project/
+        ├── laporan.pdf
+        ├── backup.tar.gz
+        └── script.sh
+```
 
-Lakukan pengujian menggunakan ketiga akun tersebut dan dokumentasikan hasilnya.
+Atur permission sehingga:
+
+* laporan.pdf hanya dapat dibaca dan diubah oleh pemilik.
+* backup.tar.gz dapat dibaca oleh anggota grup tetapi tidak dapat diubah.
+* script.sh dapat dieksekusi oleh seluruh pengguna, tetapi hanya dapat diubah oleh pemilik.
+
+Sertakan hasil perintah:
+
+```bash
+ls -l
+```
 
 ---
 
 ### Tugas 3
 
-Konfigurasikan UFW sehingga:
+Konfigurasikan SSH sehingga:
 
-* mengizinkan SSH (2222),
-* mengizinkan HTTP (80),
-* menolak seluruh koneksi masuk lainnya.
+* login root dinonaktifkan,
+* hanya akun **operator** yang dapat login melalui SSH.
 
-Sertakan keluaran perintah:
+Lakukan pengujian menggunakan akun lain.
 
-```bash
-sudo ufw status verbose
-```
+---
+
+### Tugas 4
+
+Aktifkan UFW sehingga:
+
+* SSH diizinkan,
+* HTTP diizinkan,
+* seluruh koneksi masuk lainnya ditolak.
 
 ---
 
@@ -402,11 +541,11 @@ sudo ufw status verbose
 Laporan memuat:
 
 1. Tujuan praktikum.
-2. Dasar teori singkat.
-3. Langkah konfigurasi pengguna dan grup.
-4. Konfigurasi SSH sebelum dan sesudah hardening.
-5. Konfigurasi firewall beserta tangkapan layar.
-6. Hasil pengujian akses SSH menggunakan masing-masing akun.
+2. Dasar teori.
+3. Hasil pengelolaan pengguna dan grup.
+4. Hasil pengaturan *ownership* dan *permission* file.
+5. Hasil konfigurasi SSH.
+6. Hasil konfigurasi UFW.
 7. Analisis studi kasus.
 8. Jawaban tugas praktikum.
 9. Kesimpulan.
@@ -418,10 +557,11 @@ Laporan memuat:
 | Komponen                    | Bobot |
 | --------------------------- | ----: |
 | Manajemen pengguna dan grup |   20% |
-| Hardening SSH               |   25% |
-| Konfigurasi firewall        |   25% |
-| Analisis studi kasus        |   15% |
-| Laporan praktikum           |   15% |
+| Ownership (`chown`/`chgrp`) |   20% |
+| Permission (`chmod`)        |   20% |
+| Hardening SSH               |   15% |
+| Firewall UFW                |   15% |
+| Laporan                     |   10% |
 
 ---
 
@@ -435,4 +575,4 @@ Pada akhir praktikum, pastikan kondisi berikut telah terpenuhi:
 * Apache2 telah diinstal (jika belum, lakukan `sudo apt install apache2 -y`) sebagai persiapan instalasi SafeLine WAF pada praktikum berikutnya.
 * **Buat snapshot VirtualBox** dengan nama Praktikum-3 agar konfigurasi hardening dapat dipulihkan apabila terjadi kesalahan pada praktikum selanjutnya.
 
-Dengan demikian, lingkungan laboratorium akan siap digunakan untuk implementasi **Web Application Firewall (WAF)** pada Praktikum 4, sekaligus memperkuat kompetensi pengendalian akses dan penerapan kontrol keamanan yang menjadi bagian dari profil **Keamanan Siber Muda**.
+Dengan demikian, lingkungan laboratorium akan siap digunakan untuk implementasi Web Application Firewall (WAF) pada Praktikum 4.
