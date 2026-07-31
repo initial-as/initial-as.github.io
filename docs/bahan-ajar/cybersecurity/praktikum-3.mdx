@@ -166,10 +166,6 @@ cat /etc/passwd
 Buat user:
 
 ```bash
-sudo adduser operator
-```
-
-```bash
 sudo adduser auditor
 ```
 
@@ -182,13 +178,13 @@ sudo groupadd adminlab
 Masukkan user:
 
 ```bash
-sudo usermod -aG adminlab operator
+sudo usermod -aG adminlab auditor
 ```
 
 Verifikasi:
 
 ```bash
-groups operator
+groups auditor
 ```
 
 ---
