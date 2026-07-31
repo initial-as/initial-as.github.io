@@ -194,7 +194,7 @@ groups auditor
 Masuk sebagai:
 
 ```bash
-su - operator
+su - auditor
 ```
 
 Coba jalankan:
@@ -230,13 +230,13 @@ ls -l praktikum3
 Ubah owner:
 
 ```bash
-sudo chown operator praktikum3/rahasia.txt
+sudo chown auditor praktikum3/rahasia.txt
 ```
 
 Ubah owner dan group:
 
 ```bash
-sudo chown operator:adminlab praktikum3/rahasia.txt
+sudo chown auditor:adminlab praktikum3/rahasia.txt
 ```
 
 Verifikasi:
@@ -361,7 +361,7 @@ Port 2222
 Tambahkan:
 
 ```text
-AllowUsers operator
+AllowUsers auditor
 ```
 
 Restart:
@@ -379,7 +379,7 @@ sudo ss -tlnp
 Pengujian dari Windows Host:
 
 ```bash
-ssh operator@192.168.56.10
+ssh auditor@192.168.56.10
 ```
 
 Lakukan percobaan login menggunakan akun lain dan amati hasilnya.
@@ -490,7 +490,7 @@ Verifikasi grup masing-masing.
 Buat struktur direktori seperti berikut:
 
 ```text
-/home/operator/
+/home/auditor/
     └──project/
         ├── laporan.pdf
         ├── backup.tar.gz
@@ -516,7 +516,7 @@ ls -l
 Konfigurasikan SSH sehingga:
 
 * login root dinonaktifkan,
-* hanya akun **operator** yang dapat login melalui SSH.
+* hanya akun **auditor** yang dapat login melalui SSH.
 
 Lakukan pengujian menggunakan akun lain.
 
