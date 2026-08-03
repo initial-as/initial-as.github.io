@@ -1,0 +1,458 @@
+---
+title: "4. Implementasi Web Application Firewall (SafeLine) Menggunakan Docker"
+---
+
+# Implementasi Web Application Firewall (SafeLine) Menggunakan Docker
+
+- Durasi: 1 Pertemuan (3 x 50 menit)
+- Tingkat: Dasar–Menengah
+
+---
+
+## Capaian Pembelajaran
+
+Setelah menyelesaikan praktikum ini mahasiswa mampu:
+
+1. Menjelaskan konsep Web Application Firewall (WAF).
+2. Menggunakan Docker untuk menjalankan aplikasi keamanan.
+3. Mendeploy DVWA menggunakan Docker Compose.
+4. Mendeploy SafeLine Community Edition menggunakan Automatic Deploy.
+5. Mengkonfigurasi Reverse Proxy.
+6. Melakukan pengujian serangan web sederhana.
+7. Menganalisis log keamanan yang dihasilkan SafeLine.
+
+---
+
+## Tujuan Praktikum
+
+Mahasiswa mampu mengimplementasikan Web Application Firewall (SafeLine) sebagai lapisan perlindungan aplikasi web dan menganalisis aktivitas serangan berdasarkan log yang dihasilkan.
+
+---
+
+## Dasar Teori
+
+### 1. Docker
+
+Docker merupakan platform container yang memungkinkan aplikasi dijalankan secara terisolasi tanpa harus membuat Virtual Machine baru. Keuntungan:
+
+* ringan
+* cepat
+* mudah dipindahkan
+* mudah direplikasi
+
+---
+
+### 2. DVWA
+
+DVWA (*Damn Vulnerable Web Application*) adalah aplikasi web yang sengaja dibuat rentan untuk pembelajaran keamanan aplikasi web. Mahasiswa akan menggunakan DVWA untuk melakukan simulasi:
+
+* SQL Injection
+* XSS
+* Brute Force
+* Command Injection
+
+---
+
+### 3. SafeLine
+
+SafeLine merupakan Web Application Firewall (WAF) yang bekerja sebagai *Reverse Proxy*. Semua request HTTP akan melewati SafeLine terlebih dahulu sebelum diteruskan ke DVWA.
+
+```text
+Browser → SafeLine → DVWA
+```
+
+---
+
+## Peralatan
+
+VM dari Praktikum 1:
+
+* Windows Host
+* Kali Linux (VM)
+* Ubuntu Server (VM)
+
+Software:
+
+* Docker Engine
+* Docker Compose Plugin
+* Git
+* SafeLine CE
+* DVWA
+
+---
+
+## Topologi
+
+Praktikum ini menggunakan topologi yang telah disiapkan pada **[Praktium 1](praktikum-1.mdx)**.
+
+```text
+                     Internet
+                         │
+                VirtualBox NAT Network
+                         │
+      ┌──────────────────┴──────────────────┐
+      │                                     │
+ Ubuntu Server                          Kali
+ 192.168.56.10                          192.168.56.20
+      │                                     │
+      └──────────────────┬──────────────────┘
+                         │
+              VirtualBox Host-Only Network
+                         │
+                  Windows Host
+                  192.168.56.1
+```
+
+---
+
+## Langkah Praktikum
+
+### A. Instalasi Docker
+
+* Instal Docker menggunakan repository Ubuntu.
+
+    ```bash
+    sudo apt install -y docker.io docker-compose-v2
+    ```
+
+* Enable docker
+
+    ```bash
+    sudo systemctl enable --now docker
+    ```
+
+* Verifikasi instalasi
+
+    ```bash
+    docker --version
+    ```
+
+    ```bash
+    docker compose version
+    ```
+
+* Pastikan Docker Service aktif
+
+    ```bash
+    sudo systemctl status docker
+    ```
+
+:::tip
+Docker hanya kompatibel dengan firewall iptables-nft dan iptables-legacy. Aturan firewall yang dibuat menggunakan UFW tidak didukung pada Docker. Oleh sebab itu, saat Anda mengekspos port kontainer menggunakan Docker, port-port tersebut akan melewati aturan firewall UFW.
+:::
+
+---
+
+### B. Deploy DVWA Menggunakan Docker
+
+* Clone repository
+
+    ```bash
+    git clone https://github.com/digininja/DVWA.git
+    ```
+
+* Masuk ke folder DVWA
+
+    ```bash
+    cd DVWA
+    ```
+
+* Edit konfigurasi DVWA
+
+    ```bash
+    nano config.yaml
+    ```
+
+* Cari bagian
+
+    ```yaml
+    ports:
+      - "127.0.0.1:4280:80"
+    ```
+
+* Ubah menjadi
+
+    ```yaml
+    ports:
+      - "0.0.0.0:4280:80"
+    ```
+
+    :::tip
+    Hal ini diperlukan agar DVWA dapat diakses melalui jaringan Host-Only VirtualBox.
+    :::
+
+* Jalankan container
+
+    ```bash
+    docker compose up -d
+    ```
+
+* Lihat container
+
+    ```bash
+    docker ps
+    ```
+
+    Pastikan container DVWA dan database berhasil berjalan.
+
+---
+
+### C. Menambahkan DNS lokal
+
+Di **Windows Host**
+
+Edit file
+
+```text
+C:\Windows\System32\drivers\etc\hosts
+```
+
+Tambahkan
+
+```text
+192.168.56.10    dvwa.lab
+```
+
+---
+
+### D. Deploy SafeLine Community Edition
+
+* **Periksa Persyaratan**
+
+    Periksa Docker
+
+    ```bash
+    docker version
+    ```
+
+    Periksa Docker Compose
+
+    ```bash
+    docker compose version
+    ```
+
+    Periksa memori
+
+    ```bash
+    free -h
+    ```
+
+    Periksa ruang penyimpanan
+
+    ```bash
+    df -h
+    ```
+
+    Dokumentasi resmi merekomendasikan Docker ≥20.10.14, Docker Compose ≥2.0.0, serta sumber daya minimum 1 vCPU, RAM 1 GB, dan ruang disk 5 GB. 
+
+* **Instalasi SafeLine**
+
+    Jalankan script berikut:
+
+    ```bash
+    sudo bash -c "$(curl -fsSLk https://waf.chaitin.com/release/latest/manager.sh)" -- --en
+    ```
+
+    Metode ini merupakan metode deployment yang direkomendasikan pada dokumentasi resmi SafeLine. Setelah menjalankan perintah di atas, tekan `1` untuk instalasi. Jika terjadi error akibat kekurangan ukuran media penyimpanan, jalankan perintah berikut:
+    ```bash
+    sudo lvextend -l +100%FREE -r /dev/ubuntu-vg/ubuntu-lv
+    ```
+
+    Setelah instalasi selesai, catat password admin.
+
+* **Login Dashboard**
+
+    Buka
+
+    ```text
+    https://192.168.56.10:9443
+    ```
+
+    Port default Web UI adalah **9443**. 
+
+    Jika lupa password, reset akun administrator:
+
+    ```bash
+    docker exec safeline-mgt resetadmin
+    ```
+
+    Perintah tersebut akan menampilkan username dan password administrator. 
+
+---
+
+### E. Menambahkan Website
+
+Masuk ke Dashboard SafeLine.
+
+Di sidebar kiri, klik **Applications**, kemudian klik tombol **Add Application**. Isi parameter seperti berikut:
+
+| Parameter        | Nilai            |
+| ---------------- | ---------------- |
+| Domain           | `dvwa.lab`       |
+| Listening Port   | 80               |
+| Protocol         | HTTP             |
+| Metode           | Reverse Proxy    |
+| Upstream         | `127.0.0.1:4280` |
+| Website Name     | DVWA             |
+
+:::warning
+Pastikan konfigurasi sesuai dengan alamat container DVWA sesuai hasil inspeksi Docker.
+:::
+
+---
+
+### F. Pengujian Normal
+
+Akses
+
+```text
+http://dvwa.lab
+```
+
+Pastikan
+
+* Login berhasil
+* Database dapat diakses
+* Semua menu berjalan
+
+---
+
+### G. Monitoring
+
+Amati Dashboard SafeLine. Perhatikan:
+
+* Request
+* Client IP
+* URL
+* Status
+* Action
+
+---
+
+###  H. Pengujian SQL Injection
+
+Masuk ke menu SQL Injection. Masukkan:
+
+```text
+' OR '1'='1
+```
+
+Amati
+
+* Request diblokir?
+* Alert muncul?
+* Rule apa yang aktif?
+
+---
+
+### I. Pengujian XSS
+
+Masukkan
+
+```html
+<script>alert(1)</script>
+```
+
+Amati
+
+* Status Request
+* Alert
+* Log
+
+---
+
+### J. Pengujian Command Injection
+
+Masuk ke menu DVWA. Masukkan payload sederhana sesuai fitur yang tersedia, misalnya:
+
+```text
+127.0.0.1 && id
+```
+
+Amati apakah SafeLine:
+
+* mengizinkan request,
+* memberikan peringatan,
+* atau memblokir request.
+
+---
+
+### K. Analisis Event
+
+Lengkapi tabel berikut.
+
+| Action | URL | Jenis Serangan | Client IP | Waktu |
+| ------ | --- | -------------- | --------- | ----- |
+
+---
+
+## Studi Kasus
+
+Sebuah organisasi telah memasang SafeLine di depan aplikasi web internal.
+
+Selama satu jam terakhir, dashboard menunjukkan peningkatan jumlah request yang diblokir dengan pola SQL Injection dan XSS.
+
+Jawablah:
+
+1. Informasi apa saja pada dashboard yang perlu dianalisis terlebih dahulu?
+2. Bagaimana membedakan antara serangan yang valid dan *false positive*?
+3. Tindakan apa yang sebaiknya dilakukan administrator apabila serangan berasal dari alamat IP yang sama secara berulang?
+
+---
+
+## Tugas Praktikum
+
+### Tugas 1
+
+Buat diagram komunikasi:
+
+* Sebelum menggunakan SafeLine
+* Setelah menggunakan SafeLine
+
+---
+
+### Tugas 2
+
+Lakukan pengujian:
+
+* SQL Injection
+* XSS
+* Command Injection
+
+Sertakan:
+
+* Payload
+* Screenshot
+* Event SafeLine
+* Analisis hasil
+
+---
+
+## Laporan Praktikum
+
+Laporan memuat:
+
+1. Tujuan praktikum.
+2. Topologi.
+3. Instalasi Docker.
+4. Instalasi DVWA.
+5. Instalasi SafeLine.
+6. Konfigurasi Reverse Proxy.
+7. Hasil pengujian serangan.
+8. Analisis Event.
+9. Jawaban tugas.
+10. Kesimpulan.
+
+---
+
+## Rubrik Penilaian
+
+| Komponen                  | Bobot |
+| ------------------------- | ----: |
+| Instalasi Docker          |   10% |
+| Deploy DVWA               |   15% |
+| Deploy SafeLine           |   20% |
+| Konfigurasi Reverse Proxy |   20% |
+| Pengujian serangan        |   20% |
+| Analisis log              |   10% |
+| Laporan                   |    5% |

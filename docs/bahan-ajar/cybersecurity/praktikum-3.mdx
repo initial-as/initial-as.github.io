@@ -5,7 +5,7 @@ title: "3. Hardening Sistem dan Pengendalian Akses"
 # Hardening Sistem dan Pengendalian Akses
 
 - Durasi: 1 Pertemuan (3 x 50 menit)
-- Tingkat: Dasar
+- Tingkat: Dasar–Menengah
 
 ---
 
@@ -53,14 +53,14 @@ Prinsip **Least Privilege** menyatakan bahwa setiap pengguna hanya diberikan hak
 
 ---
 
-## 3. Authentication dan Authorization
+### 3. Authentication dan Authorization
 
 * **Authentication** menjawab pertanyaan **"Siapa Anda?"**
 * **Authorization** menjawab pertanyaan **"Apa yang boleh Anda lakukan?"**
 
 ---
 
-## 4. Ownership pada Linux
+### 4. Ownership pada Linux
 
 Setiap file memiliki tiga atribut utama:
 
@@ -84,7 +84,7 @@ Keterangan:
 
 ---
 
-## 5. Permission Linux
+### 5. Permission Linux
 
 Permission terdiri atas:
 
@@ -108,9 +108,10 @@ Contoh:
 
 ## Peralatan
 
+VM dari Praktikum 1:
+
 * Windows Host
-* Ubuntu Server
-* Kali Linux
+* Ubuntu Server (VM)
 
 Software:
 
@@ -122,7 +123,7 @@ Software:
 
 ## Topologi
 
-Praktikum ini menggunakan topologi yang sama dengan yang telah disiapkan pada praktikum sebelumnya.
+Praktikum ini menggunakan topologi yang telah disiapkan pada **[Praktium 1](praktikum-1.mdx)**.
 
 ```text
                      Internet
@@ -398,6 +399,15 @@ Izinkan SSH.
 
 ```bash
 sudo ufw allow ssh
+```
+
+:::tip
+Perintah di atas akan mengizinkan koneksi TCP di port 22 (port *default* ssh). Namun karena sebelumnya port ssh sudah diganti ke 2222, maka perintah yang lebih tepat adalah:
+:::
+
+
+```bash
+sudo ufw allow 2222/tcp
 ```
 
 Izinkan HTTP.
