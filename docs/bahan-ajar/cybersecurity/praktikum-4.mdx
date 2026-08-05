@@ -5,7 +5,7 @@ title: "4. Implementasi Web Application Firewall (SafeLine) Menggunakan Docker"
 # Implementasi Web Application Firewall (SafeLine) Menggunakan Docker
 
 - Durasi: 1 Pertemuan (3 x 50 menit)
-- Tingkat: Dasar–Menengah
+- Tingkat: Menengah
 
 ---
 
@@ -68,7 +68,6 @@ Browser → SafeLine → DVWA
 VM dari Praktikum 1:
 
 * Windows Host
-* Kali Linux (VM)
 * Ubuntu Server (VM)
 
 Software:
@@ -137,8 +136,20 @@ Praktikum ini menggunakan topologi yang telah disiapkan pada **[Praktium 1](prak
     sudo systemctl status docker
     ```
 
-:::tip
-Docker hanya kompatibel dengan firewall iptables-nft dan iptables-legacy. Aturan firewall yang dibuat menggunakan UFW tidak didukung pada Docker. Oleh sebab itu, saat Anda mengekspos port kontainer menggunakan Docker, port-port tersebut akan melewati aturan firewall UFW.
+* Menambahkan user student ke group docker (opsional tapi direkomendasikan)
+    Langkah ini penting agar setiap perintah docker tidak perlu diawali dengan sudo.
+    
+    ```bash
+    sudo usermod -aG docker $USER
+    ```
+
+    Logout dan login kembali agar perubahan group membership berlaku. Perintah berikut juga dapat digunakan agar perubahan langsung berlaku tanpa perlu melakukan login ulang:
+    ```bash
+    newgrp docker
+    ```
+
+:::warning
+Docker hanya kompatibel dengan firewall iptables-nft dan iptables-legacy. Aturan firewall yang dibuat menggunakan UFW tidak didukung pada Docker. Oleh sebab itu, saat port kontainer diekspos menggunakan Docker, port-port tersebut akan melewati aturan firewall UFW.
 :::
 
 ---
@@ -177,9 +188,7 @@ Docker hanya kompatibel dengan firewall iptables-nft dan iptables-legacy. Aturan
       - "0.0.0.0:4280:80"
     ```
 
-    :::tip
-    Hal ini diperlukan agar DVWA dapat diakses melalui jaringan Host-Only VirtualBox.
-    :::
+    Perubahan IP ini diperlukan agar DVWA dapat diakses melalui host lain yang ada di jaringan Host-Only VirtualBox.
 
 * Jalankan container
 
@@ -199,9 +208,7 @@ Docker hanya kompatibel dengan firewall iptables-nft dan iptables-legacy. Aturan
 
 ### C. Menambahkan DNS lokal
 
-Di **Windows Host**
-
-Edit file
+Di Windows Host, edit file
 
 ```text
 C:\Windows\System32\drivers\etc\hosts
@@ -254,6 +261,7 @@ Tambahkan
     ```
 
     Metode ini merupakan metode deployment yang direkomendasikan pada dokumentasi resmi SafeLine. Setelah menjalankan perintah di atas, tekan `1` untuk instalasi. Jika terjadi error akibat kekurangan ukuran media penyimpanan, jalankan perintah berikut:
+    
     ```bash
     sudo lvextend -l +100%FREE -r /dev/ubuntu-vg/ubuntu-lv
     ```
@@ -262,41 +270,37 @@ Tambahkan
 
 * **Login Dashboard**
 
-    Buka
+    Port default Web UI adalah 9443. Di web browser, buka:
 
     ```text
     https://192.168.56.10:9443
     ```
 
-    Port default Web UI adalah **9443**. 
-
-    Jika lupa password, reset akun administrator:
+    Jika lupa password, reset akun administrator dengan perintah:
 
     ```bash
     docker exec safeline-mgt resetadmin
     ```
 
-    Perintah tersebut akan menampilkan username dan password administrator. 
+    Perintah tersebut akan menampilkan username dan password administrator. Gunakan username dan password tersebut untuk login di dashboard SafeLine.
 
 ---
 
 ### E. Menambahkan Website
 
-Masuk ke Dashboard SafeLine.
+Masuk ke Dashboard SafeLine. Di sidebar kiri, klik **Applications**, kemudian klik tombol **Add Application**. Isi data berikut:
 
-Di sidebar kiri, klik **Applications**, kemudian klik tombol **Add Application**. Isi parameter seperti berikut:
-
-| Parameter        | Nilai            |
-| ---------------- | ---------------- |
-| Domain           | `dvwa.lab`       |
-| Listening Port   | 80               |
-| Protocol         | HTTP             |
-| Metode           | Reverse Proxy    |
-| Upstream         | `127.0.0.1:4280` |
-| Website Name     | DVWA             |
+| Kolom            | Nilai                   |
+| ---------------- | ----------------------- |
+| Domain           | `dvwa.lab`              |
+| Listening Port   | 80                      |
+| Protocol         | HTTP                    |
+| Metode           | Reverse Proxy           |
+| Upstream         | `http://127.0.0.1:4280` |
+| Website Name     | DVWA                    |
 
 :::warning
-Pastikan konfigurasi sesuai dengan alamat container DVWA sesuai hasil inspeksi Docker.
+Pastikan konfigurasi yang dimasukkan sesuai dengan alamat container DVWA pada hasil inspeksi Docker: `docker ps`.
 :::
 
 ---
@@ -379,20 +383,17 @@ Amati apakah SafeLine:
 
 ### K. Analisis Event
 
-Lengkapi tabel berikut.
+Di dashboard SafeLine, klik menu **Attacks** di sidebar kiri, kemudian klik **Logs**. Berdasarkan informasi yang ditampilkan, lengkapi tabel berikut:
 
 | Action | URL | Jenis Serangan | Client IP | Waktu |
 | ------ | --- | -------------- | --------- | ----- |
+|  ...   | ... |      ...       |    ...    |  ...  |
 
 ---
 
 ## Studi Kasus
 
-Sebuah organisasi telah memasang SafeLine di depan aplikasi web internal.
-
-Selama satu jam terakhir, dashboard menunjukkan peningkatan jumlah request yang diblokir dengan pola SQL Injection dan XSS.
-
-Jawablah:
+Sebuah organisasi telah memasang SafeLine di depan aplikasi web internal. Selama satu jam terakhir, dashboard menunjukkan peningkatan jumlah request yang diblokir dengan pola SQL Injection dan XSS. Jawablah:
 
 1. Informasi apa saja pada dashboard yang perlu dianalisis terlebih dahulu?
 2. Bagaimana membedakan antara serangan yang valid dan *false positive*?

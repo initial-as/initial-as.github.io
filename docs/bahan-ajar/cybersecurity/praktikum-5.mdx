@@ -1,0 +1,432 @@
+---
+title: "5. Security Monitoring menggunakan Wazuh SIEM"
+---
+
+# Security Monitoring menggunakan Wazuh SIEM
+
+- Durasi: 1 Pertemuan (3 x 50 menit)
+- Tingkat: Menengah–Lanjut
+
+---
+
+## Capaian Pembelajaran
+
+Setelah menyelesaikan praktikum ini, mahasiswa mampu:
+
+1. Menjelaskan konsep Security Information and Event Management (SIEM).
+2. Menjelaskan fungsi Wazuh sebagai platform keamanan.
+3. Menginstal Wazuh menggunakan Docker.
+4. Mengakses Dashboard Wazuh.
+5. Melakukan monitoring host.
+6. Menganalisis alert keamanan.
+7. Menjelaskan hubungan antara SafeLine dan Wazuh dalam arsitektur keamanan.
+
+---
+
+## Tujuan Praktikum
+
+Mahasiswa mampu membangun platform monitoring keamanan berbasis Wazuh untuk mengumpulkan, memantau, dan menganalisis log keamanan dari server yang telah diamankan menggunakan SafeLine.
+
+---
+
+## Dasar Teori
+
+### 1. Security Monitoring
+
+Pengamanan tidak berhenti setelah sistem dipasang firewall atau WAF. Administrator harus memantau aktivitas sistem untuk mendeteksi serangan, penyalahgunaan, maupun kesalahan konfigurasi.
+
+---
+
+### 2. SIEM
+
+**Security Information and Event Management (SIEM)** adalah platform yang mengumpulkan log dari berbagai sumber, melakukan normalisasi, korelasi, serta menghasilkan peringatan (*alert*) ketika ditemukan aktivitas yang mencurigakan.
+
+---
+
+### 3. Wazuh
+
+Wazuh merupakan platform keamanan *open source* yang menyediakan kemampuan:
+
+* Log Collection
+* File Integrity Monitoring (FIM)
+* Vulnerability Detection
+* Security Configuration Assessment (SCA)
+* Malware Detection
+* Threat Hunting
+* Dashboard Monitoring
+
+---
+
+### 4. Arsitektur Wazuh
+
+Komponen utama Wazuh:
+
+* **Wazuh indexer** adalah mesin analitik dan pencarian teks lengkap (*full-text search*) yang sangat skalabel. Komponen pusat ini mengindeks dan menyimpan peringatan (*alert*) yang dihasilkan oleh server Wazuh.
+
+* **Server Wazuh** menganalisis data yang diterima dari agen. Server ini memproses data tersebut melalui dekoder dan aturan (*rules*), serta memanfaatkan *threat intelligence* untuk mendeteksi indikator kompromi (IOC) yang sudah diketahui. Satu server mampu menganalisis data dari ratusan atau ribuan agen dan dapat ditingkatkan skalanya secara horizontal jika dikonfigurasi sebagai klaster. Komponen pusat ini juga berfungsi untuk mengelola agen, termasuk melakukan konfigurasi dan pembaruan (*upgrade*) dari jarak jauh saat diperlukan.
+
+* **Dasbor Wazuh** merupakan antarmuka pengguna berbasis web untuk visualisasi dan analisis data. Dasbor ini menyediakan tampilan siap pakai untuk berbagai kebutuhan, seperti *threat hunting*, kepatuhan regulasi (misalnya PCI DSS, GDPR, CIS, HIPAA, NIST 800-53), deteksi aplikasi yang rentan, data pemantauan integritas berkas, hasil penilaian konfigurasi, peristiwa pemantauan infrastruktur *cloud*, dan lain-lain. Dasbor ini juga digunakan untuk mengelola konfigurasi Wazuh serta memantau statusnya.
+
+* **Agen Wazuh** diinstal pada perangkat *endpoint* seperti laptop, komputer desktop, server, instans *cloud*, atau mesin virtual. Agen ini menyediakan kemampuan pencegahan, deteksi, dan respons terhadap ancaman. Agen Wazuh dapat berjalan pada berbagai sistem operasi seperti Linux, Windows, macOS, Solaris, AIX, dan HP-UX.
+
+Mengapa di industri WAF dan SIEM dipisahkan? Di lingkungan produksi, WAF dan SIEM memiliki karakteristik yang berbeda. Namun dalam praktikum ini, satu VM akan memberikan kemudahan dan pengalaman belajar yang lebih baik.
+| WAF                             | SIEM                                |
+| ------------------------------- | ----------------------------------- |
+| Inline (berada di jalur trafik) | Out-of-band                         |
+| Harus memiliki latensi rendah   | Tidak sensitif terhadap latensi     |
+| CPU sedang                      | CPU dan RAM tinggi                  |
+| Sedikit menyimpan data          | Menyimpan log dalam jumlah besar    |
+| Melayani request web            | Menganalisis seluruh log organisasi |
+
+---
+
+## Peralatan
+
+VM:
+
+* Ubuntu Server
+* Kali Linux
+
+Software:
+
+* Docker Engine
+* Docker Compose Plugin
+* SafeLine
+* DVWA
+* Wazuh
+
+Untuk menjalankan Wazuh *single-node*, diperlukan setidaknya:
+
+* CPU: Minimal 4 core
+* Memori: Minimal RAM 8 GB untuk host Docker
+* Ruang disk: Minimal penyimpanan 50 GB untuk image Docker dan volume data
+
+---
+
+## Topologi
+
+Praktikum ini menggunakan topologi yang telah disiapkan pada **[Praktium 1](praktikum-1.mdx)**.
+
+```text
+                     Internet
+                         │
+                VirtualBox NAT Network
+                         │
+      ┌──────────────────┴──────────────────┐
+      │                                     │
+ Ubuntu Server                          Kali
+ 192.168.56.10                          192.168.56.20
+      │                                     │
+      └──────────────────┬──────────────────┘
+                         │
+              VirtualBox Host-Only Network
+                         │
+                  Windows Host
+                  192.168.56.1
+```
+
+---
+
+## Langkah Praktikum
+
+### A. Persiapan
+
+* Periksa ukuran disk:
+
+    ```bash
+    lsblk
+    ```
+
+* Perhatikan ukuran disk `ubuntu--vg-ubuntu--lv` dan posisi sda nya. Jika ukurannya kurang, perbesar dengan perintah berikut:
+
+    ```bash
+    sudo growpart /dev/sda 3
+    ```
+    Ganti sda 3 sesuai dengan lokasi `ubuntu--vg-ubuntu--lv`
+
+    Diikuti perintah:
+    ```bash
+    sudo lvextend -l +100%FREE -r /dev/ubuntu-vg/ubuntu-lv
+    ```
+
+* Periksa layanan Docker.
+
+    ```bash
+    docker ps
+    ```
+
+    Pastikan container SafeLine dan DVWA masih berjalan, serta SafeLine tidak mendengarkan di port `443` (TLS) karena akan digunakan untuk dashboard Wazuh di tahap berikutnya.
+
+---
+
+### B. Instalasi Wazuh
+
+1. Clone Repository Resmi
+
+    ```bash
+    git clone https://github.com/wazuh/wazuh-docker.git -b v4.14.6
+    ```
+
+    Masuk ke direktori single-node:
+
+    ```bash
+    cd wazuh-docker/single-node
+    ```
+
+    Dokumentasi resmi menyarankan menjalankan seluruh perintah berikutnya dari direktori ini.
+
+---
+
+2. Generate Sertifikat
+
+    Wazuh menggunakan TLS antar komponennya.
+
+    Jalankan:
+
+    ```bash
+    docker compose -f generate-indexer-certs.yml run --rm generator
+    ```
+
+    Sertifikat akan dibuat pada direktori konfigurasi yang digunakan oleh stack Docker.
+
+---
+
+3. Jalankan Stack
+
+    ```bash
+    docker compose up -d
+    ```
+
+    Tunggu beberapa menit hingga seluruh container siap.
+
+---
+
+4. Verifikasi
+
+    ```bash
+    docker compose ps
+    ```
+
+    Seharusnya muncul tiga layanan utama:
+
+    * wazuh.manager
+    * wazuh.indexer
+    * wazuh.dashboard
+
+---
+
+### C. Membuka Dashboard
+
+Akses Dashboard Wazuh melalui browser. Buka browser lalu akses IP Ubuntu:
+
+```text
+https://<IP-Ubuntu>
+```
+
+Misalnya:
+
+```text
+https://192.168.56.10
+```
+
+Karena menggunakan sertifikat self-signed, browser akan menampilkan peringatan keamanan. Itu hal yang normal pada lingkungan lab, klik *Advanced* lalu *Proceed*.
+
+Login awal:
+
+```text
+Username : admin
+Password : SecretPassword
+```
+
+---
+
+### D. Mengenal Dashboard
+
+Mahasiswa diminta mengamati menu berikut:
+
+* Dashboard
+* Endpoints
+* Threat Intelligence
+* Security Events
+* Inventory
+* Vulnerabilities
+
+Diskusikan fungsi masing-masing.
+
+---
+
+### E. Monitoring Host
+
+Tambahkan *endpoint*, isikan data sesuai Ubuntu Server yang digunakan. Jalankan perintah sesuai instruksi Wazuh untuk menambahkan *agent*. Setelah penambahan *agent* selesai, klik pada *agent* yang telah dibuat kemudian amati informasi berikut:
+
+* Sistem Operasi
+* CPU
+* Memory
+* Kernel
+* Network
+* Installed Packages
+
+---
+
+### F. Security Configuration Assessment
+
+Buka menu:
+
+```text
+Security Configuration Assessment
+```
+
+Amati:
+
+* jumlah pemeriksaan,
+* konfigurasi yang sesuai (*pass*),
+* konfigurasi yang tidak sesuai (*fail*).
+
+Diskusikan mengapa hasil tersebut penting untuk proses hardening.
+
+:::tip
+Jika Wazuh menampilkan pesan "no scans available" (tidak ada pemindaian yang tersedia) pada modul Security Configuration Assessment (SCA), hal ini biasanya berarti agen tidak menjalankan pemindaian, file kebijakan hilang atau dinonaktifkan, atau Anda sedang melihat Wazuh manager itu sendiri, yang tidak menampilkan dasbor SCA untuk pemindaian server lokal.
+:::
+
+---
+
+### G. File Integrity Monitoring
+
+Buat sebuah file baru.
+
+```bash
+touch /tmp/uji_keamanan.txt
+```
+
+Ubah isi file:
+
+```bash
+echo "Cybersecurity Lab" > /tmp/uji_keamanan.txt
+```
+
+Amati apakah perubahan file tercatat oleh Wazuh.
+
+---
+
+### H. Monitoring Login
+
+Lakukan login SSH dari Windows Host ke Ubuntu Server. Amati apakah aktivitas login muncul sebagai event pada Wazuh.
+
+---
+
+### I. Simulasi Aktivitas Mencurigakan
+
+Lakukan beberapa percobaan login menggunakan akun yang tidak diizinkan (sesuai konfigurasi Praktikum 3). Diskusikan:
+
+* Apakah muncul alert?
+* Informasi apa saja yang tersedia pada alert tersebut?
+
+---
+
+### J. Hubungan SafeLine dan Wazuh
+
+Diskusikan alur berikut.
+
+```text
+Penyerang
+     │
+     ▼
+ SafeLine (WAF)
+     │
+     ▼
+ Apache / DVWA
+     │
+     ▼
+ Log Sistem
+     │
+     ▼
+ Wazuh
+     │
+     ▼
+ Dashboard
+```
+
+Jelaskan peran masing-masing komponen.
+
+---
+
+## Studi Kasus
+
+Administrator menerima beberapa alert mengenai percobaan login SSH yang gagal dari alamat IP tertentu. Mahasiswa diminta:
+
+1. Mengidentifikasi informasi penting pada alert.
+2. Menjelaskan kemungkinan penyebab alert tersebut.
+3. Menentukan tindakan yang dapat dilakukan administrator untuk mengurangi risiko serangan.
+
+---
+
+## Tugas Praktikum
+
+### Tugas 1
+
+Identifikasi minimal lima informasi mengenai host Ubuntu yang tersedia pada Dashboard Wazuh.
+
+---
+
+### Tugas 2
+
+Lakukan perubahan terhadap sebuah file yang dipantau dan dokumentasikan:
+
+* waktu kejadian,
+* jenis event,
+* tindakan yang dilakukan.
+
+---
+
+### Tugas 3
+
+Lakukan login SSH yang berhasil dan login SSH yang gagal. Bandingkan event yang dihasilkan.
+
+---
+
+### Tugas 4
+
+SafeLine berfungsi mencegah serangan terhadap aplikasi web, sedangkan Wazuh berfungsi memantau aktivitas keamanan sistem. Jelaskan bagaimana kedua teknologi tersebut saling melengkapi dalam menerapkan prinsip *Defense in Depth*. Berikan contoh skenario di mana penggunaan salah satunya saja tidak cukup untuk memberikan perlindungan yang memadai.
+
+---
+
+## Laporan Praktikum
+
+Laporan memuat:
+
+1. Tujuan praktikum.
+2. Dasar teori SIEM.
+3. Diagram arsitektur.
+4. Hasil instalasi Wazuh.
+5. Hasil monitoring host.
+6. Hasil File Integrity Monitoring.
+7. Hasil monitoring login SSH.
+8. Analisis studi kasus.
+9. Jawaban tugas.
+10. Kesimpulan.
+
+---
+
+## Rubrik Penilaian
+
+| Komponen                  | Bobot |
+| ------------------------- | ----: |
+| Instalasi Wazuh           |   20% |
+| Monitoring host           |   20% |
+| File Integrity Monitoring |   20% |
+| Analisis alert            |   25% |
+| Laporan                   |   15% |
+
+---
+
+## Persiapan Praktikum 6
+
+Pada akhir praktikum, pastikan:
+
+* Wazuh Dashboard dapat diakses.
+* Host Ubuntu telah terdaftar dan mengirimkan log.
+* File Integrity Monitoring aktif.
+* Event login SSH berhasil dan gagal dapat diamati.
+* Buat **snapshot VirtualBox** dengan nama **Praktikum-5**.
+
+Snapshot ini akan digunakan pada Praktikum 6 untuk mempelajari analisis log dan respons insiden, sehingga mahasiswa dapat berlatih menginterpretasikan alert dari SafeLine, sistem operasi Linux, dan Wazuh sebagai satu kesatuan dalam lingkungan Mini Security Operations Center (SOC).
