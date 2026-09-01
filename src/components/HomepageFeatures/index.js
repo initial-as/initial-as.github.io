@@ -1,41 +1,45 @@
 import clsx from 'clsx';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
+import Link from '@docusaurus/Link';
 
 const FeatureList = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'Bahan Ajar',
+    Svg: require('@site/static/img/bahan-ajar.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Materi pembelajaran yang disusun untuk membantu mahasiswa memahami berbagai konsep teknologi informasi secara terstruktur dan mudah dipahami.<br />
       </>
     ),
+    link: '/docs/bahan-ajar/intro', // Internal path or external URL
+    buttonText: 'Baca Bahan Ajar', // Text for the button
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Tutorial',
+    Svg: require('@site/static/img/tutorial.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Panduan praktis dan langkah demi langkah untuk mempelajari, mencoba, dan menerapkan berbagai teknologi melalui eksperimen dan proyek sederhana.<br />
       </>
     ),
+    link: '/docs/tutorial/intro',
+    buttonText: 'Baca Tutorial',
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'Blog',
+    Svg: require('@site/static/img/blog.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Catatan pribadi tentang berbagai hal yang saya pelajari, kerjakan, dan temukan dalam perjalanan mengajar, meneliti, dan mengeksplorasi teknologi.<br />
       </>
     ),
+    link: '/blog',
+    buttonText: 'Baca Blog',
   },
 ];
 
-function Feature({Svg, title, description}) {
+function Feature({ Svg, title, description, link, buttonText }) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
@@ -44,6 +48,15 @@ function Feature({Svg, title, description}) {
       <div className="text--center padding-horiz--md">
         <Heading as="h3">{title}</Heading>
         <p>{description}</p>
+        {link && buttonText && (
+          <div className={styles.buttons}>
+            <Link
+              className="button button--primary"
+              to={link}>
+              {buttonText}
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );
