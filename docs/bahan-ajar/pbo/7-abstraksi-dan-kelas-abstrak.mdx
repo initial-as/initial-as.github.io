@@ -1,0 +1,295 @@
+---
+title: "7. Abstraksi dan Kelas Abstrak"
+---
+
+## Tujuan Pembelajaran:
+
+Pada akhir pertemuan ini, mahasiswa diharapkan mampu:
+
+1.  Menjelaskan konsep **abstraksi** sebagai salah satu pilar utama Pemrograman Berorientasi Objek.
+2.  Memahami perbedaan antara abstraksi dan enkapsulasi.
+3.  Mengenali dan mendefinisikan **kelas abstrak** dan **metode abstrak** di Python menggunakan modul `abc`.
+4.  Menerapkan aturan penggunaan kelas abstrak (tidak bisa di-instantiate, metode abstrak harus di-override).
+5.  Mengaplikasikan abstraksi untuk merancang kode yang lebih terstruktur dan *maintainable*.
+6.  Menerapkan konsep abstraksi dan kelas abstrak pada studi kasus yang relevan.
+
+-----
+
+## A. Apa Itu Abstraksi?
+
+Bayangkan Anda mengendarai mobil. Anda menggunakan setir, pedal gas, rem, dan tuas transmisi. Anda tahu bahwa menekan pedal gas akan mempercepat mobil. Tapi, apakah Anda perlu tahu persis bagaimana mesin membakar bahan bakar, bagaimana transmisi mengubah gigi, atau bagaimana sistem injeksi bekerja di baliknya? Tidak.
+
+Ini adalah inti dari **abstraksi**:
+
+  * **Penyajian Informasi Esensial:** Abstraksi berarti menyajikan hanya informasi yang relevan atau esensial kepada pengguna, sementara menyembunyikan detail implementasi yang kompleks dan tidak perlu diketahui.
+  * **Fokus pada "Apa", Bukan "Bagaimana":** Saat berinteraksi dengan objek yang di-abstraksi, kita hanya perlu tahu *apa* yang bisa dilakukannya (antarmuka), bukan *bagaimana* ia melakukannya (implementasi internal).
+
+**Perbedaan Abstraksi dan Enkapsulasi:**
+
+Kedua konsep ini seringkali membingungkan karena sama-sama menyembunyikan detail, tetapi ada perbedaan fokus:
+
+  * **Enkapsulasi:** Fokus pada **menyembunyikan data dan perilaku internal** dalam sebuah objek dari akses luar yang tidak sah. Ini tentang *melindungi* detail. (Contoh: Saldo bank disembunyikan dan hanya bisa diakses melalui metode setor/tarik.)
+  * **Abstraksi:** Fokus pada **menyederhanakan pandangan** terhadap suatu sistem dengan hanya menunjukkan fungsionalitas yang penting dan menyembunyikan kompleksitas yang tidak relevan. Ini tentang *menyederhanakan* antarmuka. (Contoh: Anda tahu mobil punya tombol 'start' untuk menyalakan, tanpa perlu tahu detail mekanisme start mesin.)
+
+**Mengapa Abstraksi Penting?**
+
+1.  **Mengelola Kompleksitas:** Memecah sistem yang rumit menjadi bagian-bagian yang lebih sederhana dan lebih mudah dikelola.
+2.  **Meningkatkan Keterbacaan dan Desain:** Membuat desain program lebih jelas, karena hanya fungsionalitas inti yang terekspos.
+3.  **Fleksibilitas dan Ekstensibilitas:** Memungkinkan Anda mengubah implementasi internal di masa mendatang tanpa memengaruhi kode lain yang menggunakan abstraksi tersebut. Selama antarmuka (metode yang diekspos) tetap sama, perubahan internal tidak masalah.
+4.  **Memaksakan Aturan Desain:** Dengan kelas abstrak, kita bisa memastikan bahwa kelas-kelas turunan mengimplementasikan perilaku-perilaku tertentu.
+
+-----
+
+## B. Kelas Abstrak dan Metode Abstrak di Python
+
+Di Python, kita bisa membuat kelas dan metode abstrak menggunakan modul bawaan **`abc` (Abstract Base Classes)**.
+
+  * **Kelas Abstrak:** Sebuah kelas yang tidak dapat dibuat objeknya secara langsung (tidak bisa di-instantiate). Kelas ini dirancang untuk menjadi kelas induk yang berisi satu atau lebih metode abstrak. Tujuannya adalah untuk mendefinisikan antarmuka umum yang harus diimplementasikan oleh kelas-kelas anaknya.
+  * **Metode Abstrak:** Metode yang dideklarasikan di kelas abstrak tetapi tidak memiliki implementasi (badan kode). Kelas anak yang mewarisi kelas abstrak *wajib* mengimplementasikan (override) semua metode abstrak yang didefinisikan di kelas induk abstraknya. Jika tidak, kelas anak tersebut juga akan menjadi abstrak.
+
+### Implementasi di Python:
+
+1.  **Impor `ABC` dan `abstractmethod`:**
+    ```python
+    from abc import ABC, abstractmethod
+    ```
+2.  **Buat Kelas Abstrak:** Kelas induk Anda harus mewarisi dari `ABC`.
+    ```python
+    class NamaKelasAbstrak(ABC):
+        # ...
+    ```
+3.  **Buat Metode Abstrak:** Gunakan dekorator `@abstractmethod` di atas definisi metode. Metode ini tidak memiliki badan (isi) atau bisa memiliki `pass`.
+    ```python
+    @abstractmethod
+    def nama_metode_abstrak(self, parameter):
+        pass # atau raise NotImplementedError("Harus diimplementasikan oleh subclass")
+    ```
+
+### Contoh: Kelas Abstrak `Bentuk`
+
+Kita ingin membuat sistem untuk menghitung luas dan keliling berbagai bentuk geometri. Semua bentuk memiliki konsep "luas" dan "keliling", tetapi cara menghitungnya berbeda.
+
+```python
+from abc import ABC, abstractmethod
+import math
+
+# Kelas Abstrak: Bentuk
+class Bentuk(ABC): # Mewarisi dari ABC
+    def __init__(self, nama):
+        self._nama = nama
+
+    @property
+    def nama(self):
+        return self._nama
+
+    @abstractmethod # Ini adalah metode abstrak, harus diimplementasikan anak
+    def hitung_luas(self):
+        pass # Tidak ada implementasi di kelas induk abstrak
+
+    @abstractmethod # Ini juga metode abstrak
+    def hitung_keliling(self):
+        pass # Tidak ada implementasi di kelas induk abstrak
+
+    def deskripsi(self): # Metode non-abstrak (punya implementasi)
+        return f"Ini adalah bentuk {self.nama}."
+
+# --- Kelas Konkret (Child Class) yang Mewarisi Bentuk ---
+
+class Persegi(Bentuk): # Mewarisi dari Bentuk
+    def __init__(self, sisi):
+        super().__init__("Persegi")
+        if sisi <= 0:
+            raise ValueError("Sisi persegi harus positif.")
+        self.sisi = sisi
+
+    def hitung_luas(self): # Wajib mengimplementasikan metode abstrak
+        return self.sisi ** 2
+
+    def hitung_keliling(self): # Wajib mengimplementasikan metode abstrak
+        return 4 * self.sisi
+
+class Lingkaran(Bentuk): # Mewarisi dari Bentuk
+    def __init__(self, jari_jari):
+        super().__init__("Lingkaran")
+        if jari_jari <= 0:
+            raise ValueError("Jari-jari lingkaran harus positif.")
+        self.jari_jari = jari_jari
+
+    def hitung_luas(self): # Wajib mengimplementasikan metode abstrak
+        return math.pi * (self.jari_jari ** 2)
+
+    def hitung_keliling(self): # Wajib mengimplementasikan metode abstrak
+        return 2 * math.pi * self.jari_jari
+
+# --- Penggunaan ---
+
+# Coba membuat objek dari kelas abstrak (akan error!)
+# try:
+#     bentuk_umum = Bentuk("General Shape")
+# except TypeError as e:
+#     print(f"\nError: {e}") # Output: Can't instantiate abstract class Bentuk with abstract methods hitung_keliling, hitung_luas
+
+# Membuat objek dari kelas konkret
+persegi1 = Persegi(5)
+lingkaran1 = Lingkaran(7)
+
+print(f"\n{persegi1.deskripsi()}")
+print(f"Luas {persegi1.nama}: {persegi1.hitung_luas()}")
+print(f"Keliling {persegi1.nama}: {persegi1.hitung_keliling()}")
+
+print(f"\n{lingkaran1.deskripsi()}")
+print(f"Luas {lingkaran1.nama}: {lingkaran1.hitung_luas():.2f}") # Format 2 desimal
+print(f"Keliling {lingkaran1.nama}: {lingkaran1.hitung_keliling():.2f}") # Format 2 desimal
+
+# Polimorfisme dengan kelas abstrak
+daftar_bentuk = [Persegi(4), Lingkaran(3), Persegi(10)]
+
+print("\n--- Menampilkan Informasi Semua Bentuk (Polimorfisme) ---")
+for bentuk in daftar_bentuk:
+    print(f"\nBentuk: {bentuk.nama}")
+    print(f"  Luas: {bentuk.hitung_luas():.2f}")
+    print(f"  Keliling: {bentuk.hitung_keliling():.2f}")
+```
+
+**Penjelasan:**
+
+  * `Bentuk` tidak bisa langsung dibuat objeknya karena ia adalah kelas abstrak dan memiliki metode abstrak.
+  * `Persegi` dan `Lingkaran` adalah kelas konkret. Mereka **wajib** mengimplementasikan (override) metode `hitung_luas()` dan `hitung_keliling()` dari `Bentuk`. Jika salah satu tidak di-override, maka `Persegi` atau `Lingkaran` itu sendiri akan menjadi kelas abstrak.
+  * Metode `deskripsi()` bukan abstrak, sehingga kelas anak mewarisinya langsung dan bisa menggunakannya tanpa overriding.
+  * Polimorfisme bekerja mulus di sini. Kita bisa memiliki *list* `daftar_bentuk` yang berisi objek-objek `Persegi` dan `Lingkaran`, dan memanggil `hitung_luas()` atau `hitung_keliling()` pada setiap objek secara generik.
+
+-----
+
+## C. Studi Kasus: Sistem Pembayaran dengan Abstraksi
+
+Kita akan merevisi studi kasus sistem pembayaran dari pertemuan sebelumnya untuk mengimplementasikan abstraksi.
+
+**Tujuan:** Memastikan bahwa setiap metode pembayaran memiliki cara untuk `proses_pembayaran()` dan `dapatkan_detail_transaksi()`, tetapi detail implementasinya diserahkan kepada jenis pembayaran spesifik.
+
+```python
+from abc import ABC, abstractmethod
+import datetime
+
+# --- Kelas Abstrak: MetodePembayaran ---
+class MetodePembayaran(ABC):
+    def __init__(self, id_transaksi):
+        self._id_transaksi = id_transaksi
+        self._waktu_transaksi = datetime.datetime.now()
+
+    @property
+    def id_transaksi(self):
+        return self._id_transaksi
+
+    @property
+    def waktu_transaksi(self):
+        return self._waktu_transaksi
+
+    @abstractmethod
+    def proses_pembayaran(self, jumlah):
+        # Metode ini harus diimplementasikan oleh setiap metode pembayaran konkret
+        pass
+
+    @abstractmethod
+    def dapatkan_detail_transaksi(self):
+        # Metode ini harus diimplementasikan untuk memberikan detail unik
+        pass
+
+    def tampilkan_waktu_transaksi(self): # Metode konkret
+        return f"Waktu Transaksi: {self._waktu_transaksi.strftime('%Y-%m-%d %H:%M:%S')}"
+
+
+# --- Kelas Konkret: KartuKredit ---
+class KartuKredit(MetodePembayaran):
+    def __init__(self, id_transaksi, nomor_kartu, masa_berlaku):
+        super().__init__(id_transaksi)
+        # Enkapsulasi: _ untuk protected, tapi bisa diakses via property jika perlu
+        self._nomor_kartu = nomor_kartu
+        self._masa_berlaku = masa_berlaku
+
+    def proses_pembayaran(self, jumlah): # Implementasi metode abstrak
+        if jumlah <= 0:
+            print(f"[{self.id_transaksi}] Pembayaran Kartu Kredit gagal: Jumlah harus positif.")
+            return False
+        print(f"[{self.id_transaksi}] Memproses pembayaran Rp{jumlah:,} via Kartu Kredit (**** {self._nomor_kartu[-4:]})...")
+        print("Pembayaran berhasil!")
+        return True
+
+    def dapatkan_detail_transaksi(self): # Implementasi metode abstrak
+        return (f"Metode: Kartu Kredit\n"
+                f"  Nomor Kartu: **** {self._nomor_kartu[-4:]}\n"
+                f"  Masa Berlaku: {self._masa_berlaku}")
+
+
+# --- Kelas Konkret: TransferBank ---
+class TransferBank(MetodePembayaran):
+    def __init__(self, id_transaksi, nama_bank, nomor_rekening):
+        super().__init__(id_transaksi)
+        self._nama_bank = nama_bank
+        self._nomor_rekening = nomor_rekening
+
+    def proses_pembayaran(self, jumlah): # Implementasi metode abstrak
+        if jumlah <= 0:
+            print(f"[{self.id_transaksi}] Pembayaran Transfer Bank gagal: Jumlah harus positif.")
+            return False
+        print(f"[{self.id_transaksi}] Memproses pembayaran Rp{jumlah:,} via Transfer Bank ({self._nama_bank}, Rek: {self._nomor_rekening})...")
+        print("Menunggu konfirmasi transfer...")
+        print("Pembayaran berhasil!")
+        return True
+
+    def dapatkan_detail_transaksi(self): # Implementasi metode abstrak
+        return (f"Metode: Transfer Bank\n"
+                f"  Bank: {self._nama_bank}\n"
+                f"  Nomor Rekening: {self._nomor_rekening}")
+
+
+# --- Penggunaan ---
+print("--- Simulasi Pembayaran ---")
+# Buat objek-objek metode pembayaran
+kartu_visa = KartuKredit("TXN001", "1234-5678-9012-3456", "12/25")
+transfer_bca = TransferBank("TXN002", "BCA", "9876543210")
+kartu_master = KartuKredit("TXN003", "6543-2109-8765-4321", "08/26")
+
+# Simpan dalam list generik (polimorfik)
+daftar_pembayaran = [kartu_visa, transfer_bca, kartu_master]
+
+for metode in daftar_pembayaran:
+    print(f"\n--- Transaksi ID: {metode.id_transaksi} ---")
+    metode.proses_pembayaran(150000) # Panggil metode abstrak secara polimorfik
+    print(metode.dapatkan_detail_transaksi()) # Panggil metode abstrak secara polimorfik
+    print(metode.tampilkan_waktu_transaksi()) # Panggil metode konkret yang diwarisi
+
+# Coba pembayaran dengan jumlah negatif (contoh validasi)
+print("\n--- Contoh Pembayaran Gagal ---")
+kartu_visa.proses_pembayaran(-50000)
+
+```
+
+**Penjelasan:**
+
+  * `MetodePembayaran` adalah kelas abstrak yang mendefinisikan "kontrak": setiap metode pembayaran konkret harus memiliki cara untuk `proses_pembayaran` dan `dapatkan_detail_transaksi`.
+  * `KartuKredit` dan `TransferBank` adalah implementasi konkret dari kontrak tersebut.
+  * Fungsi `tampilkan_waktu_transaksi` adalah metode konkret yang diwarisi, menunjukkan bahwa kelas abstrak bisa memiliki metode konkret.
+  * Polimorfisme memungkinkan kita mengiterasi `daftar_pembayaran` dan memanggil `proses_pembayaran()` atau `dapatkan_detail_transaksi()` pada setiap objek, dan Python secara otomatis menjalankan implementasi yang benar untuk jenis pembayaran tersebut.
+
+-----
+
+## D. Tugas
+
+1.  **Latihan Abstraksi: Sistem Notifikasi**
+
+      * Buatlah sebuah kelas abstrak bernama `Notifikasi` menggunakan modul `abc`.
+          * Kelas ini harus memiliki atribut `penerima` (misal: nomor telepon, email, username).
+          * Kelas ini harus memiliki metode abstrak: `kirim(pesan)` yang akan diimplementasikan oleh kelas anak untuk mengirim pesan.
+          * Kelas ini juga bisa memiliki metode konkret, misalnya `cek_status_penerima()` yang mengembalikan string "Penerima aktif" (untuk latihan).
+      * Buat dua kelas konkret yang mewarisi dari `Notifikasi`:
+          * `EmailNotifikasi`:
+              * Atribut tambahan: `subjek_email`.
+              * Implementasikan `kirim(pesan)` agar mencetak simulasi pengiriman email (misal: "Mengirim email ke [penerima] dengan subjek '[subjek\_email]': [pesan]").
+          * `SMSNotifikasi`:
+              * Tidak ada atribut tambahan spesifik selain yang diwarisi.
+              * Implementasikan `kirim(pesan)` agar mencetak simulasi pengiriman SMS (misal: "Mengirim SMS ke [penerima]: [pesan]").
+      * Buat beberapa objek dari `EmailNotifikasi` dan `SMSNotifikasi`.
+      * Masukkan semua objek ke dalam satu *list*.
+      * Lakukan iterasi pada *list* tersebut dan panggil metode `kirim()` pada setiap objek dengan pesan yang berbeda, serta panggil `cek_status_penerima()`. Amati perilaku polimorfiknya.
+
+-----

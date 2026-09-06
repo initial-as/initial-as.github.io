@@ -1,0 +1,544 @@
+---
+title: "6. Analisis Log dan Incident Response menggunakan Wazuh"
+---
+
+# Analisis Log dan Incident Response menggunakan Wazuh
+
+- Durasi: 1 Pertemuan (3 x 50 menit)
+- Tingkat: Menengah–Lanjut
+
+---
+
+## Capaian Pembelajaran
+
+Setelah menyelesaikan praktikum ini mahasiswa mampu:
+
+1. Menjelaskan konsep **Security Event**, **Security Alert**, dan **Incident Response**.
+2. Mengidentifikasi aktivitas mencurigakan berdasarkan log keamanan.
+3. Menganalisis alert keamanan menggunakan Wazuh.
+4. Menelusuri sumber dan kronologi suatu insiden.
+5. Melakukan tindakan awal untuk mengatasi insiden keamanan.
+6. Melakukan isolasi sederhana terhadap sumber ancaman.
+7. Mendokumentasikan hasil investigasi insiden secara sistematis.
+
+---
+
+## Tujuan Praktikum
+
+Mahasiswa mampu menggunakan Wazuh untuk melakukan **deteksi → analisis → investigasi → respons awal → dokumentasi** terhadap insiden keamanan sederhana pada lingkungan laboratorium.
+
+---
+
+## Dasar Teori
+
+### 1. Security Event
+
+**Security event** adalah suatu kejadian yang berhubungan dengan keamanan sistem. Contoh:
+
+* login berhasil,
+* login gagal,
+* perubahan file,
+* perubahan konfigurasi,
+* koneksi jaringan,
+* instalasi software.
+
+Tidak semua event merupakan serangan.
+
+---
+
+### 2. Security Alert
+
+Alert merupakan pemberitahuan mengenai event atau rangkaian event yang dianggap penting atau mencurigakan oleh sistem keamanan. Contoh:
+
+```text
+Multiple failed SSH authentication attempts
+```
+
+Alert tersebut belum tentu membuktikan bahwa telah terjadi kompromi. Administrator perlu melakukan investigasi.
+
+---
+
+### 3. Log
+
+Log merupakan catatan aktivitas yang dihasilkan oleh sistem, aplikasi, atau perangkat jaringan. Contoh:
+
+```text
+SSH authentication failure
+Apache access log
+Apache error log
+System authentication log
+Docker log
+SafeLine security event
+```
+
+Log menjadi salah satu sumber utama dalam investigasi insiden.
+
+---
+
+### 4. Incident Response
+
+Incident Response adalah proses menangani insiden keamanan. Secara sederhana dapat digambarkan: text
+Preparation → Detection → Analysis → Containment → Eradication → Recovery → Lessons Learned.
+
+---
+
+### 5. Timeline Analysis
+
+Investigasi tidak hanya mencari **apa yang terjadi**, tetapi juga:
+
+* kapan terjadi,
+* dari mana berasal,
+* akun apa yang digunakan,
+* sistem apa yang terdampak,
+* tindakan apa yang dilakukan.
+
+Contoh:
+
+```text
+10:01:15  Login SSH gagal
+10:01:21  Login SSH gagal
+10:01:27  Login SSH gagal
+10:02:03  Login berhasil
+10:03:12  File berubah
+```
+
+Rangkaian event tersebut dapat memberikan indikasi adanya aktivitas mencurigakan.
+
+---
+
+## Peralatan
+
+### Hardware/VM
+
+* Windows Host
+* Ubuntu Server
+* Kali Linux
+
+### Software
+
+* Wazuh
+* SafeLine
+* DVWA
+* OpenSSH
+* Docker
+
+---
+
+## Topologi
+
+```text
+                     Internet
+                         │
+                VirtualBox NAT Network
+                         │
+      ┌──────────────────┴──────────────────┐
+      │                                     │
+ Ubuntu Server                          Kali
+ 192.168.56.10                          192.168.56.20
+      │                                     │
+      └──────────────────┬──────────────────┘
+                         │
+              VirtualBox Host-Only Network
+                         │
+                  Windows Host
+                  192.168.56.1
+```
+
+Pada praktikum ini:
+
+* **Kali Linux** digunakan sebagai mesin pengujian.
+* **DVWA** digunakan sebagai aplikasi target.
+* **SafeLine** digunakan sebagai lapisan proteksi aplikasi web.
+* **Wazuh** digunakan untuk monitoring dan analisis.
+* **Ubuntu Server** menjadi sumber utama event yang dianalisis.
+
+---
+
+## Langkah Praktikum
+
+### A. Verifikasi Lingkungan
+
+Periksa container:
+
+```bash
+docker ps
+```
+
+Pastikan container yang diperlukan masih berjalan.
+
+Periksa Wazuh:
+
+```bash
+docker ps | grep wazuh
+```
+
+Periksa SafeLine:
+
+```bash
+docker ps
+```
+
+Pastikan DVWA dapat diakses dari Windows Host.
+
+---
+
+### B. Mengenali Security Event pada Wazuh
+
+Buka Wazuh Dashboard. Masuk ke bagian event/security events. Amati informasi seperti:
+
+* timestamp,
+* agent,
+* rule,
+* severity,
+* source IP,
+* username,
+* command atau aktivitas terkait.
+
+Pilih minimal **lima event** dan klasifikasi sebagai:
+
+| Event                 | Normal/Mencurigakan | Alasan |
+| --------------------- | ------------------- | ------ |
+| Login berhasil        |                     |        |
+| Login gagal           |                     |        |
+| Perubahan file        |                     |        |
+| Aktivitas web         |                     |        |
+| Perubahan konfigurasi |                     |        |
+
+---
+
+### C. Simulasi Failed SSH Login
+
+Dari Kali Linux, lakukan percobaan login SSH menggunakan username yang salah. Contoh:
+
+```bash
+ssh fakeuser@192.168.56.10
+```
+
+Masukkan password yang salah beberapa kali. Amati Wazuh dan catat:
+
+* waktu,
+* source IP,
+* username,
+* jumlah percobaan,
+* rule yang muncul,
+* severity.
+
+---
+
+### D. Analisis Brute-Force Sederhana
+
+Lakukan beberapa percobaan autentikasi gagal terhadap SSH pada **lab yang telah disediakan**. Contoh:
+
+```bash
+ssh operator@192.168.56.10
+```
+
+Masukkan password yang salah beberapa kali, kemudian periksa Wazuh. Tentukan: **Apakah rangkaian login gagal tersebut dapat dianggap sebagai indikasi brute-force?** Jelaskan berdasarkan bukti log yang ditemukan.
+
+---
+
+### E. Simulasi Perubahan File
+
+Gunakan file yang telah dipersiapkan untuk File Integrity Monitoring.
+
+Misalnya:
+
+```bash
+echo "modified by student" >> /tmp/uji_keamanan.txt
+```
+
+Kemudian:
+
+```bash
+cat /tmp/uji_keamanan.txt
+```
+
+Tunggu sampai event diterima Wazuh. Cari event perubahan file, kemudian catat:
+
+* nama file,
+* waktu perubahan,
+* jenis perubahan,
+* user yang melakukan perubahan.
+
+---
+
+### F. Simulasi Serangan Web
+
+Gunakan Kali Linux untuk mengakses DVWA melalui SafeLine. Lakukan pengujian keamanan pada DVWA menggunakan payload sederhana yang telah dipelajari pada **[Praktium 4](praktikum-4.mdx)**.. Contoh kategori:
+
+* SQL Injection
+* XSS
+
+Kemudian periksa apakah terdapat event yang relevan pada SafeLine dan/atau Wazuh.
+
+---
+
+### G. Korelasi SafeLine dan Wazuh
+
+Bandingkan dua sumber informasi:
+
+* SafeLine
+
+     ```text
+     Client IP
+     Request
+     URL
+     Attack Type
+     Action
+     Timestamp
+     ```
+
+* Wazuh
+
+     ```text
+     Timestamp
+     Rule
+     Agent
+     Source
+     Event
+     Severity
+     ```
+
+Buat tabel:
+
+| Waktu | SafeLine | Wazuh | Interpretasi |
+| ----- | -------- | ----- | ------------ |
+|       |          |       |              |
+|       |          |       |              |
+|       |          |       |              |
+
+Tujuannya adalah untuk mengetahui konsep **event correlation**.
+
+---
+
+### H. Investigasi Insiden
+
+Pada pukul 10.15 terjadi beberapa kegagalan login SSH dari alamat IP tertentu. Lima menit kemudian terjadi login berhasil. Setelah itu ditemukan perubahan pada sebuah file sistem.
+
+Carilah event yang berkaitan. Gunakan Wazuh untuk menjawab:
+
+1. Kapan percobaan pertama terjadi?
+2. Berapa kali login gagal?
+3. Dari IP mana aktivitas berasal?
+4. Akun apa yang digunakan?
+5. Apakah terjadi login berhasil?
+6. File apa yang kemudian berubah?
+7. Siapa yang melakukan perubahan?
+8. Apakah terdapat indikasi kompromi?
+
+---
+
+### I. Membuat Timeline Insiden
+
+Susun hasil investigasi menjadi timeline. Contoh:
+
+```text
+10:15:01  SSH login gagal
+10:15:04  SSH login gagal
+10:15:08  SSH login gagal
+10:15:14  SSH login berhasil
+10:17:32  File berubah
+10:18:01  Aktivitas mencurigakan terdeteksi
+```
+
+Kemudian buat kesimpulan:
+
+> Berdasarkan rangkaian event tersebut, ...
+
+---
+
+### J. Containment
+
+Setelah ditemukan sumber aktivitas mencurigakan, mahasiswa melakukan tindakan containment sederhana. Contoh:
+
+* memblokir IP sumber menggunakan UFW;
+* menonaktifkan akun yang dicurigai;
+* menghentikan layanan tertentu jika diperlukan.
+
+Contoh pemblokiran IP pada UFW:
+
+```bash
+sudo ufw deny from 192.168.56.20
+```
+
+Verifikasi:
+
+```bash
+sudo ufw status numbered
+```
+
+:::danger[Peringatan]
+Perintah containment hanya boleh dilakukan terhadap alamat IP dan akun yang digunakan dalam lingkungan laboratorium. Jangan memblokir IP jaringan kampus, gateway, atau alamat publik yang tidak terkait dengan praktikum.
+:::
+
+---
+
+## K. Verifikasi Containment
+
+Setelah aturan firewall diterapkan, lakukan pengujian ulang dari mesin Kali.
+
+Amati:
+
+* apakah koneksi berhasil,
+* apakah event baru muncul,
+* apakah aktivitas dari sumber tersebut masih terlihat.
+
+Kemudian dokumentasikan perubahan yang dilakukan.
+
+---
+
+## Studi Kasus
+
+### Kasus: Dugaan Kompromi Server
+
+Wazuh menunjukkan aktivitas berikut:
+
+```text
+08:21:10  Failed SSH login - user admin
+08:21:13  Failed SSH login - user admin
+08:21:17  Failed SSH login - user admin
+08:21:20  Failed SSH login - user admin
+08:21:32  Successful SSH login - user admin
+08:24:05  File modified - /var/www/html/index.php
+08:25:12  New process detected
+```
+
+### Pertanyaan
+
+1. Event mana yang paling mencurigakan?
+2. Apa hubungan antara event-event tersebut?
+3. Apakah terdapat indikasi kompromi?
+4. Apa bukti yang perlu dikumpulkan?
+5. Apa tindakan containment yang sebaiknya dilakukan?
+6. Apa tindakan yang **tidak boleh langsung dilakukan** sebelum bukti dikumpulkan?
+7. Bagaimana administrator memastikan bahwa sistem telah kembali aman?
+
+---
+
+## Tugas Praktikum
+
+### Tugas 1 — Analisis Alert
+
+Temukan minimal **lima security alert/event** pada Wazuh.
+
+Dokumentasikan:
+
+* timestamp,
+* rule,
+* severity,
+* source,
+* deskripsi,
+* interpretasi.
+
+---
+
+### Tugas 2 — Investigasi SSH
+
+Lakukan simulasi failed login SSH.
+
+Buat analisis:
+
+```text
+Source
+   ↓
+Event
+   ↓
+Alert
+   ↓
+Analysis
+   ↓
+Response
+```
+
+---
+
+### Tugas 3 — File Integrity
+
+Lakukan perubahan terhadap file yang dipantau Wazuh.
+
+Jelaskan:
+
+* perubahan yang dilakukan,
+* event yang dihasilkan,
+* bagaimana Wazuh mendeteksinya,
+* apakah perubahan tersebut merupakan indikasi ancaman.
+
+---
+
+### Tugas 4 — Korelasi SafeLine dan Wazuh
+
+Lakukan satu pengujian terhadap DVWA melalui SafeLine.
+
+Bandingkan informasi yang tersedia pada:
+
+* SafeLine,
+* Wazuh.
+
+Jelaskan mengapa administrator sebaiknya menggunakan lebih dari satu sumber informasi dalam investigasi.
+
+---
+
+### Tugas 5 — Incident Response
+
+Berdasarkan kasus yang diberikan dosen, buat **Incident Response Report** yang minimal memuat:
+
+1. Incident ID.
+2. Waktu kejadian.
+3. Sumber ancaman.
+4. Sistem terdampak.
+5. Indikator kompromi.
+6. Kronologi.
+7. Analisis.
+8. Tindakan containment.
+9. Dampak.
+10. Rekomendasi.
+
+---
+
+## Laporan Praktikum
+
+Laporan memuat:
+
+1. Tujuan praktikum.
+2. Dasar teori.
+3. Topologi.
+4. Hasil verifikasi Wazuh.
+5. Analisis security event.
+6. Hasil simulasi SSH.
+7. Hasil File Integrity Monitoring.
+8. Hasil pengujian DVWA/SafeLine.
+9. Korelasi event.
+10. Timeline insiden.
+11. Tindakan containment.
+12. Analisis studi kasus.
+13. Incident Response Report.
+14. Kesimpulan.
+
+---
+
+## Rubrik Penilaian
+
+| Komponen                        |    Bobot |
+| ------------------------------- | -------: |
+| Identifikasi dan analisis event |      20% |
+| Analisis SSH/security incident  |      20% |
+| File Integrity Monitoring       |      15% |
+| Korelasi SafeLine–Wazuh         |      15% |
+| Incident Response               |      20% |
+| Laporan                         |      10% |
+| **Total**                       | **100%** |
+
+---
+
+## Persiapan Praktikum 7
+
+Pada akhir praktikum, pastikan:
+
+* Wazuh berjalan dengan baik.
+* Event SSH dapat ditemukan.
+* File Integrity Monitoring dapat menghasilkan event.
+* Event SafeLine dapat dianalisis.
+* Mahasiswa memahami proses deteksi dan respons awal.
+* Snapshot VirtualBox dibuat dengan nama `Praktikum-6`.
+
+Praktikum berikutnya dapat menggunakan lingkungan yang sama untuk melakukan **Vulnerability Assessment dan Security Testing menggunakan Kali Linux**, kemudian menghubungkan hasil pengujian dengan mekanisme deteksi SafeLine dan Wazuh.
