@@ -1,0 +1,500 @@
+---
+title: "1. Konsep dan Peran Administrator Sistem"
+---
+
+# Konsep dan Peran Administrator Sistem
+
+## Capaian Pembelajaran
+
+Setelah mengikuti pertemuan ini, mahasiswa diharapkan mampu:
+
+1. Menjelaskan pengertian dan ruang lingkup pekerjaan Administrator Sistem.
+2. Menjelaskan peran, tanggung jawab, dan wewenang Administrator Sistem.
+3. Mengidentifikasi komponen *system environment* dalam suatu organisasi.
+4. Menganalisis kebutuhan pengguna terhadap sistem komputer dan server.
+5. Menjelaskan hubungan antara kebutuhan pengguna, *system environment*, dan perancangan sistem.
+6. Menjelaskan siklus kerja Administrator Sistem mulai dari identifikasi kebutuhan hingga pemeliharaan sistem.
+
+Peta Okupasi Nasional Bidang TIK 2025 (PON TIK 2025) mendefinisikan Administrator Sistem sebagai orang yang bertanggung jawab terhadap **pemeliharaan dan pengelolaan sistem komputer, jaringan, dan perangkat keras**. Okupasi ini berada pada **KKNI Level 6**. 
+
+---
+
+## A. Apa Itu Administrator Sistem?
+
+**Administrator Sistem (System Administrator/SysAdmin)** adalah profesional TI yang bertanggung jawab untuk memastikan sistem komputer, server, jaringan, dan sumber daya terkait dapat **beroperasi dengan baik, aman, tersedia, dan sesuai dengan kebutuhan pengguna**. Dalam PON, ruang lingkup pekerjaan Administrator Sistem mencakup dua kelompok besar:
+
+1. **Perancangan dan implementasi**
+
+   * sistem komputer,
+   * jaringan,
+   * perangkat keras,
+   * serta teknologi yang memenuhi kebutuhan pengguna.
+
+2. **Pemeliharaan dan dukungan**
+
+   * sistem komputer yang telah ada,
+   * jaringan,
+   * perangkat keras,
+   * dan layanan sistem. 
+
+Dengan demikian, administrator sistem **bukan hanya orang yang melakukan instalasi server**. Seorang SysAdmin juga harus mampu menjawab pertanyaan:
+
+> "Sistem seperti apa yang dibutuhkan pengguna, bagaimana sistem tersebut dibangun, bagaimana sistem tersebut diamankan, bagaimana kinerjanya dipantau, dan apa yang harus dilakukan ketika terjadi masalah?"
+
+---
+
+## B. Posisi Administrator Sistem dalam Infrastruktur TI
+
+Administrator Sistem berada pada posisi yang menghubungkan antara:
+
+**Pengguna → Sistem → Infrastruktur TI**
+
+Sebagai contoh, sebuah universitas memiliki sistem informasi akademik. Pengguna membutuhkan:
+
+* akses sistem 24 jam,
+* akses yang cepat,
+* keamanan data mahasiswa,
+* mekanisme login,
+* penyimpanan data,
+* dan kemampuan pemulihan ketika terjadi kerusakan.
+
+Administrator Sistem kemudian harus memastikan bahwa kebutuhan tersebut didukung oleh:
+
+* server,
+* sistem operasi,
+* jaringan,
+* penyimpanan,
+* database,
+* layanan aplikasi,
+* keamanan,
+* monitoring,
+* dan backup.
+
+Dengan demikian, pola pikir yang harus dimiliki oleh seorang Administrator Sistem:
+
+**Kebutuhan pengguna** → **Perancangan sistem** → **Implementasi** → **Konfigurasi** → **Keamanan** → **Monitoring** → **Pemeliharaan & troubleshooting**
+
+---
+
+## C. Ruang Lingkup Pekerjaan Administrator Sistem
+
+Berdasarkan PON, Administrator Sistem memiliki lingkup pekerjaan yang mencakup **perancangan, implementasi, pemeliharaan, dan dukungan** terhadap sistem komputer, jaringan, serta perangkat keras. Secara konseptual dapat dikelompokkan menjadi:
+
+### 1. Planning
+
+Administrator memahami:
+
+* siapa pengguna sistem,
+* kebutuhan pengguna,
+* layanan yang diperlukan,
+* kapasitas sistem,
+* tingkat ketersediaan yang diharapkan,
+* dan kebutuhan keamanan.
+
+### 2. Design
+
+Administrator menentukan:
+
+* arsitektur server,
+* sistem operasi,
+* jaringan,
+* storage,
+* layanan,
+* virtualisasi,
+* dan mekanisme keamanan.
+
+### 3. Implementation
+
+Administrator melakukan:
+
+* instalasi sistem operasi,
+* instalasi server,
+* konfigurasi layanan,
+* konfigurasi jaringan,
+* konfigurasi keamanan.
+
+### 4. Operation
+
+Administrator memastikan sistem:
+
+* berjalan,
+* tersedia,
+* memiliki performa yang baik,
+* dan dapat digunakan oleh pengguna.
+
+### 5. Maintenance
+
+Administrator melakukan:
+
+* update,
+* upgrade,
+* backup,
+* monitoring,
+* troubleshooting,
+* dan recovery.
+
+---
+
+## D. Profil Administrator Sistem
+
+PON menyebutkan beberapa karakteristik penting yang harus dimiliki seorang Administrator Sistem, yaitu:
+
+1. Keterampilan pemecahan masalah
+2. Komunikatif
+3. Teamwork
+4. Mudah beradaptasi
+5. Teliti
+
+Kelima aspek tersebut penting karena administrasi sistem bukan hanya persoalan teknis.
+
+### Contoh
+
+Ketika server tidak dapat diakses, Administrator harus:
+
+1. **Problem solving** → mencari penyebab masalah.
+2. **Communication** → berkomunikasi dengan pengguna atau tim lain.
+3. **Teamwork** → berkoordinasi dengan network engineer atau developer.
+4. **Adaptability** → mampu menghadapi teknologi dan konfigurasi yang berbeda.
+5. **Teliti** → memastikan perubahan konfigurasi tidak menimbulkan masalah baru.
+
+---
+
+## E. Tanggung Jawab Administrator Sistem
+
+PON secara khusus menetapkan **delapan tanggung jawab** Administrator Sistem. 
+
+### 1. Mengidentifikasi *System Environment* dengan teknologi yang sesuai
+
+Administrator harus memahami lingkungan sistem sebelum melakukan implementasi. Pertanyaan yang perlu dijawab misalnya:
+
+* Sistem apa yang sudah tersedia?
+* Berapa jumlah pengguna?
+* Server apa yang digunakan?
+* Sistem operasi apa yang digunakan?
+* Bagaimana topologi jaringan?
+* Layanan apa yang berjalan?
+* Teknologi apa yang sesuai dengan kebutuhan?
+
+---
+
+### 2. Merancang arsitektur *server environment*
+
+Administrator menentukan bagaimana server akan dibangun. Misalnya:
+
+```text
+Internet
+   │
+Firewall
+   │
+Web Server
+   │
+Application Server
+   │
+Database Server
+   │
+Storage
+```
+
+Perancangan harus mempertimbangkan:
+
+* kapasitas,
+* performa,
+* keamanan,
+* ketersediaan,
+* skalabilitas,
+* dan biaya.
+
+---
+
+### 3. Merancang sistem keamanan *server environment*
+
+Administrator harus mempertimbangkan keamanan sejak tahap desain. Contohnya:
+
+* authentication,
+* authorization,
+* firewall,
+* access control,
+* patch management,
+* backup,
+* logging,
+* dan monitoring.
+
+---
+
+### 4. Merancang skenario pengujian server
+
+Server yang selesai dibangun tidak langsung dianggap berhasil. Harus ada pengujian, seperti:
+
+> Apakah server dapat diakses?
+
+> Apakah layanan tetap berjalan setelah reboot?
+
+> Apakah pengguna dengan hak akses berbeda memperoleh akses yang sesuai?
+
+> Bagaimana sistem ketika terjadi beban tinggi?
+
+---
+
+### 5. Memantau ketersediaan sistem
+
+Administrator harus mengetahui apakah sistem:
+
+* *up*,
+* *down*,
+* atau mengalami gangguan.
+
+Contoh indikator *Uptime*:
+
+```text
+Server uptime = 99.9%
+```
+
+https://www.cloudflarestatus.com/
+
+https://www.githubstatus.com/
+
+---
+
+### 6. Memantau kinerja sistem
+
+Administrator memonitor sumber daya seperti:
+
+* CPU,
+* RAM,
+* storage,
+* network,
+* dan proses.
+
+---
+
+### 7. Memantau keamanan sistem
+
+Administrator harus mendeteksi indikasi:
+
+* login yang mencurigakan,
+* perubahan konfigurasi,
+* akses tidak sah,
+* malware,
+* dan aktivitas abnormal.
+
+---
+
+### 8. Menginvestigasi kerusakan sistem
+
+Ketika terjadi masalah, administrator harus:
+
+**Identifikasi → Analisis → Diagnosis → Perbaikan → Verifikasi**
+
+Kemampuan troubleshooting ini menjadi salah satu kompetensi penting SysAdmin.
+
+---
+
+## F. Wewenang Administrator Sistem
+
+PON memberikan beberapa wewenang yang berkaitan langsung dengan pengelolaan sistem, antara lain:
+
+* mengakses dan mengelola data pengguna,
+* membuat dan menghapus akun,
+* menetapkan izin dan kebijakan pengguna,
+* menginstal dan memodifikasi perangkat lunak,
+* mengelola jaringan dan perangkat keras,
+* serta memantau keamanan sistem. 
+
+Karena Administrator Sistem memiliki privilege yang sangat tinggi, maka wewenangnya harus dikendalikan. Misalnya, seorang administrator Linux dapat memiliki akses:
+
+```bash
+root
+```
+
+atau menggunakan:
+
+```bash
+sudo
+```
+
+Kesalahan administrator dapat berdampak terhadap seluruh sistem. Oleh sebab itu, prinsip penting yang harus dikenalkan sejak awal adalah:
+
+> **"With great privilege comes great responsibility."**
+
+Dalam praktik administrasi sistem, konsep ini berkaitan erat dengan **least privilege** dan pengendalian akses.
+
+### Pengendalian Wewenang Administrator Sistem
+
+1. **Manajemen Akses dan Identitas (IAM)**
+    * Prinsip Hak Akses Minimum: Berikan hak akses hanya sesuai dengan apa yang benar-benar dibutuhkan untuk menyelesaikan pekerjaan. Jangan berikan akses penuh (root/domain admin) jika tugasnya hanya mengelola cadangan (backup).
+    * Akun Berbasis Personel: Larang keras penggunaan akun admin bersama (shared accounts seperti "admin" atau "administrator"). Setiap admin harus menggunakan akun atas nama pribadi agar semua tindakan bisa ditelusuri.
+    * Just-In-Time (JIT) Elevation: Gunakan sistem di mana hak akses admin hanya aktif saat dibutuhkan dan akan kedaluwarsa otomatis dalam jangka waktu tertentu (misalnya menggunakan fitur sudo di Linux atau PIM/PAM di lingkungan Windows/Cloud).
+2. **Autentikasi dan Pemisahan Tugas**
+    * Multi-Factor Authentication (MFA): Wajibkan MFA untuk semua akses administratif tanpa terkecuali, terutama untuk akses jarak jauh (VPN/SSH).
+    * Pemisahan Tugas (Separation of Duties): Bagilah tanggung jawab kritis agar tidak dikuasai oleh satu orang saja. Misalnya, admin yang mengonfigurasi sistem tidak boleh menjadi orang yang sama yang menyetujui atau mengaudit log keamanan sistem tersebut.
+3. **Pengawasan dan Audit (Monitoring)**
+    * Sentralisasi Log Aktivitas: Alirkan semua log aktivitas admin (seperti riwayat perintah/komando) ke server log terpisah yang tidak dapat diubah atau dihapus oleh admin itu sendiri (immutable logs).
+    * Solusi PAM (Privileged Access Management): Gunakan perangkat lunak PAM (seperti CyberArk, BeyondTrust, atau HashiCorp Vault) untuk merekam sesi kerja admin, mengelola kata sandi admin secara otomatis, dan memantau aktivitas mencurigakan secara real-time.
+4. **Prosedur dan Manajemen Perubahan**
+    * Manajemen Perubahan (Change Management): Setiap perubahan besar pada sistem harus melalui proses persetujuan resmi (RFC - Request for Change). Admin tidak boleh mengubah konfigurasi produksi tanpa ada tiket atau dokumentasi tertulis.
+    * Tinjauan Akses Berkala: Lakukan audit berkala (misalnya setiap 3 atau 6 bulan) untuk meninjau ulang siapa saja yang memegang hak akses admin dan mencabut hak akses bagi karyawan yang sudah pindah divisi atau keluar.
+
+
+
+---
+
+## G. Memahami *System Environment*
+
+Salah satu kompetensi Administrator Sistem yang pertama disebutkan dalam PON adalah **Mengidentifikasi System Environment dengan Teknologi yang Sesuai**. 
+
+Secara sederhana, *system environment* adalah **lingkungan teknologi tempat suatu sistem komputer atau layanan dijalankan**.
+
+Komponennya dapat mencakup:
+
+### 1. Hardware
+
+* Server
+* CPU
+* RAM
+* Storage
+* NIC
+* perangkat jaringan
+
+### 2. Operating System
+
+Contoh:
+
+* Linux
+* Windows Server
+
+### 3. Network
+
+* LAN
+* WAN
+* Internet
+* router
+* switch
+* firewall
+
+### 4. Services
+
+Misalnya:
+
+* DNS
+* DHCP
+* Web Server
+* File Server
+* SSH
+* Database
+
+### 5. Users
+
+* administrator,
+* staf,
+* dosen,
+* mahasiswa,
+* pelanggan,
+* dan sebagainya.
+
+### 6. Security
+
+* authentication,
+* authorization,
+* firewall,
+* access control,
+* logging.
+
+---
+
+## H. Mengidentifikasi Kebutuhan Pengguna
+
+PON menempatkan **Mengumpulkan Kebutuhan Pengguna** sebagai tugas utama sebelum identifikasi *system environment*. Ini penting karena administrator tidak seharusnya langsung memilih teknologi. Urutan yang lebih tepat adalah:
+
+**Kebutuhan → Analisis → Teknologi → Desain → Implementasi**
+
+Bukan:
+
+**Teknologi → kemudian mencari masalah yang dapat diselesaikan.**
+
+---
+
+### Contoh Kasus
+
+Sebuah fakultas ingin menyediakan sistem penyimpanan file untuk 500 mahasiswa. Kebutuhan pengguna:
+
+* 500 mahasiswa,
+* setiap mahasiswa mendapatkan ruang penyimpanan,
+* dapat diakses melalui jaringan,
+* membutuhkan autentikasi,
+* tersedia setiap hari,
+* data harus dapat dipulihkan ketika terjadi kerusakan.
+
+Administrator kemudian harus menentukan:
+
+**Apa kebutuhan kapasitas storage?**
+
+Misalnya:
+
+```text
+500 mahasiswa × 5 GB
+= 2.500 GB
+= 2,5 TB
+```
+
+Kemudian perlu dipertimbangkan:
+
+* kapasitas tambahan,
+* backup,
+* filesystem,
+* network,
+* authentication,
+* keamanan,
+* dan monitoring.
+
+Ini menunjukkan bahwa **administrasi sistem dimulai dari kebutuhan, bukan dari perintah Linux**.
+
+---
+
+## I. Studi Kasus
+
+### Kasus: Server Sistem Informasi Akademik
+
+Sebuah universitas memiliki sistem informasi akademik yang digunakan oleh:
+
+* 10.000 mahasiswa,
+* 500 dosen,
+* 100 tenaga kependidikan.
+
+Sistem digunakan untuk:
+
+* KRS,
+* nilai,
+* jadwal,
+* dan administrasi akademik.
+
+Dalam beberapa bulan terakhir:
+
+* server sering lambat,
+* beberapa kali tidak dapat diakses,
+* storage hampir penuh,
+* terdapat banyak percobaan login yang gagal.
+
+### Diskusikan
+
+1. Apa saja kebutuhan pengguna yang harus dikumpulkan?
+2. Apa saja komponen *system environment* yang perlu diidentifikasi?
+3. Informasi apa yang harus diketahui administrator sebelum merancang server baru?
+4. Apa risiko jika administrator langsung melakukan upgrade server tanpa melakukan analisis?
+5. Apa saja aspek keamanan yang perlu dipertimbangkan?
+6. Parameter apa yang perlu dimonitor?
+7. Bagaimana administrator menentukan apakah masalah berasal dari hardware, jaringan, sistem operasi, atau aplikasi?
+
+---
+
+## K. Ringkasan Materi
+
+Poin utama yang harus dipahami:
+
+1. **Administrator Sistem** bertanggung jawab atas pengelolaan dan pemeliharaan sistem komputer, jaringan, dan perangkat keras.
+2. Administrator Sistem tidak hanya melakukan instalasi server.
+3. Pekerjaan SysAdmin mencakup **perencanaan, perancangan, implementasi, operasi, monitoring, maintenance, dan troubleshooting**.
+4. Administrator harus memahami **kebutuhan pengguna** sebelum menentukan teknologi.
+5. *System environment* mencakup berbagai komponen seperti hardware, OS, jaringan, layanan, pengguna, dan keamanan.
+6. Administrator memiliki **hak akses dan wewenang tinggi**, sehingga pengelolaannya harus dilakukan secara hati-hati.
+7. Kompetensi SysAdmin mencakup aspek teknis sekaligus **problem solving, komunikasi, teamwork, adaptasi, dan ketelitian**. 
+8. Administrasi sistem merupakan **siklus berkelanjutan**, bukan pekerjaan sekali selesai.
