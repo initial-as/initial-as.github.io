@@ -1,0 +1,881 @@
+---
+title: "7. Vulnerability Assessment dan Security Testing"
+---
+
+# Vulnerability Assessment dan Security Testing
+
+- Durasi: 1 Pertemuan (3 x 50 menit)
+- Tingkat: Menengah–Lanjut
+
+---
+
+## A. Capaian Pembelajaran
+
+Setelah menyelesaikan praktikum ini, mahasiswa diharapkan mampu:
+
+1. Menjelaskan konsep *vulnerability assessment* dan *security testing*.
+2. Mengidentifikasi kerentanan pada sistem dan layanan jaringan.
+3. Melakukan *vulnerability scanning* secara terkontrol pada lingkungan laboratorium.
+4. Menganalisis hasil pemindaian keamanan.
+5. Membedakan antara *vulnerability*, *threat*, *risk*, dan *exploit*.
+6. Melakukan pengujian keamanan sederhana terhadap aplikasi web.
+7. Menentukan tingkat risiko berdasarkan hasil pengujian.
+8. Menyusun rekomendasi mitigasi terhadap kerentanan yang ditemukan.
+9. Mendokumentasikan hasil *security assessment* secara sistematis.
+
+---
+
+## B. Tujuan Praktikum
+
+Setelah mengikuti praktikum, mahasiswa mampu:
+
+1. Menentukan target dan ruang lingkup pengujian keamanan.
+2. Melakukan identifikasi host dan layanan yang aktif.
+3. Melakukan *vulnerability scanning* menggunakan tools yang tersedia.
+4. Mengidentifikasi potensi kerentanan pada sistem.
+5. Melakukan pengujian keamanan terhadap DVWA.
+6. Menganalisis hubungan antara hasil *assessment* dengan risiko keamanan.
+7. Menyusun rekomendasi perbaikan.
+8. Membuat laporan *security assessment*.
+
+---
+
+## C. Dasar Teori
+
+### 1. Vulnerability Assessment
+
+**Vulnerability Assessment** adalah proses sistematis untuk mengidentifikasi, menganalisis, dan menilai kelemahan keamanan pada sistem, jaringan, aplikasi, atau layanan.
+
+Secara sederhana:
+
+> Vulnerability Assessment = mencari dan menilai kelemahan keamanan.
+
+Contoh kerentanan:
+
+* layanan menggunakan versi perangkat lunak yang rentan;
+* port yang tidak diperlukan terbuka;
+* konfigurasi sistem yang tidak aman;
+* password policy yang lemah;
+* aplikasi web memiliki celah SQL Injection;
+* aplikasi memiliki celah Cross-Site Scripting;
+* direktori atau file dapat diakses tanpa autentikasi.
+
+---
+
+### 2. Security Testing
+
+**Security Testing** merupakan proses pengujian untuk mengetahui apakah mekanisme keamanan suatu sistem mampu menghadapi kondisi atau serangan tertentu.
+
+Contohnya:
+
+* pengujian autentikasi;
+* pengujian otorisasi;
+* pengujian input validation;
+* pengujian SQL Injection;
+* pengujian XSS;
+* pengujian konfigurasi keamanan;
+* pengujian terhadap layanan jaringan.
+
+Dalam praktikum ini, pengujian hanya dilakukan terhadap sistem yang berada di **lingkungan laboratorium dan telah mendapatkan izin**.
+
+---
+
+### 3. Vulnerability, Threat, Risk, dan Exploit
+
+Keempat istilah berikut perlu dibedakan.
+   1. Vulnerability
+
+      Kelemahan pada sistem yang dapat dimanfaatkan untuk mengganggu keamanan.
+   2. Threat
+
+      Potensi ancaman yang dapat memanfaatkan suatu kerentanan.
+   3. Exploit
+
+      Teknik atau kode yang digunakan untuk memanfaatkan suatu kerentanan.
+   4. Risk
+
+      Kemungkinan dan dampak yang dapat terjadi akibat adanya kerentanan.
+
+Hubungan sederhananya:
+
+> **Vulnerability → dapat dimanfaatkan oleh Threat → menggunakan Exploit → menghasilkan Risk**
+
+---
+
+### 4. Vulnerability Scanning
+
+*Vulnerability scanning* menggunakan perangkat lunak untuk melakukan pemeriksaan otomatis terhadap sistem.
+
+Scanner dapat mencari:
+
+* port terbuka;
+* service yang aktif;
+* versi perangkat lunak;
+* konfigurasi yang tidak aman;
+* vulnerability yang telah diketahui;
+* informasi sistem yang dapat meningkatkan risiko.
+
+Hasil scanner tetap harus dianalisis oleh manusia karena hasil pemindaian dapat mengandung:
+
+* *false positive*;
+* informasi yang tidak relevan;
+* kerentanan yang sudah dimitigasi;
+* kerentanan yang membutuhkan verifikasi manual.
+
+---
+
+### 5. Port dan Service
+
+Sistem jaringan dapat menyediakan berbagai layanan melalui port tertentu.
+
+Contoh:
+
+| Port | Service        | Fungsi                |
+| ---- | -------------- | --------------------- |
+| 22   | SSH            | Remote administration |
+| 80   | HTTP           | Web                   |
+| 443  | HTTPS          | Secure Web            |
+| 3306 | MySQL          | Database              |
+| 8080 | HTTP Alternate | Web application       |
+
+Port terbuka tidak selalu berarti sistem memiliki vulnerability. Namun, semakin banyak layanan yang terbuka, semakin besar pula **attack surface** yang harus diamankan.
+
+---
+
+### 6. CVE dan CVSS
+
+**CVE (Common Vulnerabilities and Exposures)** merupakan sistem penamaan vulnerability yang telah diketahui.
+
+Contoh format:
+
+`CVE-YYYY-NNNN`
+
+**CVSS (Common Vulnerability Scoring System)** digunakan untuk membantu menilai tingkat keparahan suatu vulnerability.
+
+Secara umum, skor CVSS dikategorikan menjadi:
+
+* None
+* Low
+* Medium
+* High
+* Critical
+
+Dalam praktikum, mahasiswa tidak hanya mencatat skor, tetapi juga harus memahami **dampak vulnerability terhadap sistem yang diuji**.
+
+---
+
+### 7. Attack Surface
+
+**Attack surface** adalah keseluruhan titik yang dapat menjadi jalur masuk atau dimanfaatkan oleh pihak yang tidak berwenang.
+
+Contohnya:
+
+* port jaringan;
+* service;
+* web application;
+* API;
+* akun pengguna;
+* file;
+* konfigurasi;
+* perangkat lunak yang tidak diperbarui.
+
+Tujuan *security hardening* pada Praktikum 3 salah satunya adalah mengurangi *attack surface*.
+
+---
+
+### 8. Etika Security Testing
+
+Security testing harus dilakukan dengan:
+
+1. Target yang jelas.
+2. Scope yang jelas.
+3. Izin yang jelas.
+4. Metode pengujian yang sesuai.
+5. Dokumentasi aktivitas.
+6. Tidak merusak sistem.
+7. Tidak mengakses data yang tidak diperlukan.
+
+Dalam praktikum ini:
+
+> **Dilarang melakukan scanning atau penetration testing terhadap sistem di luar jaringan laboratorium.**
+
+---
+
+## D. Peralatan dan Software
+
+### 1. Perangkat
+
+* Windows Host.
+* Ubuntu Server VM.
+* Kali Linux VM.
+* Jaringan Host-Only VirtualBox.
+
+### 2. Software
+
+#### Pada Ubuntu Server
+
+* Docker
+* Docker Compose
+* SafeLine
+* DVWA
+* OpenSSH
+* UFW
+* Wazuh
+
+#### Pada Kali Linux
+
+* Nmap
+* Nikto
+* Browser
+* Tools keamanan lain yang tersedia pada Kali Linux
+
+---
+
+## E. Topologi Praktikum
+
+Rangkaian cyber range yang digunakan:
+
+```text
+                     Internet
+                         │
+                VirtualBox NAT Network
+                         │
+      ┌──────────────────┴──────────────────┐
+      │                                     │
+ Ubuntu Server                          Kali
+ 192.168.56.10                          192.168.56.20
+      │                                     │
+      └──────────────────┬──────────────────┘
+                         │
+              VirtualBox Host-Only Network
+                         │
+                  Windows Host
+                  192.168.56.1
+```
+
+Kali Linux berperan sebagai **security testing machine**, sedangkan Ubuntu Server menjadi **target environment**.
+
+---
+
+## F. Persiapan Praktikum
+
+Pastikan:
+
+#### 1. Ubuntu Server aktif
+
+```bash
+ip addr
+```
+
+Catat IP address Ubuntu Server.
+
+Contoh:
+
+```text
+192.168.56.10
+```
+
+#### 2. Kali Linux aktif
+
+```bash
+ip addr
+```
+
+Contoh:
+
+```text
+192.168.56.20
+```
+
+Pastikan kedua mesin dapat berkomunikasi.
+
+Dari Kali:
+
+```bash
+ping 192.168.56.10
+```
+
+#### 3. Periksa Docker
+
+Pada Ubuntu:
+
+```bash
+docker ps
+```
+
+Pastikan container yang diperlukan berjalan.
+
+#### 4. Periksa SafeLine dan DVWA
+
+Akses DVWA melalui browser menggunakan alamat yang telah dikonfigurasi pada Praktikum 4.
+
+Pastikan aplikasi dapat diakses melalui SafeLine.
+
+#### 5. Periksa Wazuh
+
+Pastikan Wazuh masih dapat menerima dan menampilkan event dari sistem yang telah dikonfigurasi pada Praktikum 5–6.
+
+---
+
+## G. Langkah Praktikum
+
+### 1. Menentukan Scope Assessment
+
+Sebelum melakukan scanning, mahasiswa harus menentukan:
+
+| Parameter       | Nilai                |
+| --------------- | -------------------- |
+| Target          | Ubuntu Server        |
+| IP Target       | ................     |
+| Tester          | Kali Linux           |
+| IP Tester       | ................     |
+| Network         | Host-Only            |
+| Scope           | Laboratorium         |
+| Tools           | Nmap, Nikto, Browser |
+| Waktu Pengujian | ................     |
+
+#### Pertanyaan
+
+1. Mengapa scope perlu ditentukan sebelum security testing?
+2. Apa risiko melakukan scanning terhadap sistem yang tidak memiliki izin?
+3. Mengapa security testing di laboratorium sebaiknya menggunakan jaringan terisolasi?
+
+---
+
+### 2. Network Discovery
+
+Gunakan Nmap untuk mengetahui host yang aktif.
+
+```bash
+nmap -sn 192.168.56.0/24
+```
+
+Catat host yang ditemukan.
+
+Contoh:
+
+```text
+192.168.56.10
+```
+
+#### Tugas
+
+Buat tabel:
+
+| IP Address    | Status | Keterangan    |
+| ------------- | ------ | ------------- |
+| 192.168.56.10 | Up     | Ubuntu Server |
+| ............. | .....  | ............. |
+
+---
+
+### 3. Port Scanning
+
+Lakukan pemeriksaan port terhadap Ubuntu Server.
+
+```bash
+nmap 192.168.56.10
+```
+
+Kemudian lakukan deteksi service:
+
+```bash
+nmap -sV 192.168.56.10
+```
+
+Perhatikan:
+
+* port;
+* state;
+* service;
+* version.
+
+#### Catat hasil:
+
+| Port | State | Service | Version  |
+| ---- | ----- | ------- | -------- |
+| 22   | open  | ssh     | ........ |
+| 80   | open  | http    | ........ |
+| .... | ....  | ....    | ....     |
+
+#### Analisis
+
+1. Port apa saja yang terbuka?
+2. Service apa yang berjalan?
+3. Apakah semua port tersebut diperlukan?
+4. Apa risiko jika service yang tidak diperlukan tetap terbuka?
+
+---
+
+### 4. Security Enumeration
+
+Gunakan informasi hasil Nmap untuk melakukan identifikasi lebih lanjut terhadap service.
+
+Contoh:
+
+```bash
+nmap -sV -sC 192.168.56.10
+```
+
+Amati informasi yang diberikan Nmap.
+
+Catat:
+
+* service;
+* versi;
+* informasi tambahan;
+* kemungkinan konfigurasi yang perlu diperiksa.
+
+> Gunakan hanya pada IP Ubuntu Server dalam jaringan praktikum.
+
+---
+
+### 5. Vulnerability Scanning dengan Nikto
+
+Nikto dapat digunakan untuk melakukan pemeriksaan terhadap web server.
+
+Jika DVWA diakses melalui HTTP pada target:
+
+```bash
+nikto -h http://192.168.56.10
+```
+
+Sesuaikan URL dengan konfigurasi SafeLine/DVWA pada laboratorium.
+
+Catat hasil yang diperoleh.
+
+Contoh tabel:
+
+| Temuan   | URL/Port | Risiko | Keterangan |
+| -------- | -------- | ------ | ---------- |
+| ........ | ........ | Low    | ........   |
+| ........ | ........ | Medium | ........   |
+| ........ | ........ | High   | ........   |
+
+#### Pertanyaan
+
+1. Apa fungsi Nikto?
+2. Apakah semua hasil Nikto merupakan vulnerability yang pasti dapat dieksploitasi?
+3. Apa yang dimaksud dengan *false positive*?
+4. Mengapa hasil scanner perlu diverifikasi?
+
+---
+
+### 6. Security Testing pada DVWA
+
+DVWA digunakan sebagai aplikasi target yang memang dirancang untuk pembelajaran keamanan web.
+
+Lakukan pengujian terhadap vulnerability yang telah dipelajari pada Praktikum 4.
+
+Contoh:
+
+* SQL Injection
+* Cross-Site Scripting (XSS)
+* Directory Traversal
+
+Gunakan level keamanan DVWA sesuai instruksi dosen.
+
+#### Dokumentasi
+
+Untuk setiap pengujian, catat:
+
+| Parameter        | Keterangan |
+| ---------------- | ---------- |
+| Vulnerability    | ........   |
+| Target           | ........   |
+| Metode pengujian | ........   |
+| Hasil            | ........   |
+| Bukti            | Screenshot |
+| Risiko           | ........   |
+| Mitigasi         | ........   |
+
+#### Pertanyaan
+
+1. Mengapa DVWA cocok digunakan sebagai target pembelajaran?
+2. Apa perbedaan vulnerability scanning dengan pengujian manual?
+3. Mengapa aplikasi yang memiliki vulnerability harus segera diperbaiki jika digunakan pada lingkungan produksi?
+
+---
+
+### 7. Pengujian SafeLine WAF
+
+Lakukan pengujian terhadap DVWA melalui SafeLine.
+
+Akses aplikasi menggunakan URL yang telah dikonfigurasi pada Praktikum 4.
+
+Lakukan pengujian normal terlebih dahulu.
+
+Kemudian lakukan pengujian terhadap beberapa pola input yang telah dipelajari, seperti:
+
+* SQL Injection;
+* XSS;
+* Directory Traversal.
+
+Amati apakah SafeLine:
+
+* mengizinkan request;
+* memblokir request;
+* menghasilkan event;
+* mencatat alamat IP;
+* mencatat waktu;
+* mencatat URL atau request yang dianggap berbahaya.
+
+### Catat hasil:
+
+| Pengujian           | Hasil Request | WAF Action | Event    |
+| ------------------- | ------------- | ---------- | -------- |
+| Normal Request      | Allowed       | Allow      | ........ |
+| SQL Injection       | ........      | ........   | ........ |
+| XSS                 | ........      | ........   | ........ |
+| Directory Traversal | ........      | ........   | ........ |
+
+---
+
+### 8. Analisis Hasil Assessment
+
+Gabungkan hasil:
+
+1. Nmap;
+2. Nikto;
+3. DVWA;
+4. SafeLine;
+5. Wazuh.
+
+Buat daftar temuan keamanan.
+
+Contoh:
+
+| No | Temuan                            | Sumber   | Severity | Bukti      |
+| -- | --------------------------------- | -------- | -------- | ---------- |
+| 1  | Port SSH terbuka                  | Nmap     | Medium   | Screenshot |
+| 2  | Web server information disclosure | Nikto    | Low      | Screenshot |
+| 3  | SQL Injection                     | DVWA     | High     | Screenshot |
+| 4  | XSS                               | DVWA     | High     | Screenshot |
+| 5  | Malicious request blocked         | SafeLine | Medium   | Screenshot |
+
+---
+
+### 9. Risk Assessment
+
+Gunakan pendekatan sederhana:
+
+**Risk = Likelihood × Impact**
+
+#### Likelihood
+
+| Nilai | Keterangan |
+| ----- | ---------- |
+| 1     | Unlikely   |
+| 2     | Possible   |
+| 3     | Likely     |
+
+#### Impact
+
+| Nilai | Keterangan |
+| ----- | ---------- |
+| 1     | Low        |
+| 2     | Medium     |
+| 3     | High       |
+
+#### Risk Score
+
+| Score | Level  |
+| ----- | ------ |
+| 1–2   | Low    |
+| 3–4   | Medium |
+| 6–9   | High   |
+
+Contoh:
+
+```text
+SQL Injection
+Likelihood = 3
+Impact = 3
+
+Risk = 3 × 3 = 9
+Risk Level = High
+```
+
+Kemudian lakukan penilaian terhadap minimal **5 temuan**.
+
+---
+
+### 10. Menentukan Prioritas Mitigasi
+
+Berdasarkan hasil *risk assessment*, tentukan prioritas perbaikan.
+
+Gunakan format:
+
+| Prioritas | Temuan   | Risk   | Rekomendasi |
+| --------- | -------- | ------ | ----------- |
+| 1         | ........ | High   | ........    |
+| 2         | ........ | High   | ........    |
+| 3         | ........ | Medium | ........    |
+| 4         | ........ | Medium | ........    |
+| 5         | ........ | Low    | ........    |
+
+Pertimbangkan:
+
+* tingkat risiko;
+* kemungkinan eksploitasi;
+* dampak;
+* kemudahan mitigasi;
+* kebutuhan bisnis.
+
+---
+
+### 11. Verifikasi Mitigasi
+
+Pilih minimal **satu vulnerability** untuk dilakukan perbaikan. Contoh tindakan:
+
+* menutup port yang tidak diperlukan;
+* mengubah konfigurasi service;
+* memperbarui software;
+* memperbaiki konfigurasi web;
+* mengaktifkan mekanisme keamanan;
+* memperbaiki input validation.
+
+Setelah mitigasi, lakukan pengujian ulang.
+
+Contoh:
+
+```bash
+nmap 192.168.56.10
+```
+
+Bandingkan:
+
+#### Sebelum mitigasi
+
+```text
+Port 8080 → open
+```
+
+#### Setelah mitigasi
+
+```text
+Port 8080 → closed
+```
+
+#### Pertanyaan
+
+1. Apakah vulnerability berhasil dikurangi?
+2. Apakah ada dampak terhadap service?
+3. Apakah mitigasi menimbulkan masalah baru?
+4. Mengapa security testing perlu dilakukan kembali setelah mitigasi?
+
+---
+
+## H. Studi Kasus
+
+### Kasus: Security Assessment Web Server
+
+Sebuah organisasi memiliki web server internal dengan konfigurasi berikut:
+
+```text
+Ubuntu Server
+IP: 192.168.56.10
+
+Service:
+22/tcp    SSH
+80/tcp    HTTP
+3306/tcp  MySQL
+8080/tcp  HTTP Alternate
+```
+
+Hasil assessment menunjukkan:
+
+#### Temuan 1
+
+Port 22 terbuka dan SSH dapat diakses dari jaringan laboratorium.
+
+#### Temuan 2
+
+Port 3306 terbuka dan database dapat diakses melalui jaringan.
+
+#### Temuan 3
+
+DVWA memiliki vulnerability SQL Injection.
+
+#### Temuan 4
+
+SafeLine berhasil mendeteksi dan memblokir sebagian request berbahaya.
+
+#### Temuan 5
+
+Wazuh mencatat beberapa event keamanan yang berkaitan dengan aktivitas pengujian.
+
+---
+
+### Pertanyaan Studi Kasus
+
+1. Temuan mana yang memiliki risiko paling tinggi?
+2. Mengapa port database yang terbuka dapat menjadi masalah keamanan?
+3. Apakah port yang terbuka otomatis berarti vulnerability?
+4. Bagaimana hubungan antara vulnerability dan risk?
+5. Apa mitigasi yang dapat dilakukan untuk setiap temuan?
+6. Bagaimana SafeLine membantu mengurangi risiko serangan terhadap web application?
+7. Bagaimana Wazuh membantu proses monitoring setelah security testing?
+8. Mengapa hasil security assessment perlu didokumentasikan?
+9. Bagaimana cara melakukan verifikasi setelah mitigasi?
+
+---
+
+## I. Tugas Praktikum
+
+Mahasiswa melakukan **Mini Security Assessment** terhadap cyber range yang telah dibangun selama Praktikum 1–6.
+
+### 1. Network Assessment
+
+Lakukan:
+
+* host discovery;
+* port scanning;
+* service detection.
+
+Gunakan Nmap.
+
+---
+
+### 2. Web Vulnerability Assessment
+
+Lakukan:
+
+* web server scanning;
+* vulnerability identification;
+* pengujian terhadap DVWA.
+
+Gunakan Nikto dan tools yang telah dipelajari.
+
+---
+
+### 3. WAF Assessment
+
+Lakukan pengujian terhadap DVWA melalui SafeLine.
+
+Identifikasi:
+
+* request yang diizinkan;
+* request yang diblokir;
+* security event;
+* informasi yang dicatat WAF.
+
+---
+
+### 4. Risk Assessment
+
+Identifikasi minimal **5 temuan keamanan**.
+
+Untuk setiap temuan tentukan:
+
+* vulnerability;
+* sumber temuan;
+* likelihood;
+* impact;
+* risk score;
+* risk level;
+* rekomendasi mitigasi.
+
+---
+
+### 5. Verification
+
+Pilih minimal **1 temuan** dan lakukan:
+
+1. Identifikasi vulnerability.
+2. Dokumentasikan kondisi awal.
+3. Terapkan mitigasi.
+4. Lakukan pengujian ulang.
+5. Dokumentasikan kondisi setelah mitigasi.
+6. Bandingkan hasil sebelum dan sesudah mitigasi.
+
+---
+
+## J. Laporan Praktikum
+
+Laporan disusun dengan format:
+
+1. Tujuan Praktikum
+2. Dasar Teori
+3. Scope dan Rules of Engagement
+
+   Tuliskan:
+
+   * target;
+   * IP address;
+   * jaringan;
+   * tools;
+   * waktu pengujian;
+   * batasan pengujian.
+
+4. Hasil Network Assessment
+
+   Lampirkan hasil:
+
+   * host discovery;
+   * port scanning;
+   * service detection.
+
+6. Hasil Vulnerability Assessment (Lampirkan hasil Nikto dan analisisnya).
+7. Hasil Security Testing (Dokumentasikan pengujian terhadap DVWA).
+8. Hasil Pengujian SafeLine
+
+   Dokumentasikan:
+
+   * request;
+   * action WAF;
+   * event;
+   * screenshot.
+
+9. Risk Assessment
+
+   Buat tabel:
+
+   | No | Vulnerability/Temuan | Likelihood | Impact | Risk Score | Level |
+   | -- | -------------------- | ---------: | -----: | ---------: | ----- |
+   | 1  | ........             |        ... |    ... |        ... | ...   |
+   | 2  | ........             |        ... |    ... |        ... | ...   |
+   | 3  | ........             |        ... |    ... |        ... | ...   |
+   | 4  | ........             |        ... |    ... |        ... | ...   |
+   | 5  | ........             |        ... |    ... |        ... | ...   |
+
+10. Rekomendasi Mitigasi -> Berikan rekomendasi untuk setiap temuan.
+11. Verification -> Tunjukkan perbandingan sebelum dan sesudah mitigasi.
+12. Kesimpulan
+
+   Jelaskan:
+
+   * vulnerability utama yang ditemukan;
+   * risiko terbesar;
+   * mitigasi yang dilakukan;
+   * hasil pengujian ulang;
+   * pembelajaran yang diperoleh.
+
+---
+
+## K. Rubrik Penilaian
+
+| Komponen                               |    Bobot |
+| -------------------------------------- | -------: |
+| Scope dan prosedur assessment          |      10% |
+| Network scanning menggunakan Nmap      |      20% |
+| Vulnerability assessment               |      20% |
+| Security testing DVWA                  |      15% |
+| Analisis SafeLine/Wazuh                |      10% |
+| Risk assessment dan prioritas mitigasi |      15% |
+| Laporan dan dokumentasi                |      10% |
+| **Total**                              | **100%** |
+
+---
+
+## L. Penutup
+
+Pada praktikum ini mahasiswa melakukan *security assessment* terhadap cyber range yang telah dibangun pada praktikum sebelumnya.
+
+Mahasiswa tidak hanya dituntut untuk menjalankan tools seperti Nmap atau Nikto, tetapi juga harus mampu:
+
+**menemukan → memverifikasi → menganalisis → menilai risiko → memberikan mitigasi → melakukan pengujian ulang.**
+
+Kemampuan tersebut merupakan bagian penting dari proses keamanan siber karena keamanan sistem tidak cukup hanya dengan memasang firewall, WAF, atau SIEM. Sistem juga perlu **dinilai secara berkala untuk mengetahui apakah masih terdapat kelemahan yang dapat dimanfaatkan**.
+
+> **Catatan Etika:** Seluruh aktivitas scanning dan security testing pada praktikum ini hanya boleh dilakukan terhadap sistem yang berada dalam scope laboratorium dan telah mendapatkan izin. Jangan melakukan scanning terhadap alamat IP, website, server, atau jaringan publik tanpa izin.
