@@ -1,0 +1,732 @@
+---
+title: "2. Perancangan Arsitektur Server Environment"
+---
+
+# Perancangan Arsitektur Server Environment
+
+## Capaian Pembelajaran
+
+Setelah mengikuti pembelajaran, mahasiswa mampu:
+
+1. Menjelaskan konsep *server environment* dan arsitektur server.
+2. Menjelaskan komponen-komponen dalam *server environment*.
+3. Membedakan berbagai model arsitektur server.
+4. Menentukan penempatan fungsi/layanan pada server berdasarkan kebutuhan.
+5. Menjelaskan konsep *availability*, *scalability*, *reliability*, dan *performance* dalam desain server.
+6. Menyusun rancangan arsitektur server berdasarkan hasil analisis kebutuhan pada Pertemuan 1.
+7. Memberikan justifikasi terhadap rancangan arsitektur yang dipilih.
+
+---
+
+## A. Apa Itu Server?
+
+**Server** adalah sistem komputer yang menyediakan sumber daya atau layanan kepada komputer/perangkat lain yang bertindak sebagai client. Contoh layanan:
+
+* Web Server → menyediakan layanan web
+* Database Server → menyediakan layanan database
+* File Server → menyediakan penyimpanan dan berbagi file
+* DNS Server → menyediakan resolusi nama
+* DHCP Server → memberikan konfigurasi IP
+* Mail Server → menyediakan layanan email
+
+Konsep sederhana:
+
+```text
+             CLIENT
+                │
+                │ Request
+                ▼
+          ┌───────────┐
+          │  SERVER   │
+          └─────┬─────┘
+                │
+                │ Response
+                ▼
+             CLIENT
+```
+
+Namun, dalam lingkungan nyata, satu server dapat menyediakan beberapa layanan atau beberapa server dapat bekerja bersama untuk menyediakan satu layanan.
+
+---
+
+## B. Apa Itu *Server Environment*?
+
+*Server environment* adalah keseluruhan lingkungan teknologi yang digunakan untuk menjalankan layanan server. Komponennya tidak hanya server secara fisik. Secara konseptual dapat terdiri atas:
+
+```text
+Server Environment
+│
+├── Hardware
+│   ├── CPU
+│   ├── RAM
+│   ├── Storage
+│   └── Network Interface
+│
+├── Operating System
+│
+├── Network
+│   ├── Router
+│   ├── Switch
+│   └── Firewall
+│
+├── Server Services
+│   ├── Web
+│   ├── Database
+│   ├── DNS
+│   └── File
+│
+├── Security
+│
+├── Monitoring
+│
+└── Backup / Recovery
+```
+
+Karena itu, ketika merancang *server environment*, administrator harus melihat sistem sebagai **satu kesatuan**, bukan hanya menentukan spesifikasi komputer server.
+
+---
+
+## C. Apa Itu Arsitektur Server?
+
+**Arsitektur server** adalah rancangan mengenai bagaimana komponen server, layanan, jaringan, penyimpanan, dan pengguna disusun serta saling berinteraksi untuk memenuhi kebutuhan sistem.
+
+Dengan kata lain:
+
+> **Arsitektur server menjawab pertanyaan: "Bagaimana sistem server akan dibangun agar kebutuhan pengguna dapat dipenuhi?"**
+
+Arsitektur bukan sekadar gambar. Rancangan arsitektur harus menjelaskan:
+
+* komponen yang digunakan,
+* fungsi setiap komponen,
+* hubungan antar-komponen,
+* aliran data,
+* kebutuhan jaringan,
+* kebutuhan keamanan,
+* dan alasan pemilihan desain.
+
+---
+
+## D. Faktor yang Dipertimbangkan dalam Perancangan
+
+Administrator Sistem perlu mempertimbangkan beberapa faktor utama.
+
+### 1. Performance
+
+Seberapa cepat sistem harus melayani pengguna? Contoh faktor:
+
+* CPU,
+* RAM,
+* storage,
+* network bandwidth,
+* jumlah concurrent users.
+
+---
+
+### 2. Availability
+
+Seberapa lama sistem harus tersedia? Misalnya sistem akademik universitas mungkin membutuhkan layanan yang tersedia hampir sepanjang waktu.
+
+Konsep sederhana:
+
+> **Availability = seberapa besar kemungkinan layanan dapat digunakan ketika dibutuhkan.**
+
+Salah satu cara mengukurnya adalah:
+
+```text
+Availability =
+Uptime / Total waktu × 100%
+```
+
+Contoh:
+
+Jika server tersedia selama 999 jam dari 1.000 jam:
+
+```text
+Availability = 999 / 1000 × 100%
+             = 99,9%
+```
+
+---
+
+### 3. Reliability
+
+**Reliability** berkaitan dengan kemampuan sistem untuk beroperasi secara konsisten tanpa mengalami kegagalan. Contohnya:
+
+* hardware berkualitas,
+* storage yang dapat diandalkan,
+* konfigurasi yang benar,
+* backup,
+* redundansi.
+
+---
+
+### 4. Scalability
+
+**Scalability** adalah kemampuan sistem untuk menangani pertumbuhan beban. Misalnya:
+
+```text
+Saat ini:
+1.000 pengguna
+
+↓ pertumbuhan
+
+Masa depan:
+5.000 pengguna
+
+↓ pertumbuhan
+
+10.000 pengguna
+```
+
+Arsitektur yang baik harus mempertimbangkan kemungkinan pertumbuhan tersebut.
+
+---
+
+### 5. Security
+
+Keamanan harus menjadi bagian dari desain sejak awal. Misalnya:
+
+```text
+Internet
+   │
+   ▼
+Firewall
+   │
+   ▼
+Web Server
+   │
+   ▼
+Application Server
+   │
+   ▼
+Database Server
+```
+
+Database tidak harus langsung dapat diakses dari internet.
+
+---
+
+### 6. Maintainability
+
+Sistem harus mudah dikelola dan dipelihara. Contohnya:
+
+* konfigurasi terdokumentasi,
+* komponen mudah diganti,
+* monitoring tersedia,
+* backup tersedia,
+* administrator dapat melakukan troubleshooting.
+
+---
+
+### 7. Cost
+
+Rancangan harus mempertimbangkan sumber daya yang tersedia. Administrator tidak selalu memilih hardware paling mahal. Prinsipnya:
+
+> **Teknologi yang dipilih harus sesuai dengan kebutuhan.**
+
+---
+
+## E. Model Arsitektur Server
+
+### 1. Single Server
+
+Seluruh layanan dijalankan pada satu server.
+
+```text
+             CLIENT
+                │
+                ▼
+       ┌─────────────────┐
+       │     SERVER      │
+       │                 │
+       │ Web             │
+       │ Application     │
+       │ Database        │
+       │ File            │
+       └─────────────────┘
+```
+
+#### Kelebihan
+
+* sederhana,
+* murah,
+* mudah diimplementasikan,
+* mudah dikelola untuk sistem kecil.
+
+#### Kekurangan
+
+Jika server mengalami kerusakan:
+
+> **semua layanan dapat terganggu.**
+
+Server juga menjadi **single point of failure**.
+
+---
+
+## F. Two-Tier Architecture
+
+Pada model ini fungsi aplikasi dan database dipisahkan.
+
+```text
+     Clients
+        │
+        ▼
+┌───────────────┐
+│ Application   │
+│ Server        │
+└───────┬───────┘
+        │
+        ▼
+┌───────────────┐
+│ Database      │
+│ Server        │
+└───────────────┘
+```
+
+Keuntungan:
+
+* beban dapat dipisahkan,
+* database tidak harus berada pada server aplikasi,
+* pengelolaan lebih terstruktur.
+
+---
+
+## G. Three-Tier Architecture
+
+Model ini memisahkan sistem menjadi:
+
+1. Presentation layer
+2. Application layer
+3. Data layer
+
+```text
+             CLIENT
+                │
+                ▼
+        ┌────────────────┐
+        │  Web / Frontend│
+        └───────┬────────┘
+                │
+                ▼
+        ┌────────────────┐
+        │ Application    │
+        │ Server         │
+        └───────┬────────┘
+                │
+                ▼
+        ┌────────────────┐
+        │ Database       │
+        │ Server         │
+        └────────────────┘
+```
+
+Model ini banyak digunakan untuk aplikasi web yang membutuhkan pemisahan fungsi.
+
+---
+
+## H. Multi-Server Architecture
+
+Untuk sistem yang lebih besar, layanan dapat ditempatkan pada beberapa server. Contoh:
+
+```text
+                     INTERNET
+                         │
+                         ▼
+                    FIREWALL
+                         │
+                         ▼
+                  ┌────────────┐
+                  │ Load       │
+                  │ Balancer   │
+                  └─────┬──────┘
+                        │
+                ┌───────┴───────┐
+                ▼               ▼
+          Web Server 1     Web Server 2
+                │               │
+                └───────┬───────┘
+                        ▼
+                Application Server
+                        │
+                        ▼
+                  Database Server
+                        │
+                        ▼
+                     Storage
+```
+
+Keuntungannya:
+
+* beban dapat dibagi,
+* lebih mudah dikembangkan,
+* dapat meningkatkan availability,
+* fungsi sistem lebih terisolasi.
+
+Namun:
+
+* lebih kompleks,
+* membutuhkan biaya lebih besar,
+* membutuhkan kemampuan administrasi yang lebih tinggi.
+
+---
+
+## I. Vertical Scaling vs Horizontal Scaling
+
+### 1. Vertical Scaling
+
+Meningkatkan kemampuan satu server. Contoh:
+
+```text
+Server lama
+4 CPU
+8 GB RAM
+
+    ↓
+
+Server baru
+16 CPU
+64 GB RAM
+```
+
+Disebut juga:
+
+> **Scale Up**
+
+---
+
+### 2. Horizontal Scaling
+
+Menambahkan server.
+
+```text
+Server 1
+Server 2
+Server 3
+Server 4
+```
+
+Disebut:
+
+> **Scale Out**
+
+Perbandingan sederhana:
+
+| Aspek          | Vertical Scaling  | Horizontal Scaling |
+| -------------- | ----------------- | ------------------ |
+| Cara           | Upgrade server    | Tambah server      |
+| Kompleksitas   | Relatif sederhana | Lebih kompleks     |
+| Batas hardware | Ada               | Lebih fleksibel    |
+| Redundansi     | Terbatas          | Lebih memungkinkan |
+| Pengelolaan    | Lebih sederhana   | Lebih kompleks     |
+
+---
+
+## J. Menentukan Penempatan Layanan
+
+Salah satu keputusan penting Administrator Sistem adalah:
+
+> **Layanan apa ditempatkan pada server mana?**
+
+Misalnya sebuah aplikasi membutuhkan:
+
+* Web Server
+* Application Server
+* Database Server
+* File Server
+
+Ada dua kemungkinan.
+
+### Alternatif 1 — Semua dalam satu server
+
+```text
+SERVER
+├── Web
+├── Application
+├── Database
+└── File
+```
+
+### Alternatif 2 — Dipisahkan
+
+```text
+Server 1 → Web
+Server 2 → Application
+Server 3 → Database
+Server 4 → File
+```
+
+Tidak ada satu desain yang selalu benar. Keputusan harus berdasarkan:
+
+* kebutuhan,
+* jumlah pengguna,
+* performa,
+* keamanan,
+* availability,
+* scalability,
+* kemampuan pengelolaan,
+* dan biaya.
+
+---
+
+## K. *Single Point of Failure*
+
+Salah satu konsep penting dalam perancangan server adalah **Single Point of Failure (SPOF)**. SPOF adalah komponen yang apabila mengalami kegagalan dapat menyebabkan keseluruhan layanan terganggu.
+
+Contoh:
+
+```text
+Internet
+   │
+   ▼
+ Router
+   │
+   ▼
+ Server
+   │
+   ▼
+Database
+```
+
+Jika hanya ada satu server dan server tersebut rusak:
+
+```text
+Server Rusak
+     ↓
+Web tidak tersedia
+     ↓
+Aplikasi tidak tersedia
+     ↓
+Pengguna tidak dapat mengakses sistem
+```
+
+Administrator harus mengidentifikasi SPOF dan, jika kebutuhan sistem mengharuskannya, mempertimbangkan **redundansi**.
+
+---
+
+## L. Redundansi
+
+**Redundansi** berarti menyediakan komponen alternatif sehingga kegagalan satu komponen tidak langsung menghentikan layanan. Contoh:
+
+```text
+             Load Balancer
+                  │
+          ┌───────┴───────┐
+          ▼               ▼
+       Server A        Server B
+          │               │
+          └───────┬───────┘
+                  ▼
+              Database
+```
+
+Jika Server A mengalami masalah, Server B masih dapat melayani permintaan, tergantung desain sistem.
+
+---
+
+## M. Network Segmentation
+
+Arsitektur server juga perlu mempertimbangkan pemisahan jaringan.
+
+DMZ (Demilitarized Zone) network adalah sebuah sub-jaringan terisolasi yang berada di antara jaringan internal yang aman (LAN) dan jaringan eksternal yang tidak tepercaya (seperti internet).
+
+Contoh sederhana:
+
+```text
+                    INTERNET
+                        │
+                     Firewall
+                        │
+             ┌──────────┴──────────┐
+             │                     │
+             ▼                     ▼
+           DMZ                 Internal
+             │                     │
+          Web Server          Database
+                                    │
+                              File Server
+```
+
+Tujuannya antara lain:
+
+* membatasi akses,
+* mengurangi risiko,
+* mengontrol komunikasi antar-server,
+* dan meningkatkan keamanan.
+
+Konsep ini nantinya akan diperdalam pada **Pertemuan 6 tentang keamanan sistem server**.
+
+---
+
+## N. Contoh Perancangan
+
+Kita gunakan kasus dari Pertemuan 1:
+
+> Universitas memiliki sistem akademik dengan 10.000 mahasiswa, 500 dosen, dan 100 tenaga kependidikan.
+
+Kebutuhan:
+
+* web application,
+* database,
+* authentication,
+* availability tinggi,
+* keamanan data.
+
+### Rancangan awal
+
+```text
+                       INTERNET
+                           │
+                           ▼
+                      FIREWALL
+                           │
+                           ▼
+                    LOAD BALANCER
+                       │       │
+                       ▼       ▼
+                    WEB 1    WEB 2
+                       │       │
+                       └───┬───┘
+                           ▼
+                    APPLICATION
+                       SERVER
+                           │
+                           ▼
+                     DATABASE
+                       SERVER
+                           │
+                           ▼
+                       BACKUP
+                       STORAGE
+```
+
+### Mengapa rancangan ini?
+
+**Web Server dipisahkan**
+→ mengurangi beban dan memungkinkan scaling.
+
+**Web Server lebih dari satu**
+→ mengurangi ketergantungan pada satu server.
+
+**Database dipisahkan**
+→ keamanan dan pengelolaan database lebih terkontrol.
+
+**Backup Storage disediakan**
+→ mendukung pemulihan data.
+
+Namun, rancangan tersebut **belum otomatis menjadi rancangan terbaik**. Administrator tetap harus melakukan analisis kapasitas, biaya, keamanan, dan kebutuhan aktual.
+
+---
+
+## O. Dari Kebutuhan ke Arsitektur
+
+Administrator Sistem perlu memahami hubungan berikut:
+
+```text
+KEBUTUHAN PENGGUNA
+        ↓
+ANALISIS KEBUTUHAN
+        ↓
+KEBUTUHAN LAYANAN
+        ↓
+KEBUTUHAN INFRASTRUKTUR
+        ↓
+ARSITEKTUR SERVER
+        ↓
+SPESIFIKASI KOMPONEN
+        ↓
+IMPLEMENTASI
+```
+
+Contoh:
+
+**Kebutuhan:**
+
+> 5.000 pengguna dapat mengakses website secara bersamaan.
+
+↓
+
+**Implikasi:**
+
+> Dibutuhkan kapasitas pemrosesan dan jaringan yang memadai.
+
+↓
+
+**Desain:**
+
+> Web server dapat menggunakan beberapa instance/server.
+
+↓
+
+**Arsitektur:**
+
+> Load balancer → beberapa web server → application server → database.
+
+Jadi:
+
+> **Arsitektur adalah konsekuensi dari kebutuhan, bukan sekadar gambar infrastruktur.**
+
+---
+
+## P. Prinsip-Prinsip Dasar Perancangan
+
+1. **Requirement-driven** → Desain harus berdasarkan kebutuhan.
+
+2. **Simplicity** → Gunakan desain sesederhana mungkin selama masih memenuhi kebutuhan.
+
+3. **No unnecessary complexity** → Jangan menambahkan teknologi hanya karena teknologi tersebut populer.
+
+4. **Security by design** → Keamanan dipertimbangkan sejak tahap desain.
+
+5. **Scalability** → Pertimbangkan pertumbuhan sistem.
+
+6. **Reliability** → Pertimbangkan kemungkinan kegagalan.
+
+7. **Maintainability** → Sistem harus dapat dikelola dan dipelihara.
+
+8. **Documentation** → Semua keputusan desain harus terdokumentasi.
+
+---
+
+## Q. Latihan Analisis
+
+Gunakan kembali **studi kasus pada Pertemuan 1**. Kemudian jawab pertanyaan berikut:
+
+### 1. Kebutuhan
+
+1. Berapa jumlah pengguna?
+2. Layanan apa yang diperlukan?
+3. Apakah sistem harus tersedia 24/7?
+4. Apakah jumlah pengguna diperkirakan bertambah?
+
+### 2. Arsitektur
+
+5. Apakah menggunakan single-server atau multi-server?
+6. Layanan apa yang ditempatkan pada masing-masing server?
+7. Apakah membutuhkan load balancer?
+8. Apakah database perlu dipisahkan?
+9. Bagaimana penyimpanan data dirancang?
+10. Di mana backup ditempatkan?
+
+### 3. Evaluasi
+
+11. Apa *single point of failure* pada rancangan?
+12. Bagaimana sistem dikembangkan jika jumlah pengguna meningkat 5×?
+13. Apa risiko keamanan dari rancangan tersebut?
+14. Apa konsekuensi jika salah satu server mati?
+15. Mengapa memilih arsitektur tersebut?
+
+---
+
+# T. Tugas yang Dihasilkan dari Pertemuan 2
+
+Hasil analisis Pertemuan 1 direvisi dan dikembangkan menjadi rancangan arsitektur server. Minimal berisi:
+
+1. Rekap kebutuhan pengguna
+2. Daftar layanan yang dibutuhkan
+3. Model arsitektur yang dipilih
+4. Diagram arsitektur server dan jaringan
+5. Penempatan layanan pada server
+6. Identifikasi SPOF
+7. Strategi scalability
+8. Strategi availability
+9. Justifikasi setiap keputusan desain

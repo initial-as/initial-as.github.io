@@ -1,50 +1,569 @@
 /**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
+ * Catatan Aulia Custom CSS
+ * Inspired by contemporary JavaScript ecosystem websites (Next.js, Vite, Tailwind, Linear).
+ * Built upon Docusaurus Infima CSS design tokens.
  */
 
-/* You can override the default Infima variables here. */
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap');
+/* -------------------------------------------------------------------------- */
+/* 1. Google Fonts Import                                                     */
+/* -------------------------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap');
 
-
+/* -------------------------------------------------------------------------- */
+/* 2. Global Base & Root Tokens (Light Theme)                                 */
+/* -------------------------------------------------------------------------- */
 :root {
-  --ifm-font-family-base: 'Google Sans', 'Lato', 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --ifm-font-family-headings: 'Montserrat', 'Lato', 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  /* --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e; */
-  --ifm-color-primary: #514bc0;
-  --ifm-color-primary-dark: #443eb2;
-  --ifm-color-primary-darker: #403ba8;
-  --ifm-color-primary-darkest: #35308a;
-  --ifm-color-primary-light: #645fc7;
-  --ifm-color-primary-lighter: #6e69ca;
-  --ifm-color-primary-lightest: #8a86d5;
-  --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  /* Typography */
+  --ifm-font-family-base: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --ifm-font-family-headings: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --ifm-font-family-monospace: 'Fira Code', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  --ifm-heading-font-weight: 700;
+  --ifm-heading-letter-spacing: -0.025em;
+  --ifm-line-height-base: 1.7;
+  --ifm-code-font-size: 88%;
+
+  /* Color Palette - Vibrant Tech Indigo (Light Mode) */
+  --ifm-color-primary: #4f46e5;
+  --ifm-color-primary-dark: #4338ca;
+  --ifm-color-primary-darker: #3730a3;
+  --ifm-color-primary-darkest: #312e81;
+  --ifm-color-primary-light: #6366f1;
+  --ifm-color-primary-lighter: #818cf8;
+  --ifm-color-primary-lightest: #a5b4fc;
+  --ifm-color-primary-contrast-background: #eef2ff;
+  --ifm-color-primary-contrast-foreground: #3730a3;
+
+  /* Canvas & Surfaces */
+  --ifm-background-color: #f8fafc;
+  --ifm-background-surface-color: #ffffff;
+  --ifm-card-background-color: #ffffff;
+  --ifm-font-color-base: #334155;
+  --ifm-heading-color: #0f172a;
+  --ifm-color-content-secondary: #64748b;
+  --ifm-link-color: #4f46e5;
+  --ifm-link-hover-color: #3730a3;
+
+  /* Dividers & Borders */
+  --ifm-hr-border-color: #e2e8f0;
+  --ifm-toc-border-color: #e2e8f0;
+
+  /* Radii */
+  --ifm-global-radius: 12px;
+  --ifm-card-border-radius: 16px;
+  --ifm-button-border-radius: 10px;
+  --ifm-code-border-radius: 8px;
+  --ifm-alert-border-radius: 12px;
+  --ifm-pagination-nav-border-radius: 14px;
+
+  /* Custom Design Tokens */
+  --site-glass-bg: rgba(255, 255, 255, 0.82);
+  --site-glass-border: rgba(226, 232, 240, 0.85);
+  --site-card-hover-border: rgba(99, 102, 241, 0.4);
+  --site-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --site-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.07);
+  --site-shadow-lg: 0 12px 30px -4px rgba(0, 0, 0, 0.08), 0 4px 8px -4px rgba(0, 0, 0, 0.04);
+  --site-shadow-glow: 0 0 25px rgba(99, 102, 241, 0.16);
+
+  /* Docusaurus Syntax Highlighting */
+  --docusaurus-highlighted-code-line-bg: rgba(79, 70, 229, 0.08);
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
+/* -------------------------------------------------------------------------- */
+/* 3. Dark Theme Tokens                                                       */
+/* -------------------------------------------------------------------------- */
 [data-theme='dark'] {
-  /* --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf; */
-  --ifm-color-primary: #d6d6e3;
-  --ifm-color-primary-dark: #bcbcd1;
-  --ifm-color-primary-darker: #afafc8;
-  --ifm-color-primary-darkest: #8787ad;
-  --ifm-color-primary-light: #f0f0f5;
-  --ifm-color-primary-lighter: #fdfdfe;
-  --ifm-color-primary-lightest: #ffffff;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  /* Color Palette - Electric Violet / Luminous Indigo (Dark Mode) */
+  --ifm-color-primary: #818cf8;
+  --ifm-color-primary-dark: #6366f1;
+  --ifm-color-primary-darker: #4f46e5;
+  --ifm-color-primary-darkest: #4338ca;
+  --ifm-color-primary-light: #a5b4fc;
+  --ifm-color-primary-lighter: #c7d2fe;
+  --ifm-color-primary-lightest: #e0e7ff;
+  --ifm-color-primary-contrast-background: rgba(99, 102, 241, 0.16);
+  --ifm-color-primary-contrast-foreground: #e0e7ff;
+
+  /* Deep Cosmic Obsidian Canvas & Surfaces */
+  --ifm-background-color: #090d16;
+  --ifm-background-surface-color: #0f172a;
+  --ifm-card-background-color: rgba(15, 23, 42, 0.75);
+  --ifm-font-color-base: #cbd5e1;
+  --ifm-heading-color: #f8fafc;
+  --ifm-color-content-secondary: #94a3b8;
+  --ifm-link-color: #a5b4fc;
+  --ifm-link-hover-color: #c7d2fe;
+
+  /* Dividers & Borders */
+  --ifm-hr-border-color: rgba(255, 255, 255, 0.08);
+  --ifm-toc-border-color: rgba(255, 255, 255, 0.08);
+  --ifm-footer-background-color: #05070d;
+
+  /* Custom Design Tokens (Dark) */
+  --site-glass-bg: rgba(9, 13, 22, 0.82);
+  --site-glass-border: rgba(255, 255, 255, 0.08);
+  --site-card-hover-border: rgba(129, 140, 248, 0.45);
+  --site-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+  --site-shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.4);
+  --site-shadow-lg: 0 12px 30px 0 rgba(0, 0, 0, 0.55);
+  --site-shadow-glow: 0 0 35px rgba(129, 140, 248, 0.22);
+
+  /* Docusaurus Syntax Highlighting */
+  --docusaurus-highlighted-code-line-bg: rgba(129, 140, 248, 0.16);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 4. Global Smooth Enhancements                                              */
+/* -------------------------------------------------------------------------- */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+::selection {
+  background-color: rgba(99, 102, 241, 0.3);
+  color: inherit;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 5. Modern Glassmorphism Navbar                                             */
+/* -------------------------------------------------------------------------- */
+.navbar {
+  background-color: var(--site-glass-bg) !important;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid var(--site-glass-border);
+  box-shadow: none !important;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  padding: 0.65rem 1.5rem;
+}
+
+.navbar__brand {
+  margin-right: 1.5rem;
+}
+
+.navbar__title {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ifm-heading-color);
+}
+
+.navbar__item {
+  font-weight: 500;
+  font-size: 0.925rem;
+  border-radius: 8px;
+  padding: 0.4rem 0.8rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.navbar__link:hover {
+  color: var(--ifm-color-primary) !important;
+  background-color: var(--ifm-color-primary-contrast-background);
+}
+
+.navbar__link--active {
+  color: var(--ifm-color-primary) !important;
+  font-weight: 600;
+  background-color: var(--ifm-color-primary-contrast-background);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 6. Modern Hero Section (Contemporary Tech Aesthetic)                       */
+/* -------------------------------------------------------------------------- */
+.hero--primary {
+  position: relative;
+  background: transparent !important;
+  color: var(--ifm-font-color-base) !important;
+  border-bottom: 1px solid var(--site-glass-border);
+  overflow: hidden;
+  padding: 5rem 0 4.5rem !important;
+}
+
+/* Atmospheric ambient backlight */
+.hero--primary::before {
+  content: '';
+  position: absolute;
+  top: -140px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 720px;
+  height: 480px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.16) 0%, rgba(129, 140, 248, 0.05) 50%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+[data-theme='dark'] .hero--primary::before {
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.26) 0%, rgba(129, 140, 248, 0.08) 50%, transparent 70%);
+}
+
+.hero--primary .container {
+  position: relative;
+  z-index: 1;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+.hero__title {
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+  margin-bottom: 1.25rem;
+  background: linear-gradient(135deg, var(--ifm-heading-color) 40%, var(--ifm-color-primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero--primary p {
+  color: var(--ifm-font-color-base);
+  font-size: 1.075rem;
+  line-height: 1.75;
+  margin-bottom: 1rem;
+}
+
+/* Tagline as an elegant badge */
+.hero__subtitle {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 1.25rem;
+  padding: 0.45rem 1.25rem;
+  border-radius: 9999px;
+  background: var(--ifm-color-primary-contrast-background);
+  color: var(--ifm-color-primary) !important;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 1px solid var(--site-card-hover-border);
+  box-shadow: var(--site-shadow-sm);
+  letter-spacing: -0.01em;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 7. Modern Homepage Feature Cards                                           */
+/* -------------------------------------------------------------------------- */
+.features {
+  padding: 4.5rem 0 5.5rem !important;
+}
+
+.features .row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.features .col.col--4 {
+  flex: 1 1 300px;
+  max-width: 100%;
+  background: var(--ifm-card-background-color);
+  border: 1px solid var(--site-glass-border);
+  border-radius: var(--ifm-card-border-radius);
+  padding: 2.5rem 2rem;
+  box-shadow: var(--site-shadow-sm);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.features .col.col--4:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--site-shadow-lg), var(--site-shadow-glow);
+  border-color: var(--site-card-hover-border);
+}
+
+.features .col.col--4::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--ifm-color-primary), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.features .col.col--4:hover::before {
+  opacity: 1;
+}
+
+.featureSvg,
+.features .featureSvg {
+  height: 120px;
+  width: 120px;
+  margin: 0 auto 1.5rem;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: drop-shadow(0 6px 12px rgba(99, 102, 241, 0.15));
+}
+
+.features .col.col--4:hover .featureSvg {
+  transform: scale(1.08);
+}
+
+.features h3 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+  color: var(--ifm-heading-color);
+}
+
+.features p {
+  color: var(--ifm-color-content-secondary);
+  font-size: 0.975rem;
+  line-height: 1.65;
+  margin-bottom: 1.5rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 8. Buttons & Interactive Elements                                          */
+/* -------------------------------------------------------------------------- */
+.button {
+  font-weight: 600;
+  border-radius: var(--ifm-button-border-radius);
+  padding: 0.65rem 1.4rem;
+  letter-spacing: -0.01em;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none !important;
+}
+
+.button--primary {
+  background: linear-gradient(135deg, var(--ifm-color-primary) 0%, var(--ifm-color-primary-dark) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 8px 0 rgba(79, 70, 229, 0.25), inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+  color: #ffffff !important;
+}
+
+.button--primary:hover {
+  background: linear-gradient(135deg, var(--ifm-color-primary-light) 0%, var(--ifm-color-primary) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px 0 rgba(79, 70, 229, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
+}
+
+.button--primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.button--secondary {
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  border: 1px solid var(--site-glass-border);
+  box-shadow: var(--site-shadow-sm);
+}
+
+.button--secondary:hover {
+  background: var(--ifm-color-primary-contrast-background);
+  color: var(--ifm-color-primary);
+  border-color: var(--site-card-hover-border);
+  transform: translateY(-2px);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 9. Sidebar & Documentation Polish                                          */
+/* -------------------------------------------------------------------------- */
+.theme-doc-sidebar-container {
+  border-right: 1px solid var(--site-glass-border) !important;
+}
+
+.menu__link {
+  border-radius: 8px;
+  font-size: 0.925rem;
+  font-weight: 500;
+  color: var(--ifm-font-color-base);
+  transition: all 0.15s ease;
+  padding: 0.45rem 0.75rem;
+  margin: 2px 0;
+}
+
+.menu__link:hover {
+  background: var(--ifm-color-primary-contrast-background);
+  color: var(--ifm-color-primary);
+}
+
+.menu__link--active:not(.menu__link--sublist) {
+  background: var(--ifm-color-primary-contrast-background) !important;
+  color: var(--ifm-color-primary) !important;
+  font-weight: 600;
+}
+
+.menu__list-item-collapsible--active {
+  background: transparent;
+}
+
+.table-of-contents {
+  border-left: 1px solid var(--site-glass-border);
+  padding-left: 0.85rem;
+}
+
+.table-of-contents__link {
+  color: var(--ifm-color-content-secondary);
+  transition: color 0.15s ease;
+}
+
+.table-of-contents__link--active {
+  color: var(--ifm-color-primary);
+  font-weight: 600;
+}
+
+.breadcrumbs__item {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.breadcrumbs__link {
+  border-radius: 6px;
+  padding: 0.2rem 0.45rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 10. Code Blocks & Inline Badges                                            */
+/* -------------------------------------------------------------------------- */
+div[class*='codeBlockContainer_'] {
+  border-radius: var(--ifm-code-border-radius);
+  border: 1px solid var(--site-glass-border);
+  box-shadow: var(--site-shadow-md);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+code {
+  font-family: var(--ifm-font-family-monospace);
+  border-radius: 6px;
+  background: var(--ifm-color-primary-contrast-background);
+  border: 1px solid var(--site-glass-border);
+  color: var(--ifm-color-primary);
+  font-size: 0.9em;
+}
+
+pre code {
+  background: transparent;
+  border: none;
+  color: inherit;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 11. Callouts & Admonitions                                                 */
+/* -------------------------------------------------------------------------- */
+.alert {
+  border-radius: var(--ifm-alert-border-radius);
+  border-width: 1px;
+  border-style: solid;
+  box-shadow: var(--site-shadow-sm);
+  backdrop-filter: blur(8px);
+  margin-bottom: 1.5rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 12. Blog & Pagination Polish                                               */
+/* -------------------------------------------------------------------------- */
+article.margin-bottom--xl {
+  padding: 2.25rem;
+  background: var(--ifm-card-background-color);
+  border-radius: var(--ifm-card-border-radius);
+  border: 1px solid var(--site-glass-border);
+  box-shadow: var(--site-shadow-sm);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+  margin-bottom: 2rem !important;
+}
+
+article.margin-bottom--xl:hover {
+  border-color: var(--site-card-hover-border);
+  box-shadow: var(--site-shadow-md);
+  transform: translateY(-2px);
+}
+
+.pagination-nav__link {
+  border-radius: var(--ifm-pagination-nav-border-radius);
+  border: 1px solid var(--site-glass-border);
+  background: var(--ifm-card-background-color);
+  box-shadow: var(--site-shadow-sm);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pagination-nav__link:hover {
+  border-color: var(--site-card-hover-border);
+  box-shadow: var(--site-shadow-md);
+  transform: translateY(-2px);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 13. Sleek Custom Scrollbar                                                 */
+/* -------------------------------------------------------------------------- */
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.6);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 14. Modern Footer                                                          */
+/* -------------------------------------------------------------------------- */
+.footer {
+  border-top: 1px solid var(--site-glass-border);
+  padding: 4rem 0 2.5rem;
+}
+
+.footer__title {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.footer__link-item {
+  color: var(--ifm-color-content-secondary);
+  transition: color 0.15s ease;
+}
+
+.footer__link-item:hover {
+  color: var(--ifm-color-primary-lightest);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 15. Accessibility & Reduced Motion                                         */
+/* -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
