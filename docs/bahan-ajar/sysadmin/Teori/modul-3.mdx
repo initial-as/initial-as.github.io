@@ -1,0 +1,816 @@
+---
+title: "3. Sistem Operasi Server dan Administrasi Dasar"
+---
+
+# Sistem Operasi Server dan Administrasi Dasar
+
+## Capaian Pembelajaran
+
+Setelah mengikuti pertemuan ini, mahasiswa mampu:
+
+1. Menjelaskan konsep dan karakteristik sistem operasi server.
+2. Menjelaskan perbedaan sistem operasi desktop dan server.
+3. Menjelaskan fungsi sistem operasi dalam *server environment*.
+4. Membandingkan karakteristik sistem operasi server berbasis Linux dan Windows.
+5. Menjelaskan konsep instalasi sistem operasi server.
+6. Menjelaskan struktur dasar sistem operasi server.
+7. Menjelaskan konsep user, group, permission, process, service, dan package.
+8. Menentukan sistem operasi server yang sesuai berdasarkan rancangan pada Pertemuan 2.
+
+---
+
+## A. Apa Itu Sistem Operasi Server?
+
+**Sistem operasi server** adalah sistem operasi yang dirancang atau digunakan untuk menjalankan dan mengelola layanan yang diberikan kepada komputer atau pengguna lain melalui jaringan. Sistem operasi berfungsi sebagai penghubung antara:
+
+```text
+USER / APPLICATION
+        │
+        ▼
+OPERATING SYSTEM
+        │
+        ▼
+HARDWARE
+```
+
+Dalam server environment:
+
+```text
+CLIENT
+   │
+   ▼
+NETWORK
+   │
+   ▼
+SERVER OS
+   │
+   ├── Web Server
+   ├── Database Server
+   ├── File Server
+   └── Network Services
+```
+
+Dengan demikian, sistem operasi merupakan fondasi tempat berbagai layanan server dijalankan. Pada akhir Pertemuan 2, Anda sudah menjawab:
+
+> **"Server seperti apa yang akan dibangun?"**
+
+Pada Pertemuan 3, Anda mulai menjawab:
+
+> **"Sistem operasi apa yang akan digunakan dan bagaimana sistem operasi tersebut menjadi fondasi server?"**
+
+---
+
+## B. Fungsi Sistem Operasi pada Server
+
+Sistem operasi bertanggung jawab terhadap berbagai sumber daya sistem.
+
+### 1. Manajemen CPU
+
+OS menentukan proses mana yang memperoleh waktu CPU.
+
+### 2. Manajemen Memori
+
+OS mengatur penggunaan:
+
+* RAM,
+* virtual memory,
+* dan proses yang berjalan.
+
+### 3. Manajemen Storage
+
+OS mengelola:
+
+* disk,
+* partition,
+* filesystem,
+* file,
+* dan direktori.
+
+### 4. Manajemen Proses
+
+OS mengelola aplikasi atau proses yang sedang berjalan.
+
+### 5. Manajemen User
+
+OS mengatur:
+
+* akun,
+* group,
+* autentikasi,
+* dan hak akses.
+
+### 6. Manajemen Network
+
+OS menyediakan kemampuan untuk:
+
+* konfigurasi interface,
+* IP address,
+* routing,
+* dan komunikasi jaringan.
+
+### 7. Menjalankan Services
+
+OS menjadi lingkungan untuk menjalankan berbagai layanan seperti:
+
+* web server,
+* database,
+* DNS,
+* SSH,
+* file sharing.
+
+---
+
+## C. Server OS vs Desktop OS
+
+Sistem operasi server dan desktop memiliki fungsi dasar yang sama sebagai sistem operasi, tetapi lingkungan penggunaannya berbeda.
+
+| Aspek             | Desktop OS                  | Server OS                              |
+| ----------------- | --------------------------- | -------------------------------------- |
+| Tujuan utama      | Penggunaan personal         | Menyediakan layanan                    |
+| Pengguna          | Umumnya satu pengguna utama | Banyak client/pengguna                 |
+| Layanan jaringan  | Bukan fokus utama           | Fokus utama                            |
+| Pengelolaan       | GUI banyak digunakan        | CLI/remote administration umum         |
+| Availability      | Umumnya tidak kritis        | Sering membutuhkan availability tinggi |
+| Resource          | Untuk aplikasi pengguna     | Untuk service dan workload             |
+| Remote management | Tidak selalu diperlukan     | Sangat penting                         |
+
+
+:::info
+Perbedaan tersebut bukan berarti sistem operasi server selalu tanpa GUI atau sistem desktop tidak dapat menyediakan layanan. Perbedaannya lebih pada orientasi penggunaan dan kebutuhan operasional.
+:::
+
+---
+
+## D. Contoh Sistem Operasi Server
+
+Beberapa sistem operasi yang umum digunakan dalam lingkungan server:
+
+### Linux
+
+Contoh distribusi:
+
+* Ubuntu Server
+* Debian Server
+* Rocky Linux
+* AlmaLinux
+
+### Windows Server
+
+Contoh:
+
+* Windows Server 2019
+* Windows Server 2022
+* Windows Server 2025
+
+Pemilihan OS harus mengikuti kebutuhan sistem.
+
+Hal ini kembali ke prinsip pada Pertemuan 1:
+
+> **Kebutuhan → analisis → pemilihan teknologi**
+
+Bukan:
+
+> **Memilih OS terlebih dahulu → kemudian menyesuaikan kebutuhan.**
+
+---
+
+## E. Faktor Pemilihan Sistem Operasi Server
+
+Administrator Sistem perlu mempertimbangkan beberapa faktor.
+
+### 1. Compatibility
+
+Apakah OS mendukung:
+
+* aplikasi,
+* database,
+* hardware,
+* driver,
+* dan layanan yang akan digunakan?
+
+### 2. Performance
+
+Apakah sistem mampu menjalankan workload yang dibutuhkan?
+
+### 3. Security
+
+Apakah tersedia:
+
+* mekanisme authentication,
+* access control,
+* firewall,
+* update keamanan,
+* logging?
+
+### 4. Stability
+
+Apakah sistem stabil untuk menjalankan server dalam jangka panjang?
+
+### 5. Management
+
+Bagaimana administrator akan mengelolanya?
+
+Misalnya:
+
+* lokal,
+* SSH,
+* remote desktop,
+* management console.
+
+### 6. Support
+
+Pertimbangkan:
+
+* dokumentasi,
+* komunitas,
+* vendor support,
+* lifecycle,
+* dan update.
+
+### 7. Cost
+
+Pertimbangkan:
+
+* lisensi,
+* hardware,
+* maintenance,
+* dan sumber daya administrator.
+
+---
+
+## F. Konsep Instalasi Sistem Operasi Server
+
+Instalasi sistem operasi server merupakan proses menyiapkan OS agar server siap digunakan.
+
+Secara umum:
+
+```text
+Persiapan
+    ↓
+Boot Installer
+    ↓
+Disk / Partition
+    ↓
+Install OS
+    ↓
+Network Configuration
+    ↓
+User Configuration
+    ↓
+Boot
+    ↓
+Initial Configuration
+```
+
+Dalam konteks PON, instalasi sistem operasi server merupakan salah satu tugas utama Administrator Sistem. 
+
+---
+
+## G. Persiapan Sebelum Instalasi
+
+Administrator tidak seharusnya langsung melakukan instalasi. Perlu dipersiapkan:
+
+### Hardware
+
+* CPU,
+* RAM,
+* storage,
+* network interface.
+
+### Software
+
+* installer OS,
+* image ISO,
+* driver jika diperlukan,
+* lisensi jika diperlukan.
+
+### Network
+
+* IP address,
+* subnet,
+* gateway,
+* DNS.
+
+### Storage
+
+* kapasitas,
+* partition,
+* filesystem.
+
+### Security
+
+* administrator account,
+* password policy,
+* akses remote.
+
+### Dokumentasi
+
+Catat konfigurasi yang digunakan.
+
+---
+
+## H. Partition dan Filesystem
+
+Salah satu konsep penting dalam instalasi server adalah **storage organization**. Secara sederhana:
+
+```text
+Physical Disk
+      │
+      ▼
+  Partition
+      │
+      ▼
+ Filesystem
+      │
+      ▼
+ Files & Directories
+```
+
+Contoh pada Linux:
+
+```text
+/
+├── etc
+├── home
+├── var
+├── usr
+├── tmp
+└── ...
+```
+
+### Beberapa direktori penting Linux
+
+| Direktori | Fungsi umum                     |
+| --------- | ------------------------------- |
+| `/`       | Root filesystem                 |
+| `/etc`    | Konfigurasi sistem              |
+| `/home`   | Direktori pengguna              |
+| `/var`    | Data yang berubah, termasuk log |
+| `/tmp`    | File sementara                  |
+| `/usr`    | Program dan resource sistem     |
+| `/opt`    | Software tambahan tertentu      |
+
+Menghafal seluruh filesystem tidaklah wajib. Yang lebih penting adalah memahami bahwa **organisasi storage berpengaruh terhadap pengelolaan server**.
+
+---
+
+## I. User dan Group
+
+Server biasanya digunakan oleh banyak akun. Contoh:
+
+```text
+Administrator
+│
+├── admin1
+├── admin2
+└── sysadmin
+
+Users
+│
+├── dosen
+├── mahasiswa
+└── staff
+```
+
+### User
+
+Representasi akun individu atau identitas yang digunakan untuk mengakses sistem.
+
+### Group
+
+Kumpulan user yang dapat digunakan untuk mempermudah pengaturan hak akses.
+
+Contoh:
+
+```text
+Group: dosen
+
+├── user01
+├── user02
+└── user03
+```
+
+Kemudian hak akses dapat diberikan berdasarkan group.
+
+---
+
+## J. Permission
+
+Salah satu karakteristik penting administrasi server adalah **pengendalian akses terhadap resource**. Pada Linux, permission dasar terdiri dari:
+
+```text
+r = read
+w = write
+x = execute
+```
+
+Untuk tiga kategori:
+
+```text
+owner
+group
+others
+```
+
+Contoh:
+
+```text
+rwx r-x r--
+```
+
+Artinya:
+
+```text
+owner  → rwx
+group  → r-x
+others → r--
+```
+
+Konsep ini sangat penting karena Administrator Sistem memiliki wewenang untuk menetapkan izin dan kebijakan pengguna. PON secara eksplisit memasukkan kemampuan menetapkan izin dan kebijakan pengguna dalam wewenang Administrator Sistem. 
+
+---
+
+## K. Process
+
+**Process** adalah program yang sedang berjalan di dalam sistem. Contoh:
+
+```text
+Operating System
+│
+├── Process A
+├── Process B
+├── Process C
+└── Process D
+```
+
+Administrator perlu mengetahui:
+
+* proses apa yang berjalan,
+* berapa resource yang digunakan,
+* apakah proses mengalami masalah,
+* dan apakah proses tersebut diperlukan.
+
+Misalnya:
+
+```text
+Web Server
+    │
+    ▼
+Process
+    │
+    ├── CPU usage
+    ├── Memory usage
+    └── Status
+```
+
+Konsep process akan sangat berguna ketika mahasiswa mempelajari **monitoring dan troubleshooting** pada Pertemuan 7.
+
+---
+
+## L. Service
+
+**Service** adalah program atau komponen sistem yang berjalan untuk menyediakan fungsi tertentu. Contoh:
+
+```text
+Server OS
+│
+├── SSH Service
+├── Web Service
+├── DNS Service
+└── Database Service
+```
+
+Perbedaan sederhana:
+
+* **Process** → program yang sedang berjalan.
+
+* **Service** → proses yang menyediakan fungsi tertentu dan umumnya dikelola sebagai layanan sistem.
+
+Contoh:
+
+> Web server merupakan service yang memungkinkan server melayani request HTTP/HTTPS.
+
+---
+
+## M. Package Management
+
+Dalam banyak sistem operasi server, software dikelola melalui **package management**. Fungsinya antara lain:
+
+* install software,
+* remove software,
+* update software,
+* mengelola dependency.
+
+Contoh konsep:
+
+```text
+Repository
+     │
+     ▼
+Package Manager
+     │
+     ▼
+Software
+```
+
+Mahasiswa belum perlu masuk terlalu jauh ke perintah spesifik. Fokus teori adalah memahami **mengapa package management penting dalam administrasi server**.
+
+---
+
+## N. Command Line Interface
+
+Administrasi server sering dilakukan melalui **Command Line Interface (CLI)**.
+
+Contoh lingkungan Linux:
+
+```text
+$ whoami
+$ pwd
+$ ls
+$ cd
+$ mkdir
+```
+
+Mengapa CLI penting?
+
+* efisien,
+* dapat dilakukan melalui remote connection,
+* membutuhkan resource lebih kecil,
+* mudah diotomatisasi,
+* cocok untuk administrasi server.
+
+Namun, CLI bukan satu-satunya metode administrasi. GUI maupun tool manajemen dapat digunakan sesuai kebutuhan.
+
+---
+
+## O. Remote Administration
+
+Administrator tidak selalu berada di depan server secara fisik. Konsep:
+
+```text
+Administrator
+     │
+     │ Remote Connection
+     ▼
+  Network
+     │
+     ▼
+   Server
+```
+
+Contoh teknologi:
+
+* SSH untuk sistem Unix/Linux,
+* Remote Desktop untuk Windows,
+* web-based management interface.
+
+Remote administration merupakan kemampuan penting karena server sering ditempatkan di:
+
+* data center,
+* ruang server,
+* cloud,
+* atau lokasi yang berbeda dari administrator.
+
+---
+
+## P. Initial Server Configuration
+
+Setelah OS terinstal, server belum tentu siap digunakan. Konfigurasi awal dapat mencakup:
+
+```text
+OS Installation
+       ↓
+Hostname
+       ↓
+Network
+       ↓
+User
+       ↓
+Time / Timezone
+       ↓
+Update
+       ↓
+Remote Access
+       ↓
+Basic Security
+       ↓
+Server Ready
+```
+
+PON memisahkan **install sistem operasi server** dan **konfigurasi sistem operasi server** sebagai tugas kompetensi yang berbeda. Ini penting:
+
+> **Instalasi OS ≠ selesai mengadministrasikan server.**
+
+Instalasi adalah awal dari administrasi server.
+
+---
+
+## Q. Contoh Kasus
+
+Gunakan kembali proyek kelompok dari Pertemuan 1 dan 2. Misalnya kelompok merancang:
+
+```text
+Internet
+    │
+ Firewall
+    │
+    ▼
+ Web Server
+    │
+    ▼
+ Database Server
+```
+
+Pada Pertemuan 3, Anda harus menentukan:
+
+### Web Server
+
+* OS apa?
+* berapa RAM?
+* berapa storage?
+* bagaimana network-nya?
+* bagaimana remote administration dilakukan?
+
+### Database Server
+
+* OS apa?
+* berapa RAM?
+* berapa storage?
+* bagaimana data disimpan?
+* bagaimana administrator mengelolanya?
+
+Keputusan tersebut harus **mengacu pada rancangan arsitektur Pertemuan 2**.
+
+---
+
+## R. Contoh Analisis Pemilihan OS
+
+Misalnya terdapat dua alternatif:
+
+| Faktor              | Linux Server                | Windows Server              |
+| ------------------- | --------------------------- | --------------------------- |
+| Lisensi             | Bergantung distribusi/edisi | Umumnya membutuhkan lisensi |
+| CLI                 | Sangat kuat                 | Tersedia                    |
+| GUI                 | Opsional pada banyak distro | Umumnya tersedia            |
+| Web hosting         | Sangat umum                 | Sangat umum                 |
+| Integrasi Microsoft | Bergantung kebutuhan        | Sangat kuat                 |
+| Administrasi        | CLI/GUI                     | GUI/PowerShell              |
+| Kebutuhan SDM       | Bergantung kompetensi       | Bergantung kompetensi       |
+
+Kesimpulan tidak boleh sekadar:
+
+> "Linux lebih baik."
+
+atau:
+
+> "Windows lebih mudah."
+
+Anda harus mengatakan:
+
+> "Untuk kebutuhan X, kami memilih Y karena ..."
+
+Itulah pola pikir seorang administrator.
+
+---
+
+## S. Prinsip Administrasi Sistem yang Perlu Ditanamkan
+
+### 1. Dokumentasikan setiap perubahan
+
+Administrator harus mengetahui:
+
+> Apa yang diubah?
+> Kapan diubah?
+> Mengapa diubah?
+> Siapa yang mengubah?
+
+### 2. Hindari penggunaan akun dengan privilege tinggi secara sembarangan
+
+Gunakan hak akses sesuai kebutuhan.
+
+### 3. Jangan menginstal software yang tidak diperlukan
+
+Semakin banyak komponen:
+
+→ semakin banyak konfigurasi
+→ semakin besar attack surface
+→ semakin sulit maintenance.
+
+### 4. Update secara terencana
+
+Update penting untuk:
+
+* keamanan,
+* bug fixing,
+* compatibility.
+
+Namun perubahan pada server produksi harus mempertimbangkan risiko.
+
+### 5. Backup konfigurasi penting
+
+Konfigurasi server dapat menjadi aset penting ketika terjadi kerusakan.
+
+---
+
+## T. Kesalahan Umum Administrator Pemula
+
+### Kesalahan 1
+
+**Langsung menginstal tanpa memahami kebutuhan.**
+
+Perbaikan:
+
+> kembali ke requirement.
+
+### Kesalahan 2
+
+**Menggunakan spesifikasi hardware berlebihan.**
+
+Perbaikan:
+
+> lakukan capacity planning.
+
+### Kesalahan 3
+
+**Semua user diberi hak administrator.**
+
+Perbaikan:
+
+> gunakan prinsip least privilege.
+
+### Kesalahan 4
+
+**Semua layanan dipasang tanpa alasan.**
+
+Perbaikan:
+
+> install hanya service yang diperlukan.
+
+### Kesalahan 5
+
+**Tidak mendokumentasikan konfigurasi.**
+
+Perbaikan:
+
+> buat server documentation.
+
+---
+
+## U. Diskusi Kelas
+
+Gunakan hasil proyek kelompok dari Pertemuan 2.
+
+### Pertanyaan 1
+
+Kelompok memilih Linux/Windows Server.
+
+**Mengapa?**
+
+### Pertanyaan 2
+
+Apakah server membutuhkan GUI?
+
+**Mengapa?**
+
+### Pertanyaan 3
+
+Apakah semua administrator harus menggunakan akun `root`/administrator?
+
+**Mengapa?**
+
+### Pertanyaan 4
+
+Apa yang terjadi jika filesystem server penuh?
+
+### Pertanyaan 5
+
+Apa yang terjadi jika service utama berhenti?
+
+### Pertanyaan 6
+
+Mengapa konfigurasi server perlu didokumentasikan?
+
+### Pertanyaan 7
+
+Jika jumlah pengguna meningkat 10 kali lipat, apakah OS harus diganti?
+
+**Mengapa?**
+
+Pertanyaan terakhir penting untuk membedakan antara masalah **software**, **resource**, dan **arsitektur**.
+
+---
+
+## V. Ringkasan
+
+Hal-hal yang harus dipahami setelah Pertemuan 3:
+
+1. Sistem operasi merupakan fondasi *server environment*.
+2. Server OS digunakan untuk menjalankan dan menyediakan berbagai layanan kepada client.
+3. Pemilihan OS harus berdasarkan kebutuhan, bukan sekadar popularitas.
+4. Administrator harus memahami CPU, memory, storage, network, process, dan service.
+5. User, group, dan permission merupakan bagian penting dalam administrasi server.
+6. CLI merupakan salah satu metode penting dalam administrasi server.
+7. Server dapat dikelola secara remote.
+8. Instalasi OS hanyalah tahap awal; server masih membutuhkan konfigurasi.
+9. Administrasi server harus memperhatikan security, maintainability, dan dokumentasi.
+10. Hasil desain Pertemuan 2 menjadi dasar implementasi pada Pertemuan 3.
