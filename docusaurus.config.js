@@ -135,7 +135,7 @@ const config = {
             ],
           },
           {
-            title: 'Community',
+            title: 'Docusaurus',
             items: [
               {
                 label: 'Stack Overflow',
@@ -152,11 +152,11 @@ const config = {
             ],
           },
           {
-            title: 'More',
+            title: 'Sosial',
             items: [
               {
-                label: 'Blog',
-                to: '/blog',
+                label: 'LinkedIn',
+                href: 'https://www.linkedin.com/in/aulia-syarif/',
               },
               {
                 label: 'GitHub',

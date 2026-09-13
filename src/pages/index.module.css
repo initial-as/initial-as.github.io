@@ -1,23 +1,331 @@
 /**
- * CSS files with the .module.css suffix will be treated as CSS modules
- * and scoped locally.
+ * Modern Homepage Styles for index.js
  */
 
+/* -------------------------------------------------------------------------- */
+/* 1. Hero Banner                                                             */
+/* -------------------------------------------------------------------------- */
 .heroBanner {
-  padding: 4rem 0;
+  padding: 5rem 0 4.5rem;
   text-align: center;
   position: relative;
   overflow: hidden;
+  background: transparent;
 }
 
 @media screen and (max-width: 996px) {
   .heroBanner {
-    padding: 2rem;
+    padding: 3.5rem 1.25rem 3rem;
   }
 }
 
-.buttons {
+.heroContent {
+  max-width: 820px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* Status Pill Badge */
+.heroPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1.1rem;
+  border-radius: 9999px;
+  background: var(--ifm-color-primary-contrast-background);
+  color: var(--ifm-color-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 1px solid var(--site-card-hover-border);
+  box-shadow: var(--site-shadow-sm);
+  margin-bottom: 1.5rem;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.heroPill:hover {
+  transform: translateY(-2px);
+  border-color: var(--ifm-color-primary);
+}
+
+.pillDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--ifm-color-primary);
+  display: inline-block;
+  box-shadow: 0 0 8px var(--ifm-color-primary);
+}
+
+/* Main Display Title */
+.heroTitle {
+  font-size: clamp(2.5rem, 5.5vw, 4.25rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.12;
+  margin-bottom: 0.85rem;
+  background: linear-gradient(135deg, var(--ifm-heading-color) 35%, var(--ifm-color-primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Dynamic Tagline */
+.heroTagline {
+  font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--ifm-color-primary);
+  margin-bottom: 1.25rem;
+}
+
+/* Sub-headline description */
+.heroDesc {
+  font-size: 1.1rem;
+  line-height: 1.75;
+  color: var(--ifm-color-content-secondary);
+  max-width: 680px;
+  margin: 0 auto 2.25rem;
+}
+
+/* CTA Action Buttons */
+.heroCtaGroup {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.heroBtnPrimary {
+  padding: 0.8rem 1.85rem;
+  font-size: 1rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.heroBtnPrimary:hover .btnArrow {
+  transform: translateX(4px);
+}
+
+.heroBtnSecondary {
+  padding: 0.8rem 1.85rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.btnArrow {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+/* Quick Topic Badges */
+.topicChips {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.topicLabel {
+  font-size: 0.825rem;
+  color: var(--ifm-color-content-secondary);
+  font-weight: 500;
+  margin-right: 0.25rem;
+}
+
+.topicChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  border-radius: 9999px;
+  background: var(--ifm-card-background-color);
+  border: 1px solid var(--site-glass-border);
+  color: var(--ifm-font-color-base);
+  box-shadow: var(--site-shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.topicChip:hover {
+  border-color: var(--site-card-hover-border);
+  transform: translateY(-2px);
+  color: var(--ifm-color-primary);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 2. Common Section Header                                                   */
+/* -------------------------------------------------------------------------- */
+.sectionHeader {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 3rem;
+}
+
+.sectionPill {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.85rem;
+  border-radius: 9999px;
+  background: var(--ifm-color-primary-contrast-background);
+  color: var(--ifm-color-primary);
+  border: 1px solid var(--site-card-hover-border);
+  margin-bottom: 0.75rem;
+}
+
+.sectionTitle {
+  font-size: clamp(1.85rem, 3.5vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.75rem;
+  color: var(--ifm-heading-color);
+}
+
+.sectionSubtitle {
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--ifm-color-content-secondary);
+}
+
+/* -------------------------------------------------------------------------- */
+/* 3. Philosophy & Story Section (Bento Cards)                                */
+/* -------------------------------------------------------------------------- */
+.philosophySection {
+  padding: 4.5rem 0 3.5rem;
+  border-top: 1px solid var(--site-glass-border);
+  background: linear-gradient(180deg, transparent 0%, rgba(99, 102, 241, 0.02) 100%);
+}
+
+.bentoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.75rem;
+}
+
+@media screen and (max-width: 996px) {
+  .bentoGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+.bentoCard {
+  background: var(--ifm-card-background-color);
+  border: 1px solid var(--site-glass-border);
+  border-radius: var(--ifm-card-border-radius);
+  padding: 2.25rem 1.85rem;
+  box-shadow: var(--site-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.bentoCard:hover {
+  transform: translateY(-5px);
+  border-color: var(--site-card-hover-border);
+  box-shadow: var(--site-shadow-lg), var(--site-shadow-glow);
+}
+
+.bentoCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--ifm-color-primary), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.bentoCard:hover::before {
+  opacity: 1;
+}
+
+.bentoIconWrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--ifm-color-primary-contrast-background);
+  border: 1px solid var(--site-card-hover-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  margin-bottom: 1.35rem;
+}
+
+.bentoCardTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+  color: var(--ifm-heading-color);
+}
+
+.bentoCardText {
+  color: var(--ifm-color-content-secondary);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 4. Bottom CTA Banner                                                       */
+/* -------------------------------------------------------------------------- */
+.bottomCtaSection {
+  padding: 3rem 0 5.5rem;
+}
+
+.ctaCard {
+  background: linear-gradient(135deg, var(--ifm-card-background-color) 0%, var(--ifm-color-primary-contrast-background) 100%);
+  border: 1px solid var(--site-card-hover-border);
+  border-radius: 20px;
+  padding: 3.5rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--site-shadow-md);
+}
+
+.ctaCardContent {
+  max-width: 620px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.ctaTitle {
+  font-size: clamp(1.75rem, 3.5vw, 2.35rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.85rem;
+  color: var(--ifm-heading-color);
+}
+
+.ctaDesc {
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--ifm-color-content-secondary);
+  margin-bottom: 2rem;
+}
+
+.ctaActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
