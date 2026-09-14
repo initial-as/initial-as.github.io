@@ -381,7 +381,7 @@ body {
 .menu__link {
   border-radius: 8px;
   font-size: 0.925rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--ifm-font-color-base);
   transition: all 0.15s ease;
   padding: 0.45rem 0.75rem;
@@ -396,6 +396,15 @@ body {
 .menu__link--active:not(.menu__link--sublist) {
   background: var(--ifm-color-primary-contrast-background) !important;
   color: var(--ifm-color-primary) !important;
+  font-weight: 600;
+}
+
+.menu__list .menu__list .menu__link {
+  font-weight: normal;
+  font-size: 0.8rem;
+}
+
+.menu__list .menu__list .menu__link--active {
   font-weight: 600;
 }
 
@@ -446,6 +455,7 @@ code {
   border: 1px solid var(--site-glass-border);
   color: var(--ifm-color-primary);
   font-size: 0.9em;
+  vertical-align: baseline;
 }
 
 pre code {
