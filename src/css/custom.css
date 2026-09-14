@@ -677,11 +677,9 @@ article.margin-bottom--xl:hover {
   }
 }
 
-@media (min-width: 997px) {
-  @supports (scrollbar-gutter: stable) {
-    .menu_SIkG {
-      padding: 0.5rem;
-    }
+@media only screen and (width>=997px) {
+  aside[class^=theme-doc-sidebar-container] .menu {
+    padding: .6rem;
   }
 }
 
