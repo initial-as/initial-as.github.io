@@ -1,0 +1,489 @@
+---
+title: Curriculum Vitae
+sidebarPath: false
+---
+
+import Heading from '@theme/Heading';
+
+export const toc = [
+  {
+    value: 'Ringkasan Profesional',
+    id: 'ringkasan-profesional',
+    level: 2,
+  },
+  {
+    value: 'Pengalaman Kerja & Akademik',
+    id: 'pengalaman-kerja-akademik',
+    level: 2,
+  },
+  {
+    value: 'Riwayat Pendidikan',
+    id: 'riwayat-pendidikan',
+    level: 2,
+  },
+  {
+    value: 'Publikasi Ilmiah & Riset Pilihan',
+    id: 'publikasi-ilmiah-riset-pilihan',
+    level: 2,
+  },
+  {
+    value: 'Keahlian & Keterampilan Teknis',
+    id: 'keahlian-keterampilan-teknis',
+    level: 2,
+  },
+  {
+    value: 'Mata Kuliah yang Diampu',
+    id: 'mata-kuliah-yang-diampu',
+    level: 2,
+  },
+  {
+    value: 'Pelatihan & Sertifikasi Profesional',
+    id: 'pelatihan-sertifikasi-profesional',
+    level: 2,
+  },
+  {
+    value: 'Pengabdian Kepada Masyarakat (PkM)',
+    id: 'pengabdian-kepada-masyarakat',
+    level: 2,
+  },
+];
+
+<div className="cv-container">
+
+  {/* Action Bar (Print / PDF) */}
+  <div className="cv-action-bar">
+    <div className="cv-last-update">
+      Terakhir diperbarui: <strong>September 2026</strong> • Dokumen Resmi
+    </div>
+    <button
+      type="button"
+      className="cv-print-btn"
+      onClick={() => {
+        if (typeof window !== 'undefined') {
+          window.print();
+        }
+      }}><span>🖨️ Cetak / Simpan PDF</span></button>
+  </div>
+
+  {/* Hero Profile Card */}
+  <div className="cv-hero-card">
+    <div className="cv-hero-inner">
+      <div className="cv-avatar-wrap">
+        <img
+          src="https://github.com/initial-as.png"
+          alt="Aulia Syarif Aziz, S.Kom., M.Sc."
+          className="cv-avatar"
+        />
+      </div>
+      <div className="cv-hero-content">
+        <h1 className="cv-name">Aulia Syarif Aziz, S.Kom., M.Sc.</h1>
+        <div className="cv-title">
+          <span>Dosen Teknologi Informasi</span>
+          <span>•</span>
+          <span>Cyber Security Researcher</span>
+          <span>•</span>
+          <span>Linux & Web Engineer</span>
+        </div>
+        <div className="cv-affiliation">
+          Universitas Islam Negeri (UIN) Ar-Raniry Banda Aceh<br />
+          Fakultas Tarbiyah dan Keguruan / Fakultas Sains dan Teknologi • Jabatan Fungsional: <strong>Asisten Ahli</strong>
+        </div>
+        <div className="cv-contacts">
+          <a className="cv-contact-item" href="mailto:aulia.aziz@ar-raniry.ac.id">
+            <span>✉️</span> <span>{'aulia.aziz@ar-raniry.ac.id'}</span>
+          </a>
+          <a className="cv-contact-item" href="mailto:as.sektim@gmail.com">
+            <span>📧</span> <span>{'as.sektim@gmail.com'}</span>
+          </a>
+          <a className="cv-contact-item" href="https://initial-as.github.io" target="_blank" rel="noopener noreferrer">
+            <span>🌐</span> <span>initial-as.github.io</span>
+          </a>
+          <a className="cv-contact-item" href="https://www.linkedin.com/in/aulia-syarif/" target="_blank" rel="noopener noreferrer">
+            <span>💼</span> <span>LinkedIn</span>
+          </a>
+          <a className="cv-contact-item" href="https://github.com/initial-as" target="_blank" rel="noopener noreferrer">
+            <span>🐙</span> <span>GitHub</span>
+          </a>
+          <span className="cv-contact-item">
+            <span>🎓</span> <span>SINTA ID: 6756861</span>
+          </span>
+          <span className="cv-contact-item">
+            <span>📍</span> <span>Banda Aceh, Indonesia</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* 1. Profil & Ringkasan Eksekutif */}
+  <section className="cv-section">
+    <div className="cv-section-header">
+      <span className="cv-section-icon">👤</span>
+      <Heading as="h2" id="ringkasan-profesional" className="cv-section-title">Ringkasan Profesional</Heading>
+    </div>
+    <div className="cv-card">
+      <div className="cv-card-body">
+        Akademisi, dosen tetap, dan peneliti di bidang <strong>Teknologi Informasi</strong> dengan fokus spesialisasi pada <strong>Keamanan Siber (Cyber Security)</strong>, <strong>Jaringan Komputer</strong>, <strong>Administrasi Sistem Linux</strong>, serta <strong>Rekayasa Perangkat Lunak & Teknologi Pembelajaran</strong>. Memiliki rekam jejak kepemimpinan program studi, perancangan kurikulum berbasis <em>Outcome-Based Education (OBE)</em>, serta publikasi riset terapan di jurnal nasional dan internasional bereputasi (seperti JNTETI UGM dan PROCESSOR). Aktif menjembatani konsep teoretis akademis dengan implementasi praktis di lapangan melalui pengembangan laboratorium, penulisan materi ajar terbuka, dan pembimbingan mahasiswa.
+      </div>
+    </div>
+  </section>
+
+  {/* 2. Pengalaman Kerja & Posisi Akademik */}
+  <section className="cv-section">
+    <div className="cv-section-header">
+      <span className="cv-section-icon">💼</span>
+      <Heading as="h2" id="pengalaman-kerja-akademik" className="cv-section-title">Pengalaman Kerja & Akademik</Heading>
+    </div>
+    <div className="cv-timeline">
+
+      {/* Item 1 */}
+      <div className="cv-timeline-item">
+        <div className="cv-timeline-dot"></div>
+        <div className="cv-item-header">
+          <h3 className="cv-item-title">Dosen Tetap (Asisten Ahli)</h3>
+          <span className="cv-item-date">2022 – Sekarang</span>
+        </div>
+        <div className="cv-item-subtitle">Universitas Islam Negeri (UIN) Ar-Raniry Banda Aceh</div>
+        <div className="cv-item-desc">
+          <ul>
+            <li>Mengampu mata kuliah inti program sarjana: <strong>Keamanan Siber</strong>, <strong>Administrasi & Pemeliharaan Sistem (Sysadmin Linux)</strong>, <strong>Pemrograman Web Dasar (PWD)</strong>, <strong>Pemrograman Berorientasi Objek (PBO)</strong>, dan <strong>Jaringan Komputer</strong>.</li>
+            <li>Membimbing dan menguji puluhan mahasiswa sarjana dalam penulisan tugas akhir, riset teknologi informasi, serta sidang munaqasyah.</li>
+            <li>Mengembangkan platform pembelajaran mandiri dan repositori modul praktikum terbuka berbasis web modern di <code>initial-as.github.io</code>.</li>
+            <li>Menjadi reviewer dan mitra bestari pada jurnal ilmiah institusi, termasuk <em>Proceeding on Computer and Electrical Education Research (PROCESSOR)</em>.</li>
+            <li>Melaksanakan kegiatan Pengabdian kepada Masyarakat (PkM) berupa transfer teknologi digital dan peningkatan literasi keamanan siber bagi instansi dan aparatur desa di Aceh.</li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Item 2 */}
+      <div className="cv-timeline-item">
+        <div className="cv-timeline-dot"></div>
+        <div className="cv-item-header">
+          <h3 className="cv-item-title">Ketua Program Studi S1 Ilmu Komputer</h3>
+          <span className="cv-item-date">2021 – 2022</span>
+        </div>
+        <div className="cv-item-subtitle">Universitas Bina Bangsa Getsempena (UBBG)</div>
+        <div className="cv-item-desc">
+          <ul>
+            <li>Memimpin manajemen operasional, akreditasi program studi, dan penyusunan kurikulum informatika terintegrasi MBKM.</li>
+            <li>Mengkoordinasikan penjaminan mutu perkuliahan, alokasi beban mengajar dosen, serta kemitraan magang kerja mahasiswa dengan industri teknologi.</li>
+            <li>Meningkatkan iklim riset mahasiswa dengan menyelenggarakan lokakarya pemrograman dan keamanan jaringan.</li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Item 3 */}
+      <div className="cv-timeline-item">
+        <div className="cv-timeline-dot"></div>
+        <div className="cv-item-header">
+          <h3 className="cv-item-title">Dosen Program Studi Ilmu Komputer</h3>
+          <span className="cv-item-date">2019 – 2021</span>
+        </div>
+        <div className="cv-item-subtitle">Universitas Bina Bangsa Getsempena (UBBG)</div>
+        <div className="cv-item-desc">
+          <ul>
+            <li>Mengajar mata kuliah Algoritma & Struktur Data, Jaringan Komputer Lanjut, dan Sistem Operasi.</li>
+            <li>Membimbing tim mahasiswa dalam kompetisi inovasi teknologi dan perancangan aplikasi komputasi.</li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Item 4 */}
+      <div className="cv-timeline-item">
+        <div className="cv-timeline-dot"></div>
+        <div className="cv-item-header">
+          <h3 className="cv-item-title">IT Infrastructure & Network Consultant</h3>
+          <span className="cv-item-date">2016 – 2019</span>
+        </div>
+        <div className="cv-item-subtitle">Konsultasi Independen & Solusi TI</div>
+        <div className="cv-item-desc">
+          <ul>
+            <li>Perancangan arsitektur jaringan lokal (LAN/VLAN), manajemen router/switch MikroTik & Cisco, serta konfigurasi server Linux (Debian, Ubuntu, Nginx, Apache).</li>
+            <li>Penerapan kebijakan keamanan perimeter: konfigurasi firewall (iptables/UFW), manajemen sertifikat SSL/TLS, dan audit integritas sistem.</li>
+            <li>Pengembangan sistem informasi web berbasis PHP, MySQL, dan integrasi REST API untuk otomasi alur kerja organisasi.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  {/* 3. Riwayat Pendidikan */}
+  <section className="cv-section">
+    <div className="cv-section-header">
+      <span className="cv-section-icon">🎓</span>
+      <Heading as="h2" id="riwayat-pendidikan" className="cv-section-title">Riwayat Pendidikan</Heading>
+    </div>
+    <div className="cv-timeline">
+
+      {/* S2 */}
+      <div className="cv-timeline-item">
+        <div className="cv-timeline-dot"></div>
+        <div className="cv-item-header">
+          <h3 className="cv-item-title">Magister Sains (M.Sc.) — Ilmu Komputer / Teknologi Informasi</h3>
+          <span className="cv-item-date">2017 – 2019</span>
+        </div>
+        <div className="cv-item-subtitle">Universitas Gadjah Mada (UGM) • Yogyakarta</div>
+        <div className="cv-item-desc">
+          <ul>
+            <li>Konsentrasi: <strong>Keamanan Siber & Jaringan Terdistribusi</strong> (Cyber Security & Network Infrastructure).</li>
+            <li>Topik Penelitian: Penerapan Deep Learning, Analisis Citra Termal, dan Model Deteksi Anomali pada Sistem Jaringan Komputer.</li>
+            <li>Mengikuti pelatihan lanjutan <em>Deep Learning Fundamental</em> di Departemen Ilmu Komputer & Elektronika UGM.</li>
+          </ul>
+        </div>
+      </div>
+
+      {/* S1 */}
+      <div className="cv-timeline-item">
+        <div className="cv-timeline-dot"></div>
+        <div className="cv-item-header">
+          <h3 className="cv-item-title">Sarjana Komputer (S.Kom.) — Teknik Informatika / Ilmu Komputer</h3>
+          <span className="cv-item-date">2012 – 2016</span>
+        </div>
+        <div className="cv-item-subtitle">Universitas Syiah Kuala (USK) • Banda Aceh</div>
+        <div className="cv-item-desc">
+          <ul>
+            <li>Fokus: Rekayasa Perangkat Lunak, Pemrograman Berorientasi Objek (C++, Java, Python), Jaringan Komputer, dan Basis Data Relasional.</li>
+            <li>Aktif dalam laboratorium komputasi dan riset pengembangan perangkat lunak utilitas sistem.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  {/* 4. Publikasi Ilmiah & Riset Pilihan */}
+  <section className="cv-section">
+    <div className="cv-section-header">
+      <span className="cv-section-icon">📚</span>
+      <Heading as="h2" id="publikasi-ilmiah-riset-pilihan" className="cv-section-title">Publikasi Ilmiah & Riset Pilihan</Heading>
+    </div>
+
+    <div className="cv-pub-card">
+      <div className="cv-pub-title">
+        Pain Recognition through Facial Expressions using Deep Learning and Thermal Imaging
+      </div>
+      <div className="cv-pub-meta">
+        <span className="cv-pub-badge">SINTA 2 / Scopus</span>
+        <em>Jurnal Nasional Teknik Elektro dan Teknologi Informasi (JNTETI) — Universitas Gadjah Mada (UGM)</em>
+      </div>
+      <div className="cv-pub-desc">
+        Riset kolaboratif mengeksplorasi ekstraksi fitur ekspresi rasa nyeri pada wajah manusia dengan memanfaatkan fusi data citra termal dan arsitektur convolutional deep neural network untuk meningkatkan akurasi deteksi non-invasif.
+      </div>
+    </div>
+
+    <div className="cv-pub-card">
+      <div className="cv-pub-title">
+        Implementasi Intrusion Detection System (IDS) Berbasis Snort/Suricata untuk Pengamanan Infrastruktur Jaringan Kampus
+      </div>
+      <div className="cv-pub-meta">
+        <span className="cv-pub-badge">Jurnal Nasional</span>
+        <em>Jurnal Keamanan Siber dan Forensik Digital</em>
+      </div>
+      <div className="cv-pub-desc">
+        Evaluasi performa rule-based IDS dalam mengidentifikasi pola serangan Distributed Denial of Service (DDoS) dan port scan secara real-time pada jaringan lalu lintas data tinggi.
+      </div>
+    </div>
+
+    <div className="cv-pub-card">
+      <div className="cv-pub-title">
+        Rancang Bangun Aplikasi RAM Cleaner Berbasis C++ untuk Optimasi Alokasi Memori Sistem Operasi
+      </div>
+      <div className="cv-pub-meta">
+        <span className="cv-pub-badge">Riset Terapan</span>
+        <em>Publikasi Bidang Rekayasa Perangkat Lunak & Sistem Operasi</em>
+      </div>
+      <div className="cv-pub-desc">
+        Pengembangan utilitas sistem tingkat rendah (low-level programming) untuk mengelola cache dan working set memory guna mencegah memory leak pada komputer bersumber daya terbatas.
+      </div>
+    </div>
+
+    <div className="cv-pub-card">
+      <div className="cv-pub-title">
+        Analisis Efektivitas Pembelajaran Praktik Pemrograman Web Menggunakan Pendekatan Dokumentasi Daring Interaktif
+      </div>
+      <div className="cv-pub-meta">
+        <span className="cv-pub-badge">Proceeding</span>
+        <em>Proceeding on Computer and Electrical Education Research (PROCESSOR)</em>
+      </div>
+      <div className="cv-pub-desc">
+        Kajian dampak pemanfaatan modul praktikum berbasis static site generator dan repository GitHub terhadap kemandirian belajar sintaks web mahasiswa PTI.
+      </div>
+    </div>
+  </section>
+
+  {/* 5. Keahlian & Keterampilan Teknis */}
+  <section className="cv-section">
+    <div className="cv-section-header">
+      <span className="cv-section-icon">🛠️</span>
+      <Heading as="h2" id="keahlian-keterampilan-teknis" className="cv-section-title">Keahlian & Keterampilan Teknis</Heading>
+    </div>
+
+    <div className="cv-grid-2">
+      {/* Kolom 1: Security & Networking */}
+      <div className="cv-card">
+        <div className="cv-card-title">
+          <span>🛡️</span> Keamanan Siber & Jaringan
+        </div>
+        <div className="cv-card-body" style={{ marginBottom: '0.75rem' }}>
+          Analisis trafik, pertahanan perimeter, audit kerentanan, dan konfigurasi perangkat jaringan.
+        </div>
+        <div className="cv-tags">
+          <span className="cv-tag">Cyber Security</span>
+          <span className="cv-tag">Network Security</span>
+          <span className="cv-tag">Intrusion Detection (IDS)</span>
+          <span className="cv-tag">Wireshark</span>
+          <span className="cv-tag">Nmap</span>
+          <span className="cv-tag">UFW / iptables</span>
+          <span className="cv-tag">MikroTik RouterOS</span>
+          <span className="cv-tag">VLAN & Routing</span>
+          <span className="cv-tag">SSL/TLS Hardening</span>
+        </div>
+      </div>
+
+      {/* Kolom 2: Sistem Operasi & DevOps */}
+      <div className="cv-card">
+        <div className="cv-card-title">
+          <span>🐧</span> Sistem & Infrastruktur Server
+        </div>
+        <div className="cv-card-body" style={{ marginBottom: '0.75rem' }}>
+          Administrasi Linux server, otomasi shell script, web server, dan kontainerisasi.
+        </div>
+        <div className="cv-tags">
+          <span className="cv-tag">Debian / Ubuntu Server</span>
+          <span className="cv-tag">Raspberry Pi OS / Raspbian</span>
+          <span className="cv-tag">Bash Scripting</span>
+          <span className="cv-tag">Nginx / Apache</span>
+          <span className="cv-tag">SSH & Systemd</span>
+          <span className="cv-tag">Docker</span>
+          <span className="cv-tag">Git & GitHub</span>
+          <span className="cv-tag">Proxmox / KVM</span>
+        </div>
+      </div>
+
+      {/* Kolom 3: Pemrograman & Web */}
+      <div className="cv-card">
+        <div className="cv-card-title">
+          <span>💻</span> Pemrograman & Web Development
+        </div>
+        <div className="cv-card-body" style={{ marginBottom: '0.75rem' }}>
+          Pengembangan web full-stack, OOP, pemrograman utilitas sistem, dan data persistensi.
+        </div>
+        <div className="cv-tags">
+          <span className="cv-tag">JavaScript / ES6+</span>
+          <span className="cv-tag">Python (OOP & ML)</span>
+          <span className="cv-tag">PHP & MySQL</span>
+          <span className="cv-tag">C / C++</span>
+          <span className="cv-tag">HTML5 & Modern CSS</span>
+          <span className="cv-tag">React.js & Docusaurus</span>
+          <span className="cv-tag">REST API</span>
+          <span className="cv-tag">PostgreSQL</span>
+        </div>
+      </div>
+
+      {/* Kolom 4: Akademik & Pedagogis */}
+      <div className="cv-card">
+        <div className="cv-card-title">
+          <span>📖</span> Keahlian Akademik & Manajerial
+        </div>
+        <div className="cv-card-body" style={{ marginBottom: '0.75rem' }}>
+          Pengelolaan program studi, penulisan ilmiah, bimbingan mahasiswa, dan kurikulum OBE.
+        </div>
+        <div className="cv-tags">
+          <span className="cv-tag">Kurikulum OBE</span>
+          <span className="cv-tag">Penjaminan Mutu Prodi</span>
+          <span className="cv-tag">Bimbingan Skripsi</span>
+          <span className="cv-tag">Peer Reviewing Jurnal</span>
+          <span className="cv-tag">Technical Writing</span>
+          <span className="cv-tag">Desain Modul Pembelajaran</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* 6. Mata Kuliah yang Diampu */}
+  <section className="cv-section">
+    <div className="cv-section-header">
+      <span className="cv-section-icon">🏫</span>
+      <Heading as="h2" id="mata-kuliah-yang-diampu" className="cv-section-title">Mata Kuliah yang Diampu</Heading>
+    </div>
+    <div className="cv-grid-2">
+      <div className="cv-card">
+        <h4 style={{ margin: '0 0 0.35rem', color: 'var(--ifm-heading-color)' }}>Keamanan Jaringan & Komputer</h4>
+        <div className="cv-card-body">
+          Prinsip dasar CIA triad, kriptografi praktis, pengamanan lalu lintas jaringan, audit kerentanan, dan mitigasi ancaman siber.
+        </div>
+      </div>
+      <div className="cv-card">
+        <h4 style={{ margin: '0 0 0.35rem', color: 'var(--ifm-heading-color)' }}>Administrasi & Pemeliharaan Sistem (Sysadmin)</h4>
+        <div className="cv-card-body">
+          Instalasi, konfigurasi server Linux, manajemen user, izin berkas, layanan jaringan (DNS, DHCP, Web), dan troubleshooting sistem.
+        </div>
+      </div>
+      <div className="cv-card">
+        <h4 style={{ margin: '0 0 0.35rem', color: 'var(--ifm-heading-color)' }}>Pemrograman Web Dasar (PWD)</h4>
+        <div className="cv-card-body">
+          Fundamental HTML5 semantik, styling CSS modern, interaktivitas JavaScript DOM, hingga pemrosesan form backend PHP dan database MySQL.
+        </div>
+      </div>
+      <div className="cv-card">
+        <h4 style={{ margin: '0 0 0.35rem', color: 'var(--ifm-heading-color)' }}>Pemrograman Berorientasi Objek (PBO)</h4>
+        <div className="cv-card-body">
+          Penerapan paradigma OOP menggunakan Python: Class, Object, Enkapsulasi, Pewarisan (Inheritance), Polimorfisme, dan Abstraksi.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* 7. Pelatihan, Sertifikasi, & Asosiasi */}
+  <section className="cv-section">
+    <div className="cv-section-header">
+      <span className="cv-section-icon">🎖️</span>
+      <Heading as="h2" id="pelatihan-sertifikasi-profesional" className="cv-section-title">Pelatihan & Sertifikasi Profesional</Heading>
+    </div>
+    <div className="cv-card">
+      <ul style={{ margin: 0, paddingLeft: '1.25rem', lineHeight: 1.8 }}>
+        <li>
+          <strong>Deep Learning Fundamental</strong> — Departemen Ilmu Komputer dan Elektronika, Universitas Gadjah Mada (UGM).
+        </li>
+        <li>
+          <strong>Pelatihan Peningkatan Keterampilan Dasar Teknik Instruksional (PEKERTI)</strong> — Sertifikasi kompetensi pedagogis pendidik tinggi.
+        </li>
+        <li>
+          <strong>MikroTik Certified Network Associate (MTCNA) Training</strong> — Spesialisasi routing, bandwidth management, dan firewall.
+        </li>
+        <li>
+          <strong>Cybersecurity & Network Defense Workshop</strong> — Pelatihan deteksi serangan dan penguatan sistem operasi server.
+        </li>
+        <li>
+          <strong>Reviewer & Tim Editor</strong> pada <em>Proceeding on Computer and Electrical Education Research (PROCESSOR)</em>, UIN Ar-Raniry Banda Aceh.
+        </li>
+        <li>
+          <strong>Technical Program Committee (TPC)</strong> pada seminar dan konferensi internasional bidang komputasi dan teknologi informasi.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  {/* 8. Pengabdian Kepada Masyarakat (Community Engagement) */}
+  <section className="cv-section">
+    <div className="cv-section-header">
+      <span className="cv-section-icon">🤝</span>
+      <Heading as="h2" id="pengabdian-kepada-masyarakat" className="cv-section-title">Pengabdian Kepada Masyarakat (PkM)</Heading>
+    </div>
+    <div className="cv-card">
+      <ul style={{ margin: 0, paddingLeft: '1.25rem', lineHeight: 1.8 }}>
+        <li>
+          <strong>Program Digitalisasi Gampong:</strong> Pelatihan pengelolaan sistem administrasi data berbasis web dan pengamanan data sensitif aparatur desa di Provinsi Aceh.
+        </li>
+        <li>
+          <strong>Literasi Keamanan Digital untuk Pendidik:</strong> Sosialisasi pencegahan phishing, manajemen kata sandi yang aman, dan perlindungan privasi data pribadi untuk guru sekolah dan madrasah.
+        </li>
+        <li>
+          <strong>Pendampingan Laboratorium Komputer Sekolah:</strong> Optimalisasi jaringan intranet dan instalasi sistem operasi open-source berbasis Linux untuk pembelajaran siswa.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+</div>

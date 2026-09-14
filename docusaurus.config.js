@@ -102,6 +102,7 @@ const config = {
             label: 'Tutorial',
           },
           { to: '/blog', label: 'Blog', position: 'left' },
+          // { to: '/docs/cv/intro', label: 'Curriculum Vitae', position: 'left' },
           {
             href: 'https://github.com/initial-as',
             label: 'GitHub',
