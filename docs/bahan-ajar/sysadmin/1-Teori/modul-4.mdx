@@ -1,0 +1,573 @@
+---
+title: "4. Server Services dan Network Services"
+---
+
+# Server Services dan Network Services
+
+Pada pertemuan sebelumnya, mahasiswa mempelajari sistem operasi server dan konfigurasi dasarnya. Pada pertemuan ini, mahasiswa akan memahami bagaimana server menyediakan layanan seperti DNS, DHCP, web server, SSH, dan file sharing.
+
+Pembahasan diarahkan pada pemahaman fungsi, cara kerja, kebutuhan, dan pertimbangan konfigurasi layanan server. Implementasi teknis secara langsung akan dilakukan pada sesi praktikum.
+
+---
+
+## A. Capaian Pembelajaran
+
+Setelah mengikuti perkuliahan ini, mahasiswa diharapkan mampu:
+
+1. Menjelaskan konsep dan fungsi layanan server.
+2. Mengidentifikasi jenis-jenis common network services dan application services.
+3. Menjelaskan cara kerja layanan DNS, DHCP, web server, SSH, dan file sharing.
+4. Menganalisis kebutuhan layanan server berdasarkan kebutuhan pengguna dan arsitektur yang telah dirancang.
+5. Menentukan penempatan layanan pada server berdasarkan kebutuhan sistem.
+6. Menjelaskan prinsip dasar instalasi, konfigurasi, dan pengujian layanan server.
+
+### Keterkaitan dengan Peta Okupasi Nasional
+
+Materi ini mendukung kompetensi Administrator Sistem yang berkaitan dengan:
+
+* J.63SAM00.011.2 — Meng-install Common Network Services pada Server.
+* J.63SAM00.012.2 — Meng-install Common Application Services pada Server.
+* J.63SAM00.014.2 — Mengkonfigurasi Common Network Services pada Server.
+* J.63SAM00.015.2 — Mengkonfigurasi Common Application Services pada Server.
+
+Materi tersebut merupakan bagian dari tugas Administrator Sistem dalam mengimplementasikan dan mengelola lingkungan server.
+
+---
+
+## B. Konsep Server Services
+
+### 1. Pengertian Server Service
+
+Server service adalah layanan atau proses yang berjalan pada server untuk menyediakan fungsi tertentu kepada client atau sistem lain melalui jaringan.
+
+Layanan server memungkinkan pengguna mengakses sumber daya tanpa harus menjalankan seluruh proses pada komputer mereka sendiri. Contohnya:
+
+* Pengguna mengakses website melalui web server.
+* Komputer memperoleh konfigurasi IP secara otomatis melalui DHCP server.
+* Pengguna mengakses nama domain melalui DNS server.
+* Administrator mengelola server dari jarak jauh melalui SSH.
+* Pengguna berbagi dan mengakses file melalui file server.
+
+### 2. Perbedaan Network Services dan Application Services
+
+| Aspek      | Network Services                                                        | Application Services                                                 |
+| ---------- | ----------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| Pengertian | Layanan yang mendukung komunikasi dan fungsi jaringan                   | Layanan yang menyediakan fungsi aplikasi kepada pengguna atau sistem |
+| Tujuan     | Memungkinkan perangkat berkomunikasi dan menemukan sumber daya jaringan | Menyediakan fungsi tertentu yang dibutuhkan pengguna atau aplikasi   |
+| Contoh     | DNS, DHCP, SSH                                                          | Web server, database server, file sharing                            |
+
+**Catatan:** Pembagian ini bersifat konseptual. Beberapa layanan dapat memiliki fungsi jaringan sekaligus fungsi aplikasi, bergantung pada konteks penggunaannya.
+
+### 3. Komponen Layanan Server
+
+Secara umum, layanan server melibatkan beberapa komponen berikut:
+
+1. **Server:** Komputer atau mesin virtual yang menjalankan layanan.
+2. **Service/Daemon:** Program yang menyediakan fungsi tertentu.
+3. **Client:** Perangkat atau aplikasi yang meminta layanan.
+4. **Protocol:** Aturan komunikasi antara client dan server.
+5. **Port:** Identifikasi endpoint komunikasi pada protokol transport.
+6. **Configuration:** Pengaturan yang menentukan bagaimana layanan beroperasi.
+7. **Log:** Catatan aktivitas, kesalahan, dan kejadian pada layanan.
+
+Sebagai contoh, ketika pengguna membuka website, browser bertindak sebagai client, web server menerima permintaan melalui HTTP atau HTTPS, kemudian mengirimkan respons kepada browser.
+
+---
+
+## C. Arsitektur Komunikasi Client–Server
+
+Model client–server merupakan dasar komunikasi sebagian besar layanan server. Alur komunikasi secara umum:
+
+1. Client membutuhkan layanan tertentu.
+2. Client mengirimkan permintaan melalui jaringan.
+3. Server menerima permintaan pada layanan yang sesuai.
+4. Server memproses permintaan.
+5. Server mengirimkan respons kepada client.
+6. Client menampilkan atau menggunakan respons tersebut.
+
+### Contoh: Akses Website
+
+Ketika mahasiswa mengakses sistem informasi akademik:
+
+1. Browser meminta resolusi nama domain melalui DNS.
+2. DNS memberikan alamat IP server.
+3. Browser membuat koneksi ke server.
+4. Browser mengirimkan permintaan HTTP atau HTTPS.
+5. Web server memproses permintaan, dan jika diperlukan, berkomunikasi dengan application server atau database server.
+6. Server mengirimkan respons kepada browser.
+
+Proses tersebut menunjukkan bahwa satu aplikasi dapat bergantung pada beberapa layanan server yang saling terhubung.
+
+---
+
+## D. Domain Name System (DNS)
+
+### 1. Pengertian DNS
+
+**Domain Name System (DNS)** adalah sistem yang menerjemahkan nama domain menjadi informasi yang diperlukan untuk menemukan layanan jaringan, terutama alamat IP. Manusia lebih mudah mengingat nama seperti **[ar-raniry.ac.id](https://ar-raniry.ac.id)** dibandingkan alamat IP server. DNS membantu client menemukan server berdasarkan nama domain.
+
+### 2. Fungsi DNS
+
+DNS memiliki beberapa fungsi, antara lain:
+
+* Menerjemahkan nama domain menjadi alamat IP.
+* Membantu client menemukan server layanan tertentu.
+* Mengelola informasi nama domain melalui DNS record.
+* Mendukung pengelolaan nama host dalam jaringan lokal maupun internet.
+
+### 3. Jenis DNS Record
+
+| DNS Record | Fungsi                                    | Contoh Penggunaan                          |
+| ---------- | ----------------------------------------- | ------------------------------------------ |
+| A          | Memetakan nama host ke alamat IPv4        | `web.example.edu → 192.168.10.10`          |
+| AAAA       | Memetakan nama host ke alamat IPv6        | Host yang menggunakan IPv6                 |
+| CNAME      | Membuat alias untuk nama domain lain      | `www` sebagai alias dari nama domain utama |
+| MX         | Menentukan mail server untuk suatu domain | Layanan email organisasi                   |
+| NS         | Menentukan name server untuk suatu domain | Server DNS otoritatif                      |
+| PTR        | Mendukung reverse DNS lookup              | Pencarian nama berdasarkan alamat IP       |
+
+### 4. Alur Resolusi DNS
+
+Ketika pengguna memasukkan nama domain pada browser, proses resolusi DNS secara umum melibatkan:
+
+1. Client memeriksa cache DNS lokal.
+2. Jika informasi belum tersedia, client menghubungi DNS resolver.
+3. Resolver mencari jawaban melalui mekanisme DNS yang sesuai.
+4. Resolver memperoleh jawaban dan mengembalikannya kepada client.
+5. Client menggunakan alamat IP untuk menghubungi server tujuan.
+
+Dalam jaringan organisasi, DNS internal dapat digunakan untuk membantu perangkat menemukan server lokal.
+
+### 5. Pertimbangan Administrasi DNS
+
+Administrator sistem perlu memperhatikan:
+
+* Konsistensi nama host dan alamat IP.
+* Ketepatan DNS record.
+* Penggunaan DNS internal atau eksternal.
+* Pengaturan TTL (Time to Live).
+* Ketersediaan DNS server.
+* Pembatasan akses terhadap fungsi administrasi DNS.
+
+Kesalahan konfigurasi DNS dapat menyebabkan layanan server tidak dapat diakses menggunakan nama domain meskipun server sebenarnya aktif.
+
+---
+
+## E. Dynamic Host Configuration Protocol (DHCP)
+
+### 1. Pengertian DHCP
+
+**Dynamic Host Configuration Protocol (DHCP)** adalah protokol yang memungkinkan perangkat memperoleh konfigurasi jaringan secara otomatis dari DHCP server. Tanpa DHCP, administrator mungkin harus mengonfigurasi alamat IP, subnet mask, gateway, dan DNS secara manual pada setiap perangkat.
+
+### 2. Informasi yang Diberikan DHCP
+
+DHCP dapat menyediakan konfigurasi seperti:
+
+* IP address
+* Subnet mask
+* Default gateway
+* DNS server
+* Lease time
+
+DHCP membantu mengurangi kesalahan konfigurasi dan menyederhanakan administrasi jaringan.
+
+### 3. Mekanisme DHCP DORA
+
+Proses pemberian alamat IP melalui DHCP umumnya dikenal sebagai **DORA**:
+
+| Tahap | Pesan                | Penjelasan                                      |
+| ----- | -------------------- | ----------------------------------------------- |
+| 1     | Discover             | Client mencari DHCP server                      |
+| 2     | Offer                | DHCP server menawarkan konfigurasi IP           |
+| 3     | Request              | Client meminta konfigurasi yang ditawarkan      |
+| 4     | Acknowledgment (ACK) | DHCP server mengonfirmasi pemberian konfigurasi |
+
+### 4. DHCP Scope dan Reservation
+
+**DHCP Scope** adalah rentang alamat IP yang dapat dialokasikan oleh DHCP server kepada client. Contoh:
+
+* Network: `192.168.10.0/24`
+* DHCP pool: `192.168.10.100–192.168.10.200`
+* Default gateway: `192.168.10.1`
+* DNS server: `192.168.10.10`
+
+Sementara itu, **DHCP Reservation** digunakan untuk memberikan alamat IP tertentu kepada perangkat berdasarkan identitas yang dikenali oleh DHCP server, umumnya alamat MAC pada jaringan Ethernet.
+
+### 5. Pertimbangan Administrasi DHCP
+
+Administrator perlu memastikan:
+
+1. DHCP pool tidak bertabrakan dengan alamat IP statis.
+2. Scope sesuai dengan subnet jaringan.
+3. Default gateway dan DNS yang diberikan benar.
+4. Lease time sesuai dengan kebutuhan jaringan.
+5. Hanya DHCP server yang berwenang yang melayani jaringan tersebut.
+
+DHCP yang salah konfigurasi dapat menyebabkan perangkat memperoleh alamat IP yang tidak sesuai atau gagal berkomunikasi dengan jaringan.
+
+---
+
+
+## F. Web Server
+
+### 1. Pengertian Web Server
+
+Web server adalah perangkat lunak yang menerima permintaan HTTP/HTTPS dari client dan mengirimkan respons berupa halaman web, file, atau konten lainnya. Web server merupakan komponen penting dalam sistem berbasis web, seperti:
+
+* Sistem informasi akademik.
+* Website organisasi.
+* Sistem e-learning.
+* Portal jurnal ilmiah.
+* Aplikasi layanan publik.
+
+### 2. Contoh Perangkat Lunak Web Server
+
+| Web Server         | Karakteristik Umum                                           |
+| ------------------ | ------------------------------------------------------------ |
+| Apache HTTP Server | Web server yang fleksibel dan banyak digunakan               |
+| Nginx              | Dikenal sebagai web server dan reverse proxy                 |
+| Microsoft IIS      | Web server yang terintegrasi dengan ekosistem Windows Server |
+
+Pemilihan web server perlu mempertimbangkan kebutuhan aplikasi, kemampuan administrator, kompatibilitas, kinerja, dan dukungan pemeliharaan.
+
+### 3. Cara Kerja Web Server
+
+1. Pengguna memasukkan alamat website pada browser.
+2. Browser memperoleh alamat IP server melalui DNS jika diperlukan.
+3. Browser mengirimkan permintaan HTTP/HTTPS.
+4. Web server menerima dan memproses permintaan.
+5. Jika diperlukan, web server meneruskan permintaan kepada application server.
+6. Web server mengirimkan respons kepada browser.
+
+### 4. HTTP dan HTTPS
+
+HTTP merupakan protokol komunikasi yang digunakan untuk pertukaran data web. HTTPS adalah HTTP yang dilindungi menggunakan TLS untuk menyediakan enkripsi komunikasi serta perlindungan integritas data dan autentikasi server. Dalam penerapan HTTPS, administrator perlu memperhatikan:
+
+* Sertifikat TLS.
+* Masa berlaku sertifikat.
+* Nama domain pada sertifikat.
+* Konfigurasi protokol dan cipher yang aman.
+* Pembaruan sertifikat sebelum kedaluwarsa.
+
+### 5. Web Server dan Application Server
+
+Keduanya memiliki peran yang berbeda, meskipun pada sistem sederhana fungsi tersebut dapat dijalankan dalam satu lingkungan server.
+
+| Web Server                                   | Application Server                     |
+| -------------------------------------------- | -------------------------------------- |
+| Menangani permintaan HTTP/HTTPS              | Menjalankan logika aplikasi            |
+| Dapat menyajikan konten statis               | Memproses aturan dan fungsi aplikasi   |
+| Dapat meneruskan permintaan ke aplikasi lain | Dapat berkomunikasi dengan database    |
+| Contoh: Nginx, Apache HTTP Server            | Contoh: runtime atau platform aplikasi |
+
+**Contoh:** Pada sistem informasi akademik, web server menerima permintaan dari browser, sedangkan aplikasi akademik memproses permintaan untuk menampilkan data mahasiswa.
+
+---
+
+## G. Secure Shell (SSH)
+
+### 1. Pengertian SSH
+
+**Secure Shell (SSH)** adalah protokol yang digunakan untuk mengakses dan mengelola sistem secara remote melalui koneksi yang terenkripsi. SSH banyak digunakan administrator untuk mengelola server Linux tanpa harus berada langsung di depan komputer server.
+
+### 2. Fungsi SSH
+
+SSH dapat digunakan untuk:
+
+* Login ke server secara remote.
+* Menjalankan perintah administrasi.
+* Memindahkan file secara aman melalui mekanisme seperti SCP atau SFTP.
+* Melakukan tunneling koneksi tertentu.
+
+### 3. Autentikasi SSH
+
+Dua metode autentikasi yang umum digunakan adalah:
+
+1. **Password authentication:** Pengguna melakukan autentikasi menggunakan kata sandi.
+2. **Public key authentication:** Pengguna membuktikan kepemilikan private key yang sesuai dengan public key yang diizinkan server.
+
+Public key authentication dapat mengurangi ketergantungan pada password, tetapi tetap membutuhkan pengelolaan kunci yang aman.
+
+### 4. Pertimbangan Keamanan SSH
+
+Administrator perlu memperhatikan:
+
+* Membatasi akses SSH hanya kepada pihak yang membutuhkan.
+* Menggunakan autentikasi yang kuat.
+* Menghindari login langsung sebagai root jika tidak diperlukan.
+* Mengelola akun dan hak akses pengguna.
+* Memantau log autentikasi.
+* Mempertimbangkan pembatasan akses berdasarkan jaringan atau firewall.
+
+SSH merupakan layanan administrasi yang penting sehingga tidak seharusnya dibuka secara luas tanpa kebijakan akses yang jelas.
+
+---
+
+## H. File Server dan File Sharing
+
+### 1. Pengertian File Server
+
+File server adalah server yang menyediakan penyimpanan dan akses file bagi pengguna atau perangkat lain dalam jaringan. File server dapat digunakan untuk mendukung kolaborasi, pertukaran dokumen, dan pengelolaan data organisasi secara terpusat.
+
+### 2. Contoh Teknologi File Sharing
+
+| Teknologi                  | Kegunaan Umum                                                                 |
+| -------------------------- | ----------------------------------------------------------------------------- |
+| SMB (Server Message Block) | Berbagi file dan printer, umum digunakan pada lingkungan Windows              |
+| NFS (Network File System)  | Berbagi direktori melalui jaringan, umum digunakan pada lingkungan Unix/Linux |
+| SFTP                       | Transfer file melalui SSH                                                     |
+
+### 3. Konsep Hak Akses File Sharing
+
+Dalam pengelolaan file server, administrator perlu menentukan:
+
+* Siapa yang dapat mengakses direktori.
+* Siapa yang dapat membaca file.
+* Siapa yang dapat membuat atau mengubah file.
+* Siapa yang dapat menghapus file.
+* Apakah akses diberikan kepada individu atau kelompok.
+
+Prinsip yang perlu diterapkan adalah **least privilege**, yaitu memberikan hak akses minimum yang diperlukan pengguna untuk menjalankan tugasnya.
+
+### 4. Contoh Kasus
+
+Sebuah program studi memiliki direktori bersama yang digunakan oleh dosen dan tenaga kependidikan.
+
+Kebijakan akses:
+
+| Kelompok Pengguna   | Hak Akses                                               |
+| ------------------- | ------------------------------------------------------- |
+| Ketua program studi | Membaca, membuat, mengubah, dan menghapus file          |
+| Dosen               | Membaca dan mengunggah dokumen tertentu                 |
+| Tenaga kependidikan | Membaca dan mengelola dokumen administrasi sesuai tugas |
+| Pengguna lain       | Tidak memiliki akses                                    |
+
+Administrator harus menerjemahkan kebijakan organisasi tersebut ke dalam konfigurasi akun, grup, permission sistem file, dan permission file sharing.
+
+---
+
+
+## I. Port dan Protokol Layanan Server
+
+Administrator sistem perlu memahami port yang digunakan layanan agar dapat melakukan konfigurasi jaringan, firewall, dan troubleshooting. Berikut beberapa port standar yang umum digunakan:
+
+| Layanan     | Protokol                                   | Port Standar |
+| ----------- | ------------------------------------------ | -----------: |
+| DNS         | UDP/TCP                                    |           53 |
+| DHCP Server | UDP                                        |           67 |
+| DHCP Client | UDP                                        |           68 |
+| HTTP        | TCP                                        |           80 |
+| HTTPS       | TCP                                        |          443 |
+| SSH         | TCP                                        |           22 |
+| SMB         | TCP                                        |          445 |
+| NFS         | TCP/UDP (bergantung versi dan konfigurasi) |         2049 |
+
+:::info
+Port tersebut merupakan port standar, bukan jaminan bahwa suatu layanan selalu berjalan pada port tersebut. Administrator dapat mengubah konfigurasi port, dan beberapa layanan menggunakan port tambahan.
+:::
+
+### Mengapa pemahaman port penting?
+
+Misalnya, web server sudah terinstal dan berjalan, tetapi pengguna tidak dapat mengakses website dari komputer lain. Penyebabnya tidak selalu web server yang bermasalah. Kemungkinan penyebabnya meliputi:
+
+* Service web server tidak berjalan.
+* Web server hanya mendengarkan pada alamat loopback.
+* Firewall memblokir port yang diperlukan.
+* Konfigurasi DNS tidak benar.
+* Terdapat masalah routing atau konektivitas jaringan.
+
+Dengan memahami port dan protokol, administrator dapat melakukan pemeriksaan secara sistematis.
+
+---
+
+## J. Penempatan Layanan dalam Arsitektur Server
+
+Tidak semua layanan harus ditempatkan pada satu server. Penempatan layanan perlu disesuaikan dengan kebutuhan sistem, kapasitas sumber daya, keamanan, dan arsitektur yang telah dirancang.
+
+### 1. Arsitektur Single Server
+
+Seluruh layanan ditempatkan pada satu server. Contoh:
+
+* Web server
+* Application server
+* Database server
+* DNS server
+
+**Kelebihan:**
+
+* Mudah diterapkan pada sistem berskala kecil.
+* Biaya awal relatif rendah.
+* Administrasi infrastruktur lebih sederhana.
+
+**Keterbatasan:**
+
+* Sumber daya digunakan bersama oleh berbagai layanan.
+* Gangguan server dapat memengaruhi seluruh layanan.
+* Pemisahan keamanan dan pengembangan kapasitas lebih terbatas.
+
+### 2. Arsitektur Multi-Server
+
+Layanan ditempatkan pada server yang berbeda sesuai fungsi masing-masing. Contoh:
+
+| Server   | Layanan                  |
+| -------- | ------------------------ |
+| Server 1 | Web server               |
+| Server 2 | Application server       |
+| Server 3 | Database server          |
+| Server 4 | DNS dan layanan jaringan |
+
+**Kelebihan:**
+
+* Pemisahan fungsi layanan.
+* Pengelolaan sumber daya lebih terarah.
+* Dapat mendukung peningkatan kapasitas dan isolasi layanan.
+
+**Keterbatasan:**
+
+* Membutuhkan konfigurasi jaringan yang lebih kompleks.
+* Biaya infrastruktur dan pemeliharaan dapat meningkat.
+* Komunikasi antarlayanan perlu diamankan dan dipantau.
+
+### 3. Faktor Penempatan Layanan
+
+Sebelum menentukan penempatan layanan, administrator perlu menganalisis:
+
+1. Kebutuhan pengguna.
+2. Jumlah dan jenis layanan.
+3. Kebutuhan CPU, RAM, dan penyimpanan.
+4. Kebutuhan ketersediaan layanan.
+5. Sensitivitas data.
+6. Risiko keamanan.
+7. Kebutuhan komunikasi antarlayanan.
+8. Kemampuan organisasi dalam mengelola infrastruktur.
+
+---
+
+## K. Instalasi dan Konfigurasi Layanan Server
+
+Instalasi layanan server bukan hanya proses memasang perangkat lunak. Administrator perlu memastikan bahwa layanan tersebut sesuai dengan kebutuhan dan dapat beroperasi secara benar.
+
+### 1. Tahapan Umum
+
+Tahapan instalasi dan konfigurasi layanan server meliputi:
+
+1. Mengidentifikasi kebutuhan layanan.
+2. Memeriksa kesiapan sistem operasi server.
+3. Menentukan perangkat lunak layanan yang sesuai.
+4. Menginstal perangkat lunak layanan.
+5. Mengonfigurasi parameter layanan.
+6. Menjalankan dan mengaktifkan layanan.
+7. Melakukan pengujian fungsional.
+8. Memeriksa log layanan.
+9. Mendokumentasikan konfigurasi.
+
+### 2. Pengujian Layanan
+
+Setelah layanan diinstal, administrator perlu memastikan bahwa layanan dapat digunakan sesuai fungsinya. Contoh pengujian:
+
+| Layanan     | Contoh Pengujian                                          |
+| ----------- | --------------------------------------------------------- |
+| DNS         | Memastikan nama domain dapat di-resolve                   |
+| DHCP        | Memastikan client memperoleh konfigurasi IP yang sesuai   |
+| Web server  | Memastikan website dapat diakses melalui browser          |
+| SSH         | Memastikan administrator dapat melakukan remote login     |
+| File server | Memastikan pengguna dapat mengakses file sesuai hak akses |
+
+Pengujian harus dilakukan dari sudut pandang server dan client. Layanan yang terlihat aktif pada server belum tentu dapat diakses oleh pengguna melalui jaringan.
+
+---
+
+
+## L. Studi Kasus: Infrastruktur Server Sistem Informasi Akademik
+
+### 1. Deskripsi Kasus
+
+Sebuah program studi akan mengembangkan sistem informasi akademik yang dapat digunakan oleh dosen, mahasiswa, dan tenaga kependidikan. Sistem tersebut membutuhkan layanan server untuk mendukung akses aplikasi, pengelolaan jaringan, administrasi jarak jauh, serta pertukaran dokumen.
+
+### 2. Identifikasi Kebutuhan Layanan
+
+| Kebutuhan                                      | Layanan yang Diperlukan | Alasan                           |
+| ---------------------------------------------- | ----------------------- | -------------------------------- |
+| Pengguna mengakses aplikasi akademik           | Web server              | Menerima permintaan HTTP/HTTPS   |
+| Perangkat menemukan server berdasarkan nama    | DNS                     | Menerjemahkan nama host          |
+| Perangkat memperoleh IP secara otomatis        | DHCP                    | Menyediakan konfigurasi jaringan |
+| Administrator mengelola server dari jarak jauh | SSH                     | Mendukung administrasi remote    |
+| Staf berbagi dokumen administrasi              | File server             | Menyediakan penyimpanan bersama  |
+
+### 3. Rancangan Awal
+
+Sebagai rancangan awal, organisasi dapat menggunakan dua server:
+
+| Server   | Layanan                          |
+| -------- | -------------------------------- |
+| Server A | Web server dan aplikasi akademik |
+| Server B | Database server                  |
+
+Layanan DNS, DHCP, SSH, dan file sharing dapat ditempatkan sesuai kebutuhan dan infrastruktur organisasi. Penempatannya perlu mempertimbangkan apakah organisasi telah memiliki layanan tersebut pada jaringan yang ada. Rancangan ini bukan satu-satunya pilihan.
+
+### 4. Pertanyaan Analisis
+
+1. Apakah seluruh layanan tersebut harus diinstal pada satu server?
+2. Layanan mana yang harus dapat diakses oleh pengguna dari jaringan luar?
+3. Layanan mana yang sebaiknya dibatasi hanya untuk jaringan internal?
+4. Apa risiko jika database server dapat diakses langsung dari internet?
+5. Bagaimana administrator memastikan layanan dapat diakses sesuai kebutuhan?
+6. Apa yang terjadi jika DNS server mengalami gangguan?
+7. Bagaimana cara menguji bahwa setiap layanan telah berfungsi dengan benar?
+
+---
+
+## M. Kesalahan Umum dalam Pengelolaan Layanan Server
+
+Beberapa kesalahan yang perlu dihindari oleh administrator sistem antara lain:
+
+| Kesalahan                                      | Dampak                                                    |
+| ---------------------------------------------- | --------------------------------------------------------- |
+| Menginstal layanan tanpa analisis kebutuhan    | Menambah kompleksitas dan potensi risiko keamanan         |
+| Menggunakan konfigurasi default tanpa evaluasi | Konfigurasi mungkin tidak sesuai kebutuhan organisasi     |
+| Membuka seluruh port pada firewall             | Memperluas permukaan serangan                             |
+| Tidak menguji layanan dari sisi client         | Gangguan akses pengguna dapat tidak terdeteksi            |
+| Memberikan hak akses terlalu luas              | Meningkatkan risiko akses tidak sah                       |
+| Tidak memantau log layanan                     | Kesalahan dan aktivitas mencurigakan sulit diidentifikasi |
+| Tidak mendokumentasikan konfigurasi            | Menyulitkan pemeliharaan dan troubleshooting              |
+
+Prinsip utama yang perlu diingat adalah bahwa **layanan server harus memenuhi kebutuhan pengguna, dapat diuji, dikelola, dan diamankan.**
+
+---
+
+
+## N. Aktivitas Diskusi Kelas
+
+### Diskusi: Merancang Layanan Server untuk Organisasi
+
+Mahasiswa dibagi menjadi beberapa kelompok. Setiap kelompok menggunakan kasus organisasi yang telah dipilih pada penugasan pertemuan ke-1 dan rancangan arsitektur pada pertemuan ke-2. Setiap kelompok mendiskusikan:
+
+1. Layanan server apa saja yang dibutuhkan?
+2. Apa fungsi setiap layanan?
+3. Pada server mana layanan tersebut akan ditempatkan?
+4. Layanan mana yang dapat diakses pengguna dan mana yang harus dibatasi?
+5. Bagaimana cara menguji setiap layanan?
+6. Apa risiko jika salah satu layanan mengalami gangguan?
+
+**Output diskusi:** Tabel kebutuhan layanan dan rancangan penempatan layanan pada arsitektur server kelompok.
+
+---
+
+## O. Ringkasan Materi
+
+Pada pertemuan ke-4, mahasiswa telah mempelajari bahwa:
+
+1. Server services memungkinkan server menyediakan fungsi tertentu kepada client melalui jaringan.
+2. DNS membantu client menemukan server berdasarkan nama domain.
+3. DHCP menyediakan konfigurasi jaringan secara otomatis kepada client.
+4. Web server menangani permintaan HTTP/HTTPS dari pengguna.
+5. SSH mendukung administrasi server secara remote.
+6. File server menyediakan layanan penyimpanan dan berbagi file.
+7. Instalasi layanan harus disertai konfigurasi, pengujian, dan dokumentasi.
+8. Penempatan layanan harus mempertimbangkan kebutuhan pengguna, arsitektur, keamanan, dan sumber daya.
+
+---
+
+## P. Keterkaitan dengan Pertemuan Selanjutnya
+
+Pada pertemuan ke-5, pembelajaran akan berfokus pada **Virtualisasi dan Pengelolaan Server**. Mahasiswa akan mempelajari bagaimana layanan server dapat dijalankan dalam lingkungan virtual, bagaimana sumber daya server dialokasikan, serta bagaimana virtualisasi mendukung pengelolaan infrastruktur yang lebih fleksibel.
