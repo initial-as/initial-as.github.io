@@ -1,0 +1,710 @@
+---
+title: "5. Virtualisasi dan Pengelolaan Server"
+---
+
+# Virtualisasi dan Pengelolaan Server
+
+Pada pertemuan ini, mahasiswa akan mempelajari bagaimana sistem operasi dan layanan server tersebut dapat dijalankan dalam lingkungan virtual, bagaimana sumber daya dialokasikan, serta bagaimana administrator mengelola perubahan infrastruktur melalui upgrade dan migrasi server.
+
+---
+
+## A. Capaian Pembelajaran
+
+Setelah mengikuti perkuliahan ini, mahasiswa diharapkan mampu:
+
+1. Menjelaskan konsep dan tujuan virtualisasi dalam administrasi sistem.
+2. Membedakan virtual machine (VM) dan container.
+3. Menjelaskan fungsi hypervisor dan arsitektur virtualisasi.
+4. Menganalisis kebutuhan sumber daya untuk menjalankan server virtual.
+5. Menentukan teknologi virtualisasi yang sesuai dengan kebutuhan organisasi.
+6. Menjelaskan tahapan dasar pengelolaan, upgrade, dan migrasi server.
+7. Mengidentifikasi risiko serta langkah mitigasi dalam pengelolaan lingkungan virtual.
+
+---
+
+## B. Konsep Dasar Virtualisasi
+
+### 1. Pengertian Virtualisasi
+
+Virtualisasi adalah teknologi yang memungkinkan sumber daya komputasi, seperti CPU, memori, penyimpanan, dan jaringan, disediakan dalam bentuk lingkungan virtual. Dengan virtualisasi, satu komputer fisik dapat menjalankan beberapa mesin virtual yang masing-masing memiliki sistem operasi dan aplikasi sendiri. Sebagai contoh, sebuah komputer fisik dengan prosesor 8 core, RAM 32 GB, dan SSD 1 TB dapat digunakan untuk menjalankan beberapa VM, seperti:
+
+* VM 1: Ubuntu Server untuk web server.
+* VM 2: Debian untuk database server.
+* VM 3: Ubuntu Server untuk layanan DNS dan pengujian jaringan.
+
+Ketiga VM tersebut berbagi sumber daya dari komputer fisik yang sama, tetapi memiliki lingkungan sistem operasi yang terpisah. Perlu diperhatikan bahwa jumlah VM yang dapat dijalankan tidak hanya ditentukan oleh kapasitas perangkat keras. Beban kerja, kebutuhan sumber daya setiap VM, overhead virtualisasi, dan kebutuhan ketersediaan juga harus dipertimbangkan.
+
+### 2. Mengapa Virtualisasi Dibutuhkan?
+
+Sebelum virtualisasi banyak digunakan, organisasi dapat menempatkan setiap layanan pada server fisik yang berbeda. Misalnya, organisasi memiliki tiga server fisik:
+
+| Server   | Fungsi          |
+| -------- | --------------- |
+| Server 1 | Web server      |
+| Server 2 | Database server |
+| Server 3 | File server     |
+
+Pendekatan tersebut dapat memberikan pemisahan fisik, tetapi berpotensi menimbulkan beberapa masalah:
+
+1. Pemanfaatan sumber daya perangkat keras kurang optimal jika beban kerja rendah.
+2. Biaya pembelian dan pemeliharaan perangkat keras meningkat.
+3. Penambahan layanan membutuhkan perangkat keras baru.
+4. Pemulihan dan pemindahan lingkungan server dapat lebih rumit.
+5. Kebutuhan ruang dan konsumsi daya meningkat.
+
+Dengan virtualisasi, beberapa server dapat dijalankan pada satu host fisik sesuai kapasitas dan kebutuhan sistem.
+
+### 3. Manfaat Virtualisasi
+
+Virtualisasi memberikan sejumlah manfaat:
+
+* Konsolidasi server<br />
+    Beberapa server virtual dapat dijalankan pada satu host fisik. Hal ini dapat mengurangi jumlah perangkat keras yang diperlukan.
+
+* Pemanfaatan sumber daya<br />
+    CPU, memori, penyimpanan, dan jaringan dapat dialokasikan kepada VM sesuai kebutuhan.
+
+* Isolasi lingkungan<br />
+    Setiap VM memiliki lingkungan sistem operasi sendiri. Gangguan pada satu VM tidak selalu menyebabkan VM lain berhenti, meskipun seluruh VM tetap dapat terdampak jika host fisiknya mengalami kegagalan.
+
+* Fleksibilitas<br />
+    Administrator dapat membuat, menghapus, menyalin, atau mengubah konfigurasi VM tanpa harus selalu memasang sistem operasi pada perangkat fisik baru.
+
+* Mendukung pengujian<br />
+    Lingkungan virtual dapat digunakan untuk menguji konfigurasi, pembaruan perangkat lunak, dan layanan baru sebelum diterapkan pada lingkungan produksi.
+
+* Mendukung pemulihan sistem<br />
+    Snapshot, backup, dan fitur pemulihan pada platform virtualisasi dapat membantu proses pemulihan. Namun, snapshot tidak boleh dianggap sebagai pengganti backup yang terpisah.
+
+---
+
+## C. Arsitektur Virtualisasi
+
+Secara umum, lingkungan virtualisasi terdiri atas beberapa komponen utama.
+
+### 1. Host
+
+**Host** adalah komputer fisik yang menyediakan sumber daya untuk menjalankan lingkungan virtual.
+
+Sumber daya host meliputi:
+
+* CPU.
+* RAM.
+* Penyimpanan.
+* Antarmuka jaringan.
+* Perangkat keras pendukung lainnya.
+
+Host harus memiliki kapasitas yang cukup untuk menjalankan hypervisor dan seluruh VM yang aktif.
+
+### 2. Guest
+
+**Guest** adalah sistem operasi yang berjalan di dalam lingkungan virtual, seperti VM. Contohnya:
+
+* Ubuntu Server.
+* Debian.
+* Rocky Linux.
+* Windows Server.
+
+Setiap guest memiliki kebutuhan CPU, memori, penyimpanan, dan jaringan masing-masing.
+
+### 3. Hypervisor
+
+Hypervisor adalah perangkat lunak atau lapisan virtualisasi yang memungkinkan beberapa VM berjalan pada satu host fisik. Hypervisor mengelola akses VM terhadap sumber daya perangkat keras, seperti CPU, memori, dan perangkat virtual.
+
+#### Jenis Hypervisor
+
+1. Type 1 — Bare-Metal Hypervisor
+
+    Hypervisor jenis ini berjalan langsung di atas perangkat keras fisik. Contoh teknologi:
+
+    * VMware ESXi.
+    * Microsoft Hyper-V dalam konfigurasi bare-metal.
+    * Xen.
+
+    Karakteristik umumnya:
+
+    * Dirancang untuk menjalankan lingkungan virtualisasi.
+    * Banyak digunakan pada infrastruktur server.
+    * Mendukung pengelolaan beberapa VM pada satu host.
+    * Memiliki kebutuhan konfigurasi dan pengelolaan tersendiri.
+
+2. Type 2 — Hosted Hypervisor
+
+    Hypervisor jenis ini berjalan sebagai aplikasi di atas sistem operasi host. Contoh:
+
+    * Oracle VirtualBox.
+    * VMware Workstation.
+
+    Karakteristik umumnya:
+
+    * Relatif mudah digunakan untuk pembelajaran dan pengujian.
+    * Dapat dijalankan pada komputer pribadi.
+    * Cocok untuk simulasi lingkungan server dalam laboratorium.
+    * Kinerja dan kemampuan pengelolaannya bergantung pada sistem operasi host dan platform yang digunakan.
+
+    ### Perbandingan Hypervisor
+
+    | Aspek                            | Type 1                                               | Type 2                                |
+    | -------------------------------- | ---------------------------------------------------- | ------------------------------------- |
+    | Posisi                           | Langsung di atas perangkat keras                     | Di atas sistem operasi host           |
+    | Penggunaan umum                  | Infrastruktur server                                 | Laboratorium, pembelajaran, pengujian |
+    | Pengelolaan                      | Berorientasi pada host virtualisasi                  | Melalui aplikasi pada OS host         |
+    | Ketergantungan pada OS host umum | Tidak menggunakan OS host umum sebagai lapisan utama | Bergantung pada OS host               |
+    | Contoh                           | ESXi, Hyper-V bare-metal, Xen                        | VirtualBox, VMware Workstation        |
+
+    :::tip
+    Pemilihan hypervisor tidak cukup hanya berdasarkan jenisnya. Administrator juga perlu mempertimbangkan kompatibilitas perangkat keras, dukungan sistem operasi guest, lisensi, fitur pengelolaan, keamanan, dan kebutuhan organisasi.
+    :::
+
+---
+
+## D. Virtual Machine (VM)
+
+### 1. Pengertian Virtual Machine
+
+Virtual machine adalah lingkungan komputasi virtual yang menyediakan perangkat keras virtual untuk menjalankan sistem operasi dan aplikasi. VM berperilaku seperti komputer tersendiri dari sudut pandang sistem operasi guest. Satu VM umumnya memiliki:
+
+* vCPU.
+* RAM virtual.
+* Virtual disk.
+* Virtual network interface.
+* Sistem operasi guest.
+* Aplikasi dan layanan.
+
+Contohnya, administrator membuat VM dengan spesifikasi:
+
+| Komponen       | Konfigurasi     |
+| -------------- | --------------- |
+| Nama VM        | `web-server-01` |
+| Sistem operasi | Ubuntu Server   |
+| vCPU           | 2               |
+| RAM            | 4 GB            |
+| Penyimpanan    | 40 GB           |
+| Jaringan       | Virtual network |
+| Layanan        | Web server      |
+
+Spesifikasi tersebut merupakan contoh awal, bukan standar universal. Kebutuhan sebenarnya harus ditentukan berdasarkan aplikasi, kapasitas host, pola penggunaan, dan hasil pengujian.
+
+### 2. vCPU dan CPU Fisik
+
+vCPU adalah unit pemrosesan virtual yang diberikan kepada VM. Sebagai contoh, administrator memberikan 2 vCPU kepada VM web server dan 4 vCPU kepada VM database server. Jumlah vCPU tidak selalu harus sama dengan jumlah core fisik yang tersedia. Hypervisor mengatur penjadwalan penggunaan CPU oleh VM. Namun, memberikan terlalu banyak vCPU kepada VM tidak otomatis meningkatkan kinerja. Alokasi berlebihan dapat meningkatkan persaingan penggunaan sumber daya.
+
+### 3. RAM Virtual
+
+RAM virtual adalah kapasitas memori yang dialokasikan kepada VM. Misalnya, host memiliki RAM 32 GB dan menjalankan empat VM dengan konfigurasi berikut:
+
+| VM                   | Alokasi RAM |
+| -------------------- | ----------: |
+| Web server           |        4 GB |
+| Database server      |        8 GB |
+| File server          |        4 GB |
+| Server pengujian     |        4 GB |
+| **Total alokasi VM** |   **20 GB** |
+
+Sisa kapasitas tidak seluruhnya boleh dianggap bebas untuk VM tambahan. Host dan hypervisor juga membutuhkan memori, dan sistem operasi guest mungkin menggunakan memori secara dinamis sesuai konfigurasi. Administrator harus memantau penggunaan RAM aktual, bukan hanya menjumlahkan kapasitas yang dialokasikan.
+
+### 4. Virtual Disk
+
+Virtual disk merupakan media penyimpanan yang disediakan kepada VM. Virtual disk dapat disimpan sebagai berkas atau dikelola oleh sistem penyimpanan platform virtualisasi. Administrator perlu memperhatikan:
+
+* Kapasitas disk.
+* Format virtual disk.
+* Pertumbuhan penggunaan penyimpanan.
+* Kinerja I/O.
+* Kebijakan snapshot.
+* Backup dan pemulihan.
+* Kapasitas penyimpanan host.
+
+Jika kapasitas penyimpanan host habis, beberapa VM dapat mengalami gangguan meskipun masing-masing VM masih terlihat memiliki ruang penyimpanan.
+
+### 5. Virtual Network
+
+Virtual network memungkinkan VM berkomunikasi dengan VM lain, host, atau jaringan eksternal. Mode jaringan yang umum dijumpai pada platform virtualisasi desktop antara lain:
+
+| Mode             | Fungsi Umum                                                                       |
+| ---------------- | --------------------------------------------------------------------------------- |
+| NAT              | VM menggunakan konektivitas jaringan melalui mekanisme NAT dari host              |
+| Bridged          | VM terhubung ke jaringan fisik seperti perangkat lain pada jaringan tersebut      |
+| Host-only        | Komunikasi dibatasi pada jaringan antara host dan VM sesuai konfigurasi           |
+| Internal Network | Jaringan virtual untuk komunikasi antar-VM yang tergabung dalam jaringan tersebut |
+
+Nama dan perilaku mode dapat berbeda antaraplatform virtualisasi. Pemilihan mode jaringan harus mengikuti tujuan penggunaan. Misalnya, bridged dapat digunakan ketika VM perlu memperoleh alamat IP dari jaringan lokal, sedangkan jaringan internal dapat digunakan untuk pengujian komunikasi antarserver yang tidak perlu terhubung ke jaringan luar.
+
+---
+
+## E. Container dan Perbedaannya dengan Virtual Machine
+
+Selain VM, container banyak digunakan untuk menjalankan aplikasi dan layanan.
+
+### 1. Pengertian Container
+
+Container adalah lingkungan terisolasi untuk menjalankan aplikasi dengan dependensi yang dibutuhkan. Berbeda dengan VM yang umumnya menjalankan kernel sistem operasi guest sendiri, container biasanya berbagi kernel sistem operasi host. Teknologi container populer antara lain:
+
+* Docker.
+* Podman.
+* Containerd sebagai komponen runtime container.
+
+Container banyak digunakan untuk menjalankan aplikasi web, layanan API, dan komponen aplikasi yang dapat dikemas beserta dependensinya.
+
+### 2. Perbandingan VM dan Container
+
+| Aspek                     | Virtual Machine                                               | Container                                                                        |
+| ------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Lingkungan sistem operasi | Umumnya memiliki OS guest sendiri                             | Umumnya berbagi kernel host                                                      |
+| Isolasi                   | Melalui mekanisme virtualisasi perangkat keras dan hypervisor | Melalui mekanisme isolasi sistem operasi                                         |
+| Penggunaan sumber daya    | Umumnya memiliki overhead OS guest                            | Umumnya lebih ringan untuk aplikasi yang sesuai                                  |
+| Waktu mulai               | Cenderung lebih lama dibanding container                      | Cenderung lebih cepat                                                            |
+| Fleksibilitas OS          | Dapat menjalankan OS guest berbeda sesuai dukungan hypervisor | Kernel host membatasi jenis sistem operasi yang dapat dijalankan secara langsung |
+| Penggunaan                | Menjalankan sistem operasi dan lingkungan server terpisah     | Menjalankan aplikasi dan dependensinya                                           |
+| Contoh                    | VM Ubuntu Server pada VirtualBox                              | Container aplikasi web menggunakan Docker                                        |
+
+Container bukan sekadar VM yang berukuran lebih kecil. Keduanya menggunakan pendekatan isolasi yang berbeda dan memiliki karakteristik keamanan serta pengelolaan masing-masing.
+
+### 3. Kapan Menggunakan VM?
+
+VM dapat dipertimbangkan ketika:
+
+* Aplikasi membutuhkan sistem operasi guest tersendiri.
+* Organisasi memerlukan pemisahan lingkungan sistem operasi.
+* Dibutuhkan lingkungan pengujian yang menyerupai server produksi.
+* Beberapa sistem operasi perlu dijalankan pada satu host.
+* Isolasi pada tingkat VM sesuai dengan kebutuhan arsitektur.
+
+### 4. Kapan Menggunakan Container?
+
+Container dapat dipertimbangkan ketika:
+
+* Aplikasi perlu dikemas bersama dependensinya.
+* Lingkungan pengembangan dan produksi perlu dibuat lebih konsisten.
+* Aplikasi terdiri atas beberapa komponen layanan.
+* Organisasi membutuhkan proses deployment aplikasi yang lebih mudah diulang.
+* Platform dan kebutuhan keamanan mendukung penggunaan container.
+
+Pemilihan VM atau container harus mempertimbangkan karakteristik aplikasi, kompetensi administrator, kebutuhan isolasi, dan kebijakan keamanan organisasi.
+
+---
+
+## F. Perencanaan dan Alokasi Sumber Daya Virtual
+
+Salah satu tugas penting administrator sistem adalah menentukan sumber daya yang diperlukan oleh setiap VM. Alokasi sumber daya yang tidak tepat dapat menyebabkan pemborosan kapasitas atau penurunan kinerja layanan.
+
+### 1. Komponen yang Perlu Direncanakan
+
+1. CPU<br />
+    Perencanaan CPU perlu mempertimbangkan:
+
+    * Jumlah VM.
+    * Jumlah vCPU per VM.
+    * Jenis aplikasi.
+    * Jumlah pengguna.
+    * Beban pemrosesan.
+    * Perkiraan peningkatan penggunaan.
+
+2. RAM<br />
+    Perencanaan RAM perlu mempertimbangkan:
+
+    * Kebutuhan sistem operasi.
+    * Kebutuhan aplikasi.
+    * Kebutuhan cache dan database.
+    * Jumlah layanan yang berjalan.
+    * Kapasitas memori host.
+
+3. Penyimpanan<br />
+    Perencanaan penyimpanan perlu mempertimbangkan:
+
+    * Kapasitas sistem operasi.
+    * Kapasitas aplikasi.
+    * Pertumbuhan data.
+    * Log sistem.
+    * Backup.
+    * Snapshot dan kebutuhan pemulihan.
+
+    Snapshot dapat menggunakan kapasitas tambahan seiring perubahan data. Karena itu, penggunaan snapshot harus dikelola agar tidak memenuhi penyimpanan host.
+
+4. Jaringan<br />
+    Perencanaan jaringan meliputi:
+
+    * Jumlah antarmuka jaringan virtual.
+    * Kebutuhan alamat IP.
+    * Segmentasi jaringan.
+    * Kebutuhan bandwidth.
+    * Komunikasi antarlayanan.
+    * Pengaturan firewall dan akses jaringan.
+
+### 2. Contoh Perencanaan Host
+
+Sebuah organisasi memiliki server fisik dengan spesifikasi:
+
+* CPU: 8 core.
+* RAM: 32 GB.
+* Penyimpanan: SSD 1 TB.
+
+Organisasi ingin menjalankan tiga VM:
+
+| VM        | Fungsi          |       vCPU |       RAM | Virtual Disk |
+| --------- | --------------- | ---------: | --------: | -----------: |
+| VM 1      | Web server      |          2 |      4 GB |        40 GB |
+| VM 2      | Database server |          4 |      8 GB |       200 GB |
+| VM 3      | File server     |          2 |      8 GB |       300 GB |
+| **Total** |                 | **8 vCPU** | **20 GB** |   **540 GB** |
+
+Dari tabel tersebut, jumlah RAM yang dialokasikan kepada VM adalah 20 GB. Sementara itu, total kapasitas virtual disk adalah 540 GB. Namun, angka tersebut belum cukup untuk menyatakan bahwa konfigurasi pasti aman dan optimal. Administrator masih harus mempertimbangkan:
+
+1. Memori yang digunakan host dan hypervisor.
+2. Apakah semua VM memiliki beban kerja tinggi secara bersamaan.
+3. Apakah virtual disk menggunakan alokasi tipis (*thin provisioning*) atau kapasitas yang telah dicadangkan.
+4. Ruang yang dibutuhkan untuk backup dan snapshot.
+5. Pertumbuhan data.
+6. Kebutuhan kinerja penyimpanan.
+7. Kapasitas yang diperlukan untuk pemeliharaan dan pemulihan.
+
+**Kesimpulan:** Perencanaan kapasitas tidak cukup hanya dengan menjumlahkan vCPU, RAM, dan disk. Administrator perlu memperhitungkan beban aktual dan menyediakan kapasitas cadangan yang memadai.
+
+---
+
+## G. Pengelolaan Virtual Server
+
+Setelah VM dibuat, administrator harus mengelola siklus hidupnya.
+
+### 1 Pembuatan VM
+
+Tahapan umum pembuatan VM:
+
+1. Menentukan kebutuhan layanan.
+2. Memilih hypervisor.
+3. Menentukan spesifikasi VM.
+4. Menentukan konfigurasi jaringan.
+5. Membuat virtual disk.
+6. Memasang sistem operasi guest.
+7. Mengonfigurasi sistem operasi.
+8. Memasang layanan yang diperlukan.
+9. Menguji fungsi VM.
+10. Mendokumentasikan konfigurasi.
+
+Tahapan ini menghubungkan materi pertemuan ke-3 tentang sistem operasi server dan pertemuan ke-4 tentang layanan server dengan implementasi pada lingkungan virtual.
+
+### 2. Template VM
+
+Template VM adalah citra atau konfigurasi dasar yang digunakan untuk membuat VM baru secara konsisten. Template dapat berisi sistem operasi dasar dan konfigurasi tertentu yang telah dipersiapkan. Manfaat template meliputi:
+
+* Mempercepat penyediaan server baru.
+* Menjaga konsistensi konfigurasi.
+* Mengurangi pekerjaan berulang.
+* Membantu standardisasi lingkungan server.
+
+Template harus dikelola dengan baik. Informasi sensitif, seperti private key, kredensial, dan identitas unik mesin, tidak boleh disalin sembarangan ke VM baru.
+
+### 3. Snapshot VM
+
+Snapshot merekam keadaan VM pada titik waktu tertentu sesuai kemampuan platform virtualisasi. Snapshot dapat berguna sebelum melakukan perubahan konfigurasi atau pembaruan yang berisiko. Namun, snapshot memiliki keterbatasan:
+
+* Tidak selalu menjadi backup independen.
+* Dapat membutuhkan ruang penyimpanan tambahan.
+* Snapshot yang dibiarkan terlalu lama dapat mempersulit pengelolaan penyimpanan.
+* Pemulihan ke snapshot dapat menghilangkan perubahan setelah titik snapshot.
+* Pemulihan konsistensi aplikasi, khususnya database, bergantung pada cara snapshot dibuat dan dukungan aplikasi.
+
+Oleh karena itu, snapshot sebaiknya digunakan sebagai bagian dari strategi pengelolaan perubahan, bukan sebagai satu-satunya mekanisme backup.
+
+### 4. Backup dan Restore
+
+Backup adalah salinan data atau konfigurasi yang dapat digunakan untuk pemulihan ketika terjadi kehilangan data atau gangguan. Backup dapat mencakup:
+
+* Konfigurasi hypervisor.
+* Konfigurasi VM.
+* Virtual disk.
+* Sistem operasi.
+* Konfigurasi aplikasi.
+* Database.
+* Data pengguna.
+
+Strategi backup perlu memperhatikan lokasi penyimpanan, jadwal, retensi, keamanan, serta pengujian restore. Backup yang berhasil dibuat belum tentu dapat dipulihkan dengan benar. Administrator perlu menguji proses pemulihan secara berkala.
+
+---
+
+## H. Upgrade Server
+
+### 1. Pengertian Upgrade Server
+
+Upgrade server adalah proses meningkatkan komponen sistem atau perangkat lunak untuk memenuhi kebutuhan baru, memperbaiki keterbatasan, atau meningkatkan keamanan dan kinerja. Upgrade dapat mencakup:
+
+* Peningkatan versi sistem operasi.
+* Pembaruan perangkat lunak server.
+* Peningkatan kapasitas CPU, RAM, atau penyimpanan.
+* Peningkatan versi hypervisor.
+* Peningkatan versi aplikasi.
+
+Upgrade berbeda dari pembaruan rutin biasa dalam hal cakupan dan risiko. Namun, keduanya memerlukan evaluasi, pengujian, serta pengendalian perubahan.
+
+### 2. Alasan Melakukan Upgrade
+
+Beberapa alasan upgrade antara lain:
+
+1. Versi perangkat lunak tidak lagi mendapatkan dukungan keamanan.
+2. Aplikasi membutuhkan versi sistem operasi yang lebih baru.
+3. Kinerja server tidak lagi memenuhi kebutuhan.
+4. Ditemukan kerentanan yang memerlukan perbaikan.
+5. Organisasi membutuhkan fitur baru.
+6. Infrastruktur harus menyesuaikan standar teknis organisasi.
+
+### 3. Tahapan Upgrade Server
+
+Proses upgrade sebaiknya dilakukan secara terencana.
+
+1. Tahap 1: Analisis Kebutuhan<br />
+    Administrator mengidentifikasi alasan upgrade dan menentukan hasil yang diharapkan.
+
+2. Tahap 2: Pemeriksaan Kompatibilitas<br />
+    Periksa kompatibilitas:
+
+    * Sistem operasi.
+    * Aplikasi.
+    * Database.
+    * Driver.
+    * Hypervisor.
+    * Perangkat keras.
+    * Layanan yang saling bergantung.
+
+3. Tahap 3: Backup
+
+    Buat backup sesuai kebutuhan dan pastikan backup dapat digunakan untuk pemulihan.
+
+4. Tahap 4: Pengujian
+
+    Jika memungkinkan, lakukan pengujian pada lingkungan staging atau salinan lingkungan produksi.
+
+5. Tahap 5: Pelaksanaan Upgrade
+
+    Lakukan upgrade sesuai prosedur dan jadwal pemeliharaan yang telah ditentukan.
+
+6. Tahap 6: Validasi
+
+    Pastikan sistem operasi, aplikasi, jaringan, keamanan, dan layanan terkait berfungsi sebagaimana mestinya.
+
+7. Tahap 7: Dokumentasi
+
+    Catat versi sebelum dan sesudah upgrade, perubahan konfigurasi, hasil pengujian, dan masalah yang ditemukan.
+
+8. Tahap 8: Rollback Jika Diperlukan
+
+    Jika upgrade menyebabkan kegagalan yang tidak dapat diselesaikan sesuai batas waktu yang ditentukan, jalankan rencana rollback atau pemulihan.
+
+    Rollback tidak selalu sesederhana mengembalikan snapshot. Perubahan format data, database, dan skema aplikasi dapat membuat proses pengembalian versi menjadi lebih rumit.
+
+---
+
+## I. Migrasi Server
+
+### 1. Pengertian Migrasi Server
+
+Migrasi server adalah proses memindahkan sistem, layanan, aplikasi, atau data dari lingkungan sumber ke lingkungan tujuan. Migrasi dapat dilakukan untuk meningkatkan kapasitas, mengganti perangkat keras, memindahkan platform virtualisasi, atau menyesuaikan arsitektur sistem.
+
+### 2. Jenis Migrasi Server
+
+* Migrasi Fisik ke Virtual<br />
+    Server fisik dipindahkan ke lingkungan virtual. Pendekatan ini sering disebut *Physical-to-Virtual* (P2V). Tujuannya dapat berupa konsolidasi server atau pemindahan layanan ke infrastruktur virtual.
+
+* Migrasi Virtual ke Virtual<br />
+    VM dipindahkan dari satu host atau platform virtualisasi ke lingkungan virtual lainnya. Pendekatan ini dapat digunakan ketika organisasi mengganti host, platform, atau infrastruktur virtualisasi.
+
+* Migrasi Sistem Operasi atau Platform<br />
+    Aplikasi dan data dipindahkan ke sistem operasi atau platform baru. Migrasi ini memerlukan pemeriksaan kompatibilitas karena konfigurasi, dependensi, dan cara kerja aplikasi dapat berbeda.
+
+* Migrasi Aplikasi dan Data<br />
+    Aplikasi dan data dipindahkan ke server baru, sedangkan lingkungan sumber dapat tetap digunakan selama proses transisi. Pendekatan ini dapat membantu organisasi menguji layanan baru sebelum mematikan sistem lama.
+
+### 3. Tantangan Migrasi
+
+Migrasi server dapat menghadapi beberapa tantangan:
+
+* Ketidakcocokan sistem operasi atau aplikasi.
+* Perbedaan format penyimpanan.
+* Kesalahan konfigurasi jaringan.
+* Perubahan alamat IP atau nama host.
+* Gangguan layanan selama proses pemindahan.
+* Kehilangan atau inkonsistensi data.
+* Ketergantungan antarlayanan.
+* Kesulitan rollback.
+
+Karena itu, migrasi perlu direncanakan dengan mempertimbangkan dampak terhadap pengguna dan layanan yang bergantung pada server tersebut.
+
+### 4. Tahapan Migrasi Server
+
+| Tahap            | Aktivitas                                                                     |
+| ---------------- | ----------------------------------------------------------------------------- |
+| 1. Inventarisasi | Mendata sistem operasi, aplikasi, layanan, konfigurasi, dan data              |
+| 2. Analisis      | Menentukan tujuan, risiko, dependensi, dan kebutuhan sumber daya              |
+| 3. Perencanaan   | Menentukan metode migrasi, jadwal, tanggung jawab, dan kriteria keberhasilan  |
+| 4. Persiapan     | Menyiapkan server tujuan, jaringan, penyimpanan, dan keamanan                 |
+| 5. Backup        | Membuat salinan data dan konfigurasi yang diperlukan                          |
+| 6. Migrasi       | Memindahkan sistem, aplikasi, konfigurasi, atau data                          |
+| 7. Pengujian     | Memeriksa fungsi, kinerja, keamanan, dan konsistensi data                     |
+| 8. Peralihan     | Mengarahkan pengguna atau trafik ke sistem tujuan                             |
+| 9. Pemantauan    | Mengawasi sistem setelah migrasi                                              |
+| 10. Penutupan    | Mendokumentasikan hasil dan menonaktifkan sistem lama setelah dinyatakan aman |
+
+Tidak semua migrasi membutuhkan seluruh tahapan dalam urutan yang sama. Metode yang dipilih bergantung pada jenis migrasi dan kebutuhan layanan.
+
+### 5. Contoh Kasus Migrasi
+
+Sebuah program studi memiliki sistem informasi akademik pada server fisik yang sudah mendekati batas kapasitas penyimpanan. Organisasi memutuskan untuk memindahkan aplikasi tersebut ke lingkungan virtual. Administrator harus melakukan langkah berikut:
+
+1. Menginventarisasi sistem operasi, aplikasi, database, dan layanan pendukung.
+2. Menentukan kapasitas VM berdasarkan kebutuhan aplikasi.
+3. Menyiapkan host virtualisasi dan jaringan.
+4. Menentukan cara memindahkan aplikasi dan data.
+5. Membuat backup sebelum migrasi.
+6. Menguji aplikasi pada lingkungan tujuan.
+7. Memastikan data tetap konsisten.
+8. Menentukan waktu peralihan yang meminimalkan gangguan.
+9. Memantau kinerja setelah migrasi.
+10. Memastikan sistem lama baru dinonaktifkan setelah sistem tujuan berfungsi dan rencana pemulihan dinilai memadai.
+
+---
+
+## J. Ketersediaan dan Risiko pada Lingkungan Virtual
+
+Virtualisasi dapat meningkatkan fleksibilitas, tetapi tidak secara otomatis membuat layanan menjadi selalu tersedia.
+
+### 1. Single Point of Failure
+
+Single point of failure adalah komponen yang jika mengalami kegagalan dapat menyebabkan layanan penting berhenti. Jika beberapa VM berjalan pada satu host fisik tanpa mekanisme redundansi, kegagalan host dapat memengaruhi seluruh VM tersebut. Contohnya, host menjalankan web server, database server, dan file server. Ketika motherboard atau sumber daya host mengalami kerusakan, seluruh layanan dapat berhenti sekaligus.
+
+### 2. Strategi Mitigasi
+
+Beberapa langkah yang dapat dilakukan:
+
+* Menyediakan backup terpisah.
+* Menguji prosedur restore.
+* Menggunakan redundansi untuk komponen penting.
+* Memantau kondisi host dan VM.
+* Menyediakan kapasitas sumber daya yang cukup.
+* Mendokumentasikan prosedur pemulihan.
+* Menentukan prioritas pemulihan layanan.
+* Mempertimbangkan host tambahan untuk layanan yang membutuhkan ketersediaan tinggi.
+
+Strategi yang dipilih harus disesuaikan dengan tingkat kepentingan layanan, anggaran, dan kemampuan organisasi.
+
+### 3. Monitoring Lingkungan Virtual
+
+Administrator perlu memantau:
+
+| Komponen | Indikator yang Diamati                              |
+| -------- | --------------------------------------------------- |
+| CPU      | Utilisasi dan indikasi persaingan pemrosesan        |
+| RAM      | Penggunaan memori dan tekanan memori                |
+| Storage  | Kapasitas tersisa, latensi, dan kinerja I/O         |
+| Jaringan | Bandwidth, packet loss, dan konektivitas            |
+| VM       | Status hidup/mati dan penggunaan sumber daya        |
+| Aplikasi | Respons layanan dan tingkat kesalahan               |
+| Backup   | Status pekerjaan backup dan hasil pengujian restore |
+
+Monitoring pada tingkat host dan VM sebaiknya dilengkapi dengan pemeriksaan layanan dari sisi pengguna.
+
+---
+
+## K. Studi Kasus Terintegrasi
+
+### Kasus: Virtualisasi Infrastruktur Server Program Studi
+
+Sebuah program studi ingin membangun infrastruktur server untuk mendukung sistem informasi akademik, penyimpanan dokumen, dan website program studi. Organisasi memiliki satu komputer server fisik dengan spesifikasi:
+
+* CPU: 8 core.
+* RAM: 32 GB.
+* Penyimpanan: SSD 1 TB.
+
+Tim administrator mengusulkan tiga VM:
+
+| VM   | Fungsi                  | vCPU |  RAM | Virtual Disk |
+| ---- | ----------------------- | ---: | ---: | -----------: |
+| VM 1 | Web server dan aplikasi |    2 | 4 GB |        80 GB |
+| VM 2 | Database server         |    4 | 8 GB |       200 GB |
+| VM 3 | File server             |    2 | 8 GB |       300 GB |
+
+Ketiga VM akan berjalan pada satu host fisik. Organisasi belum memiliki host virtualisasi kedua.
+
+### Pertanyaan Diskusi
+
+1. Apa manfaat penggunaan virtualisasi dalam kasus tersebut?
+2. Apakah spesifikasi host sudah cukup untuk menjalankan ketiga VM? Informasi tambahan apa yang dibutuhkan untuk memastikan kelayakannya?
+3. Mengapa database server diberi alokasi RAM lebih besar daripada web server?
+4. Apa risiko menjalankan seluruh VM pada satu host fisik?
+5. Bagaimana administrator menentukan apakah VM perlu ditambah CPU atau RAM?
+6. Apakah snapshot cukup untuk melindungi seluruh data server? Jelaskan.
+7. Apa saja yang harus dipersiapkan jika organisasi ingin memindahkan salah satu VM ke host lain?
+8. Bagaimana administrator mengurangi risiko gangguan saat melakukan upgrade sistem operasi pada VM database?
+9. Jika kapasitas penyimpanan hampir habis, apa yang perlu diperiksa sebelum memperbesar virtual disk?
+10. Dalam kondisi apa organisasi sebaiknya mempertimbangkan penggunaan container dibandingkan VM?
+
+### Tugas Kelompok
+
+Gunakan kasus organisasi yang telah dipilih pada penugasan pertemuan ke-1 dan rancangan arsitektur yang dikembangkan pada pertemuan ke-2. Setiap kelompok diminta menyusun:
+
+1. Rancangan VM yang diperlukan.
+2. Alokasi awal vCPU, RAM, dan penyimpanan.
+3. Pemilihan teknologi virtualisasi beserta alasannya.
+4. Rancangan jaringan virtual.
+5. Strategi backup dan pemulihan.
+6. Identifikasi risiko dan mitigasinya.
+7. Rencana upgrade atau migrasi jika dibutuhkan.
+
+Hasil analisis ini akan menjadi dasar implementasi pada sesi praktikum.
+
+---
+
+### Prinsip Penting dalam Administrasi Server Virtual
+
+Administrator sistem perlu menerapkan beberapa prinsip berikut:
+
+1. Sesuaikan sumber daya dengan kebutuhan.<br />
+    Jangan memberikan sumber daya terlalu kecil hingga layanan terganggu, tetapi hindari pula alokasi berlebihan tanpa dasar kebutuhan.
+2. Pisahkan lingkungan sesuai kebutuhan.<br />
+    Pemisahan VM harus mempertimbangkan fungsi, keamanan, beban kerja, dan dampak kegagalan.
+3. Dokumentasikan konfigurasi.<br />
+    Setiap VM sebaiknya memiliki dokumentasi nama, fungsi, alamat IP, spesifikasi, sistem operasi, layanan, serta dependensinya.
+4. Lakukan backup secara terencana.<br />
+    Backup harus disimpan dengan aman dan diuji melalui proses restore.
+5. Uji perubahan sebelum diterapkan.<br />
+    Upgrade dan migrasi perlu diuji sejauh memungkinkan sebelum memengaruhi sistem produksi.
+6. Siapkan rencana pemulihan.<br />
+    Administrator harus mengetahui tindakan yang dilakukan jika upgrade atau migrasi gagal.
+7. Pantau host dan guest.<br />
+    Gangguan pada host dapat memengaruhi banyak VM, sehingga monitoring tidak boleh hanya berfokus pada sistem operasi guest.
+8. Terapkan keamanan pada seluruh lapisan.<br />
+    Keamanan perlu mencakup host, hypervisor, VM, jaringan virtual, sistem operasi, aplikasi, dan data.
+
+---
+
+## L. Ringkasan Materi
+
+Pada pertemuan ke-5, mahasiswa telah mempelajari bahwa:
+
+1. Virtualisasi memungkinkan beberapa lingkungan komputasi dijalankan pada satu host fisik.
+2. Hypervisor mengelola lingkungan VM dan aksesnya terhadap sumber daya perangkat keras.
+3. VM menyediakan lingkungan sistem operasi tersendiri, sedangkan container umumnya berbagi kernel sistem operasi host.
+4. Perencanaan virtualisasi harus memperhitungkan CPU, RAM, penyimpanan, dan jaringan.
+5. Pengelolaan VM meliputi pembuatan, konfigurasi, pemantauan, snapshot, backup, dan pemulihan.
+6. Upgrade harus dilakukan melalui analisis kebutuhan, pemeriksaan kompatibilitas, backup, pengujian, validasi, dan dokumentasi.
+7. Migrasi server membutuhkan inventarisasi, perencanaan, persiapan, pemindahan, pengujian, dan pemantauan.
+8. Virtualisasi tidak secara otomatis menjamin ketersediaan tinggi karena host fisik tetap dapat menjadi titik kegagalan.
+9. Administrator harus mempertimbangkan risiko, keamanan, dan kebutuhan organisasi sebelum menentukan strategi virtualisasi.
+
+---
+
+## M. Keterkaitan dengan Pertemuan Selanjutnya
+
+Pada **pertemuan ke-6**, pembelajaran akan berfokus pada **Keamanan Sistem Server**.
+
+Materi tersebut mencakup:
+
+* Konsep keamanan server.
+* Ancaman dan kerentanan.
+* Prinsip hardening.
+* Autentikasi dan otorisasi.
+* Pengelolaan akun dan hak akses.
+* Firewall dan pembatasan akses jaringan.
+* Pembaruan keamanan.
+* Backup dan strategi pemulihan.
+* Penerapan keamanan pada server fisik dan virtual.
+
+Keterkaitannya dengan pertemuan ke-5 adalah bahwa setiap VM dan host virtualisasi harus diamankan. Lingkungan virtual yang telah dirancang dengan baik tetap berisiko jika konfigurasi, hak akses, dan komunikasi jaringannya tidak dikelola secara tepat.
