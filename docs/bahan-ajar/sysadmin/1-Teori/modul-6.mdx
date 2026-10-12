@@ -1,0 +1,567 @@
+---
+title: "6. Keamanan Sistem Server (Server Security)"
+---
+
+# Keamanan Sistem Server (Server Security)
+
+Materi pertemuan ke-6 membahas cara melindungi server dari akses tidak sah, penyalahgunaan hak akses, serangan jaringan, kerentanan perangkat lunak, dan kehilangan data. Materi ini melanjutkan pembahasan pertemuan ke-5 tentang virtualisasi dan pengelolaan server.
+
+Setelah mahasiswa memahami cara membangun lingkungan server, memasang layanan, dan mengelola VM, mahasiswa perlu memahami bagaimana lingkungan tersebut diamankan. Pembahasan menggunakan pendekatan administrator sistem, yaitu mengidentifikasi risiko, menentukan kontrol keamanan, menerapkan konfigurasi yang sesuai, dan mengevaluasi efektivitas perlindungan.
+
+## A. Capaian Pembelajaran
+
+Setelah mengikuti perkuliahan ini, mahasiswa diharapkan mampu:
+
+1. Menjelaskan konsep dan tujuan keamanan sistem server.
+2. Mengidentifikasi ancaman dan kerentanan pada server.
+3. Menjelaskan prinsip server hardening.
+4. Menganalisis pengelolaan akun, autentikasi, otorisasi, dan hak akses.
+5. Menjelaskan fungsi firewall dan pembatasan akses jaringan.
+6. Menentukan strategi pembaruan keamanan dan pengelolaan perangkat lunak.
+7. Menjelaskan mekanisme backup dan pemulihan data.
+8. Menyusun rancangan awal keamanan server berdasarkan kebutuhan organisasi.
+
+## B. Konsep Dasar Keamanan Sistem Server
+
+### 1. Pengertian Keamanan Server
+
+Keamanan server adalah serangkaian kebijakan, prosedur, konfigurasi, dan mekanisme teknis yang diterapkan untuk melindungi server beserta data dan layanan yang dijalankannya.
+
+Tujuan keamanan server bukan sekadar mencegah peretasan, tetapi juga memastikan bahwa:
+
+- Server hanya dapat diakses oleh pihak yang berwenang.
+- Data tidak diubah oleh pihak yang tidak memiliki izin.
+- Layanan tetap tersedia ketika dibutuhkan.
+- Aktivitas yang mencurigakan dapat dideteksi.
+- Gangguan dapat ditangani dan sistem dapat dipulihkan.
+
+Server yang dapat diakses melalui jaringan memiliki risiko keamanan, baik ketika digunakan untuk layanan internal maupun layanan publik.
+
+### 2. Prinsip CIA Triad
+
+Salah satu konsep dasar keamanan informasi adalah CIA Triad, yang terdiri atas tiga prinsip utama.
+
+Confidentiality — Kerahasiaan
+
+Memastikan informasi hanya dapat diakses oleh pihak yang berwenang.
+
+Contoh: mahasiswa tidak boleh mengakses data pribadi mahasiswa lain tanpa izin.
+
+Integrity — Integritas
+
+Memastikan informasi tetap akurat dan tidak diubah secara tidak sah.
+
+Contoh: nilai mahasiswa tidak dapat diubah oleh pengguna yang tidak memiliki kewenangan.
+
+Availability — Ketersediaan
+
+Memastikan sistem dan informasi tersedia ketika dibutuhkan oleh pengguna yang sah.
+
+Contoh: sistem informasi akademik tetap dapat digunakan selama periode pengisian KRS.
+
+Ketiga prinsip tersebut harus dipertimbangkan secara bersamaan. Sistem yang sangat ketat membatasi akses tetapi tidak dapat digunakan oleh pengguna yang sah belum memenuhi kebutuhan keamanan secara menyeluruh.
+
+### 3. Lapisan Keamanan Server
+
+Keamanan server tidak cukup hanya mengandalkan satu mekanisme. Perlindungan perlu diterapkan pada beberapa lapisan:
+
+1. Keamanan fisik: melindungi perangkat server dari pencurian atau kerusakan fisik.
+2. Keamanan host dan hypervisor: melindungi platform yang menjalankan VM.
+3. Keamanan sistem operasi: memperbarui sistem, mengelola akun, dan mengatur konfigurasi.
+4. Keamanan jaringan: membatasi komunikasi melalui firewall dan segmentasi jaringan.
+5. Keamanan aplikasi: mengurangi kerentanan pada aplikasi yang berjalan di server.
+6. Keamanan data: melindungi data melalui kontrol akses, enkripsi, dan backup.
+7. Monitoring dan respons: mendeteksi kejadian serta menangani insiden keamanan.
+
+Pendekatan yang menerapkan beberapa lapisan perlindungan ini dikenal sebagai defense in depth.
+
+## C. Ancaman dan Kerentanan Server
+
+### 1. Pengertian Ancaman, Kerentanan, dan Risiko
+
+Ketiga istilah ini saling berkaitan, tetapi memiliki makna berbeda.
+
+| Istilah                    | Pengertian                                            | Contoh                                                               |
+| -------------------------- | ----------------------------------------------------- | -------------------------------------------------------------------- |
+| Ancaman (threat)           | Sesuatu yang berpotensi menyebabkan kerugian          | Penyerang mencoba mengambil alih server                              |
+| Kerentanan (vulnerability) | Kelemahan yang dapat dimanfaatkan                     | Sistem operasi tidak mendapatkan pembaruan keamanan                  |
+| Risiko (risk)              | Kemungkinan dan dampak kerugian akibat suatu kejadian | Data akademik bocor karena server rentan dan dapat diakses penyerang |
+
+Risiko tidak hanya bergantung pada keberadaan ancaman, tetapi juga pada kerentanan, paparan sistem, efektivitas kontrol keamanan, dan dampak yang mungkin terjadi.
+
+### 2. Jenis Ancaman pada Server
+
+#### a. Akses tidak sah
+
+Penyerang memperoleh akses menggunakan kredensial yang dicuri, password lemah, atau kelemahan mekanisme autentikasi.
+
+#### b. Malware dan ransomware
+
+Perangkat lunak berbahaya dapat mencuri informasi, merusak sistem, mengenkripsi data, atau mengganggu operasional server.
+
+#### c. Eksploitasi kerentanan
+
+Penyerang memanfaatkan kelemahan pada sistem operasi, layanan jaringan, aplikasi, atau komponen perangkat lunak lainnya.
+
+#### d. Salah konfigurasi
+
+Kesalahan konfigurasi dapat membuka akses yang seharusnya dibatasi.
+
+Contohnya:
+
+- Database dapat diakses langsung dari internet.
+- Direktori sensitif dapat dibaca pengguna umum.
+- Layanan administrasi terbuka untuk seluruh jaringan.
+- Hak akses akun terlalu luas.
+
+#### e. Serangan terhadap ketersediaan
+
+Serangan seperti Denial of Service dapat membuat layanan lambat atau tidak dapat diakses.
+
+#### f. Ancaman dari orang dalam
+
+Pengguna yang memiliki akses sah dapat menyalahgunakan haknya, baik secara sengaja maupun tidak sengaja.
+
+#### g. Kerentanan yang Sering Ditemukan
+
+Beberapa contoh kerentanan pada server adalah:
+
+- Sistem operasi dan aplikasi tidak diperbarui.
+- Akun tidak aktif masih dapat digunakan.
+- Password mudah ditebak atau digunakan ulang.
+- Layanan yang tidak diperlukan tetap berjalan.
+- Konfigurasi firewall terlalu permisif.
+- Backup tidak tersedia atau tidak dapat dipulihkan.
+- Log tidak dipantau.
+- Kredensial disimpan dalam berkas konfigurasi tanpa perlindungan memadai.
+
+Administrator perlu melakukan pemeriksaan berkala untuk menemukan dan mengurangi kelemahan tersebut.
+
+## D. Server Hardening
+
+### 1. Pengertian Server Hardening
+
+Server hardening adalah proses mengurangi permukaan serangan (attack surface) dan memperkuat konfigurasi server agar lebih tahan terhadap penyalahgunaan dan serangan.
+
+Hardening dilakukan dengan menonaktifkan fungsi yang tidak diperlukan, memperbaiki konfigurasi, membatasi akses, dan menerapkan kontrol keamanan sesuai kebutuhan.
+
+### 2. Prinsip Least Privilege
+
+Least privilege adalah prinsip memberikan hak akses minimum yang diperlukan seseorang atau suatu proses untuk menjalankan tugasnya.
+
+Contoh penerapan:
+
+- Administrator memiliki akses administrasi sesuai tanggung jawabnya.
+- Pengguna aplikasi tidak otomatis memperoleh akses administratif ke server.
+- Akun aplikasi hanya memperoleh izin yang diperlukan untuk mengakses database.
+- Pengguna file server hanya dapat membaca atau mengubah direktori sesuai perannya.
+
+Prinsip ini mengurangi dampak jika suatu akun disalahgunakan atau berhasil diambil alih.
+
+### 3. Langkah-Langkah Hardening
+
+| Langkah                                 | Penjelasan                                                |
+| --------------------------------------- | --------------------------------------------------------- |
+| Memperbarui sistem                      | Memasang pembaruan keamanan yang telah dievaluasi         |
+| Menghapus layanan yang tidak diperlukan | Mengurangi jumlah komponen yang dapat diserang            |
+| Meninjau akun pengguna                  | Menonaktifkan akun yang tidak lagi dibutuhkan             |
+| Membatasi hak akses                     | Menerapkan least privilege                                |
+| Mengamankan akses remote                | Menggunakan autentikasi kuat dan membatasi sumber koneksi |
+| Mengonfigurasi firewall                 | Mengizinkan hanya komunikasi yang dibutuhkan              |
+| Mengamankan konfigurasi aplikasi        | Mengurangi akses tidak sah dan salah konfigurasi          |
+| Mengaktifkan logging                    | Mendukung pemantauan dan investigasi                      |
+| Mengelola backup                        | Memastikan data dapat dipulihkan                          |
+| Mendokumentasikan perubahan             | Menjaga konsistensi dan memudahkan audit                  |
+
+### 4. Mengurangi Attack Surface
+
+Attack surface adalah keseluruhan titik atau komponen yang dapat menjadi jalur serangan terhadap sistem.
+
+Misalnya, sebuah server menjalankan SSH, web server, FTP, database, dan beberapa layanan lain, padahal hanya web server dan SSH yang diperlukan.
+
+Layanan yang tidak dibutuhkan sebaiknya dievaluasi untuk dinonaktifkan atau dihapus. Namun, administrator harus memastikan tidak ada ketergantungan aplikasi sebelum menonaktifkannya.
+
+Prinsip utama: instal dan aktifkan hanya komponen yang benar-benar diperlukan, lalu evaluasi konfigurasi secara berkala.
+
+## E. Autentikasi, Otorisasi, dan Pengelolaan Akun
+
+### 1. Perbedaan Autentikasi dan Otorisasi
+
+Autentikasi (authentication) adalah proses memastikan identitas pengguna atau sistem.
+
+Otorisasi (authorization) adalah proses menentukan tindakan atau sumber daya yang boleh diakses oleh identitas tersebut.
+
+Contoh: seorang dosen berhasil login ke server menggunakan akun yang sah. Keberhasilan login membuktikan identitasnya, tetapi tidak otomatis memberinya izin untuk mengubah konfigurasi sistem operasi.
+
+### 2. Jenis Faktor Autentikasi
+
+Autentikasi dapat menggunakan beberapa jenis faktor:
+
+- Something you know: sesuatu yang diketahui, seperti password atau PIN.
+- Something you have: sesuatu yang dimiliki, seperti security key atau perangkat autentikasi.
+- Something you are: karakteristik biometrik, jika didukung sistem.
+
+Penggunaan dua faktor berbeda atau lebih dapat meningkatkan keamanan autentikasi. Penggunaan beberapa metode dari kategori yang sama tidak selalu memenuhi konsep autentikasi multifaktor.
+
+### 3. Pengelolaan Akun Pengguna
+
+Administrator perlu memastikan bahwa:
+
+1. Setiap akun memiliki pemilik dan tujuan yang jelas.
+2. Hak akses sesuai dengan tugas pengguna.
+3. Akun yang tidak digunakan dinonaktifkan sesuai kebijakan.
+4. Akun administrator dibatasi dan dipantau.
+5. Kredensial tidak dibagikan sembarangan.
+6. Aktivitas penting dicatat dalam log.
+7. Perubahan hak akses dilakukan melalui prosedur yang dapat ditelusuri.
+
+Akun bersama sebaiknya dihindari untuk aktivitas administrasi yang memerlukan akuntabilitas individual.
+
+### 4. Pengelolaan Hak Akses Berbasis Peran
+
+Role-Based Access Control (RBAC) adalah pendekatan yang memberikan hak akses berdasarkan peran pengguna.
+
+Contoh:
+
+| Peran                  | Hak Akses                                                                           |
+| ---------------------- | ----------------------------------------------------------------------------------- |
+| Administrator sistem   | Mengelola sistem operasi dan konfigurasi server sesuai kewenangan                   |
+| Administrator aplikasi | Mengelola aplikasi tanpa otomatis memperoleh hak penuh pada OS                      |
+| Dosen                  | Mengakses layanan dan data sesuai kebutuhan akademik                                |
+| Mahasiswa              | Mengakses layanan akademik sesuai haknya                                            |
+| Auditor                | Membaca informasi yang diperlukan untuk pemeriksaan, tanpa hak mengubah konfigurasi |
+
+Penerapan RBAC membantu menyederhanakan pengelolaan hak akses ketika jumlah pengguna bertambah.
+
+## F. Pengamanan Akses Remote dengan SSH
+
+SSH banyak digunakan untuk mengelola server Linux dari jarak jauh. Karena layanan ini dapat memberikan akses administrasi yang kuat, konfigurasinya harus diamankan.
+
+### 1. Risiko Akses SSH
+
+Risiko yang perlu diperhatikan meliputi:
+
+- Percobaan login menggunakan password yang lemah.
+- Kredensial yang dicuri.
+- Akun administrator yang disalahgunakan.
+- Akses SSH terbuka dari jaringan yang tidak diperlukan.
+- Kunci autentikasi yang bocor atau tidak dikelola dengan baik.
+
+### 2. Langkah Pengamanan SSH
+
+Beberapa tindakan yang dapat dilakukan:
+
+1. Gunakan autentikasi yang kuat.
+2. Pertimbangkan public key authentication sesuai kebijakan organisasi.
+3. Batasi akun yang diizinkan menggunakan SSH.
+4. Hindari login langsung sebagai root jika tidak diperlukan.
+5. Batasi sumber akses melalui firewall atau jaringan administrasi.
+6. Pantau log autentikasi.
+7. Lindungi private key dengan baik.
+8. Pastikan konfigurasi diuji sebelum sesi administrasi yang sedang berjalan ditutup.
+
+Perubahan konfigurasi SSH harus dilakukan dengan hati-hati. Kesalahan konfigurasi dapat membuat administrator kehilangan akses remote ke server.
+
+## G. Firewall dan Pembatasan Akses Jaringan
+
+### 1. Pengertian Firewall
+
+Firewall adalah mekanisme keamanan yang mengendalikan lalu lintas jaringan berdasarkan aturan tertentu.
+
+Aturan firewall dapat menggunakan informasi seperti alamat sumber, alamat tujuan, protokol, dan port.
+
+Firewall membantu membatasi komunikasi hanya pada koneksi yang diperlukan oleh sistem.
+
+### 2. Jenis Firewall
+
+Secara umum, firewall dapat diterapkan pada beberapa lapisan:
+
+- Host-based firewall: berjalan pada server untuk mengatur lalu lintas yang masuk atau keluar dari host.
+- Network firewall: melindungi jaringan atau segmen jaringan tertentu.
+- Next-generation firewall: dapat menyediakan fungsi tambahan, seperti inspeksi aplikasi dan integrasi dengan mekanisme deteksi ancaman.
+
+Firewall host dan firewall jaringan dapat digunakan secara bersamaan sebagai bagian dari pertahanan berlapis.
+
+### 3. Prinsip Pengaturan Firewall
+
+Administrator perlu menerapkan prinsip berikut:
+
+- Izinkan layanan yang benar-benar dibutuhkan.
+- Batasi akses administrasi ke jaringan atau alamat yang berwenang.
+- Jangan membuka port hanya karena aplikasi gagal diakses tanpa melakukan diagnosis.
+- Evaluasi aturan yang tidak lagi digunakan.
+- Catat perubahan konfigurasi.
+- Uji bahwa layanan yang dibutuhkan tetap dapat diakses.
+
+### 4. Contoh Kebijakan Firewall
+
+Sebuah server web menggunakan alamat IP `192.168.10.10`.
+
+| Layanan      | Port               | Kebijakan Contoh                                      |
+| ------------ | ------------------ | ----------------------------------------------------- |
+| HTTP         | TCP 80             | Diizinkan sesuai kebutuhan akses web                  |
+| HTTPS        | TCP 443            | Diizinkan untuk akses web terenkripsi                 |
+| SSH          | TCP 22             | Dibatasi untuk jaringan administrasi                  |
+| Database     | Bergantung layanan | Hanya diizinkan dari server aplikasi yang membutuhkan |
+| Layanan lain | Beragam            | Ditolak jika tidak diperlukan                         |
+
+Port dan aturan aktual harus disesuaikan dengan arsitektur. Database, misalnya, tidak perlu dibuka ke internet jika hanya digunakan oleh aplikasi pada jaringan internal.
+
+### 5. Segmentasi Jaringan
+
+Segmentasi jaringan adalah pemisahan jaringan menjadi beberapa bagian berdasarkan fungsi, tingkat kepercayaan, atau kebutuhan akses.
+
+Contoh pemisahan:
+
+- Jaringan pengguna.
+- Jaringan server aplikasi.
+- Jaringan database.
+- Jaringan administrasi.
+
+Dengan segmentasi yang tepat, komunikasi antarsektor dapat dibatasi sesuai kebutuhan. Jika salah satu sistem mengalami kompromi, segmentasi dapat membantu mengurangi kemungkinan penyebaran serangan.
+
+## H. Pembaruan Keamanan dan Manajemen Kerentanan
+
+### 1. Mengapa Pembaruan Penting?
+
+Sistem operasi, web server, database, dan aplikasi dapat memiliki kerentanan yang ditemukan setelah perangkat lunak dirilis.
+
+Pembaruan keamanan dapat memperbaiki kerentanan tersebut. Namun, pembaruan juga berpotensi menyebabkan ketidakcocokan atau perubahan perilaku aplikasi.
+
+Karena itu, administrator perlu mengelola pembaruan secara terencana.
+
+### 2. Tahapan Manajemen Pembaruan
+
+1. Menginventarisasi sistem operasi dan aplikasi.
+2. Memeriksa ketersediaan pembaruan keamanan.
+3. Menilai tingkat risiko kerentanan.
+4. Memeriksa kompatibilitas dan dampak perubahan.
+5. Membuat backup sesuai kebutuhan.
+6. Menguji pembaruan jika memungkinkan.
+7. Menjadwalkan penerapan.
+8. Memvalidasi fungsi layanan setelah pembaruan.
+9. Mendokumentasikan hasil dan masalah.
+
+Tidak semua pembaruan harus menunggu jadwal rutin. Kerentanan kritis yang sedang dieksploitasi mungkin membutuhkan penanganan segera berdasarkan prosedur respons insiden organisasi.
+
+### 3. Patch Management
+
+Patch management adalah proses terstruktur untuk mengidentifikasi, mengevaluasi, menguji, menerapkan, dan memverifikasi patch perangkat lunak.
+
+Administrator perlu memprioritaskan pembaruan berdasarkan faktor seperti:
+
+- Tingkat keparahan kerentanan.
+- Apakah kerentanan telah dieksploitasi.
+- Paparan server terhadap jaringan.
+- Sensitivitas data.
+- Pentingnya layanan.
+- Ketersediaan mitigasi sementara.
+
+### 4. Inventarisasi Perangkat Lunak
+
+Inventarisasi membantu administrator mengetahui:
+
+- Sistem operasi dan versinya.
+- Perangkat lunak yang terpasang.
+- Versi aplikasi.
+- Layanan yang aktif.
+- Status dukungan perangkat lunak.
+- Pembaruan yang belum diterapkan.
+
+Tanpa inventarisasi, organisasi dapat melewatkan sistem yang rentan atau menggunakan perangkat lunak yang sudah tidak mendapatkan dukungan.
+
+## I. Backup, Restore, dan Perlindungan Data
+
+### 1. Pengertian Backup
+
+Backup adalah salinan data atau konfigurasi yang dibuat agar dapat digunakan untuk memulihkan sistem ketika terjadi kehilangan atau kerusakan data.
+
+Backup berperan penting untuk menghadapi:
+
+- Kerusakan perangkat keras.
+- Kesalahan konfigurasi.
+- Penghapusan data yang tidak disengaja.
+- Kerusakan aplikasi.
+- Serangan ransomware.
+- Kegagalan pembaruan atau migrasi.
+
+### 2. Jenis Backup
+
+| Jenis               | Penjelasan                                                      |
+| ------------------- | --------------------------------------------------------------- |
+| Full backup         | Menyalin seluruh data yang ditentukan dalam cakupan backup      |
+| Incremental backup  | Menyalin perubahan sejak backup sebelumnya sesuai rantai backup |
+| Differential backup | Menyalin perubahan sejak full backup terakhir                   |
+
+Masing-masing memiliki konsekuensi terhadap waktu backup, kapasitas penyimpanan, dan kompleksitas restore.
+
+### 3. Prinsip Backup 3-2-1
+
+Salah satu pedoman umum adalah aturan 3-2-1:
+
+- 3 salinan data: satu data utama dan dua salinan tambahan.
+- 2 jenis media atau sistem penyimpanan yang berbeda.
+- 1 salinan di lokasi terpisah.
+
+Untuk menghadapi ransomware, organisasi juga perlu mempertimbangkan salinan backup yang offline atau immutable, akses backup yang terpisah dari akun administrasi server, dan pengujian pemulihan berkala.
+
+### 4. Backup Berbeda dengan Snapshot
+
+Snapshot merekam keadaan sistem pada suatu titik waktu sesuai kemampuan platform. Snapshot dapat membantu rollback perubahan, tetapi tidak selalu melindungi dari kegagalan media penyimpanan atau serangan yang juga menjangkau penyimpanan snapshot.
+
+Backup yang baik harus memiliki perlindungan dan siklus hidup tersendiri.
+
+### 5. Pengujian Restore
+
+Administrator tidak cukup hanya memastikan pekerjaan backup selesai. Proses restore juga harus diuji.
+
+Pengujian restore mencakup:
+
+1. Memastikan backup dapat dibaca.
+2. Memulihkan data atau sistem ke lingkungan yang sesuai.
+3. Memeriksa integritas data.
+4. Memastikan aplikasi dan layanan dapat berjalan.
+5. Mencatat waktu pemulihan.
+6. Mendokumentasikan hasil pengujian.
+
+Dua konsep penting dalam pemulihan adalah:
+
+- Recovery Point Objective (RPO): seberapa banyak kehilangan data yang masih dapat diterima, dinyatakan sebagai rentang waktu data.
+- Recovery Time Objective (RTO): target waktu yang dibutuhkan untuk memulihkan layanan.
+
+Contohnya, jika RPO ditetapkan satu jam, strategi backup dan replikasi harus dirancang agar kehilangan data akibat insiden tidak melampaui sasaran tersebut dalam kondisi yang diasumsikan. Jika RTO empat jam, organisasi menargetkan pemulihan layanan dalam empat jam.
+
+## J. Monitoring dan Logging Keamanan
+
+Keamanan server memerlukan pemantauan berkelanjutan. Konfigurasi yang baik tidak menjamin bahwa serangan atau kesalahan tidak akan terjadi.
+
+### 1. Fungsi Log
+
+Log adalah catatan kejadian yang dihasilkan sistem operasi, aplikasi, layanan jaringan, atau mekanisme keamanan.
+
+Log dapat membantu administrator:
+
+- Mengetahui kegagalan login.
+- Mengidentifikasi perubahan konfigurasi.
+- Menelusuri kesalahan layanan.
+- Menemukan aktivitas yang tidak biasa.
+- Mendukung investigasi insiden.
+
+### 2. Aktivitas yang Perlu Dipantau
+
+Contoh aktivitas yang relevan:
+
+- Percobaan login gagal yang berulang.
+- Login administrator pada waktu yang tidak biasa.
+- Perubahan hak akses.
+- Aktivasi layanan yang tidak dikenal.
+- Perubahan konfigurasi firewall.
+- Penggunaan CPU atau jaringan yang tidak normal.
+- Kegagalan backup.
+- Percobaan akses ke file sensitif.
+
+Satu indikator saja belum tentu membuktikan adanya serangan. Administrator harus memeriksa konteks, menghubungkan beberapa sumber informasi, dan mengikuti prosedur investigasi.
+
+### 3. Perlindungan Log
+
+Log sendiri merupakan sumber informasi sensitif dan perlu dilindungi.
+
+Praktik yang disarankan:
+
+- Batasi siapa yang dapat membaca atau mengubah log.
+- Sinkronkan waktu sistem agar korelasi kejadian lebih akurat.
+- Tentukan masa retensi.
+- Pertimbangkan pengiriman log ke sistem terpusat.
+- Lindungi log dari perubahan atau penghapusan yang tidak sah.
+
+## K. Studi Kasus: Mengamankan Server Sistem Informasi Akademik
+
+### Deskripsi Kasus
+
+Sebuah program studi menjalankan sistem informasi akademik dalam lingkungan virtual. Infrastruktur terdiri atas:
+
+- VM 1: web server dan aplikasi akademik.
+- VM 2: database server.
+- VM 3: file server untuk dokumen internal.
+
+Administrator menemukan beberapa kondisi berikut:
+
+1. SSH pada seluruh VM dapat diakses dari jaringan pengguna.
+2. Database server dapat menerima koneksi dari jaringan yang tidak diperlukan.
+3. Beberapa akun lama masih aktif.
+4. Pembaruan keamanan belum diterapkan selama beberapa bulan.
+5. Backup database tersedia, tetapi belum pernah diuji melalui restore.
+6. Log autentikasi hanya disimpan secara lokal.
+
+### Tugas Analisis
+
+Jawablah pertanyaan berikut.
+
+1. Identifikasi ancaman dan kerentanan yang terdapat dalam kasus tersebut.
+2. Kelompokkan risiko berdasarkan prinsip kerahasiaan, integritas, dan ketersediaan.
+3. Tentukan prioritas tindakan keamanan yang harus dilakukan terlebih dahulu.
+4. Buat rancangan kebijakan firewall untuk web server, database server, dan jaringan administrasi.
+5. Jelaskan bagaimana prinsip least privilege diterapkan pada akun administrator, aplikasi, dan pengguna.
+6. Susun rencana patch management yang sesuai dengan risiko dan kebutuhan layanan.
+7. Rancang strategi backup dan restore untuk database akademik.
+8. Tentukan kejadian keamanan apa saja yang perlu dicatat dan dipantau.
+9. Jelaskan bagaimana administrator memvalidasi bahwa perbaikan keamanan telah berhasil.
+
+### Contoh Arah Analisis
+
+| Temuan                                               | Risiko                                                      | Tindakan yang Disarankan                                              |
+| ---------------------------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------- |
+| SSH dapat diakses dari jaringan pengguna             | Percobaan akses tidak sah terhadap layanan administrasi     | Batasi SSH ke jaringan administrasi dan akun yang berwenang           |
+| Database terbuka dari jaringan yang tidak diperlukan | Akses data atau eksploitasi layanan database                | Batasi sumber koneksi sesuai kebutuhan aplikasi                       |
+| Akun lama masih aktif                                | Akun dapat disalahgunakan                                   | Tinjau kepemilikan akun dan nonaktifkan yang tidak diperlukan         |
+| Pembaruan tertunda                                   | Kerentanan yang diketahui mungkin masih dapat dieksploitasi | Inventarisasi, penilaian risiko, pengujian, dan penerapan patch       |
+| Backup belum diuji                                   | Pemulihan mungkin gagal saat dibutuhkan                     | Lakukan uji restore dan dokumentasikan hasilnya                       |
+| Log hanya lokal                                      | Bukti dapat hilang jika server dikompromikan                | Pertimbangkan pengiriman log ke sistem terpusat dengan akses terbatas |
+
+## L. Aktivitas Diskusi Kelas
+
+Mahasiswa bekerja dalam kelompok menggunakan kasus organisasi yang telah dipilih pada pertemuan ke-1 dan rancangan server pada pertemuan ke-2 hingga ke-5.
+
+Setiap kelompok mendiskusikan:
+
+1. Aset apa yang paling penting untuk dilindungi?
+2. Ancaman dan kerentanan apa yang paling relevan?
+3. Layanan apa yang perlu dibatasi aksesnya?
+4. Bagaimana akun dan hak akses akan dikelola?
+5. Bagaimana pembaruan keamanan dilakukan tanpa menimbulkan gangguan yang tidak terkendali?
+6. Bagaimana backup dan restore dirancang?
+7. Indikator apa yang perlu dipantau untuk mendeteksi gangguan keamanan?
+
+Output diskusi: Dokumen rancangan keamanan awal yang mencakup aset, risiko, kebijakan akses, firewall, patch management, backup, dan monitoring.
+
+## M. Rangkuman Materi
+
+Pada pertemuan ke-6, mahasiswa telah mempelajari bahwa:
+
+1. Keamanan server bertujuan menjaga kerahasiaan, integritas, dan ketersediaan sistem serta data.
+2. Ancaman, kerentanan, dan risiko merupakan konsep berbeda yang perlu dianalisis sebelum menentukan tindakan keamanan.
+3. Server hardening mengurangi permukaan serangan melalui konfigurasi yang lebih aman.
+4. Autentikasi memastikan identitas, sedangkan otorisasi menentukan hak akses.
+5. Prinsip least privilege membatasi hak akses sesuai kebutuhan.
+6. Firewall dan segmentasi jaringan membantu membatasi komunikasi yang tidak diperlukan.
+7. Patch management membantu mengurangi risiko akibat kerentanan perangkat lunak.
+8. Backup harus dilindungi dan diuji melalui restore.
+9. Monitoring dan logging membantu administrator mendeteksi serta menginvestigasi kejadian keamanan.
+10. Keamanan harus diterapkan pada host, hypervisor, VM, jaringan, aplikasi, dan data.
+
+## N. Keterkaitan dengan Pertemuan ke-7
+
+Pada pertemuan ke-7, mahasiswa akan mempelajari Monitoring, Troubleshooting, Recovery, dan Evaluasi Sistem.
+
+Materi tersebut mencakup:
+
+- Pemantauan ketersediaan sistem.
+- Pemantauan kinerja server.
+- Pemantauan keamanan.
+- Analisis log.
+- Investigasi gangguan sistem.
+- Root cause analysis.
+- Perbaikan dan pemulihan layanan.
+- Evaluasi sistem untuk pengembangan selanjutnya.
+
+Keterkaitannya dengan pertemuan ke-6 adalah bahwa kontrol keamanan perlu dipantau dan dievaluasi. Jika terjadi gangguan, administrator harus dapat mengidentifikasi penyebabnya, menentukan tindakan perbaikan, dan memulihkan layanan secara terencana.
