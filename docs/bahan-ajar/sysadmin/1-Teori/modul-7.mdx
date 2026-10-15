@@ -1,0 +1,659 @@
+---
+title: "7. Monitoring, Troubleshooting, Recovery, dan Evaluasi Sistem"
+---
+
+# Monitoring, Troubleshooting, Recovery, dan Evaluasi Sistem
+
+Materi pertemuan ke-7 merupakan penutup rangkaian pembelajaran teori Administrator Sistem. Pada pertemuan sebelumnya, mahasiswa telah mempelajari instalasi sistem operasi server, layanan jaringan, virtualisasi, dan keamanan server. Selanjutnya, mahasiswa perlu memahami cara memastikan bahwa sistem yang telah dibangun tetap beroperasi dengan baik, mendeteksi gangguan, melakukan investigasi, dan memulihkan layanan.
+
+Dalam praktik administrasi sistem, tugas administrator tidak berhenti setelah server berhasil dipasang dan dikonfigurasi. Administrator juga bertanggung jawab memastikan layanan tetap tersedia, kinerja memenuhi kebutuhan pengguna, keamanan terpantau, dan gangguan dapat ditangani secara sistematis.
+
+## 1. Capaian Pembelajaran
+
+Setelah mengikuti perkuliahan ini, mahasiswa diharapkan mampu:
+
+1. Menjelaskan konsep dan tujuan monitoring sistem server.
+2. Mengidentifikasi indikator ketersediaan, kinerja, dan keamanan server.
+3. Menjelaskan metode troubleshooting dan investigasi gangguan.
+4. Menganalisis log dan gejala gangguan sistem.
+5. Menentukan langkah perbaikan berdasarkan hasil investigasi.
+6. Menjelaskan prosedur backup, restore, dan recovery sistem.
+7. Mengevaluasi kondisi server berdasarkan hasil monitoring dan pengujian.
+8. Menyusun rekomendasi pengembangan infrastruktur server berdasarkan hasil evaluasi.
+
+## 2. Konsep Monitoring Sistem Server
+
+### 2.1 Pengertian Monitoring
+
+Monitoring sistem server adalah proses mengamati dan mengumpulkan informasi mengenai kondisi, kinerja, ketersediaan, dan keamanan server secara berkala atau berkelanjutan.
+
+Monitoring membantu administrator mengetahui apakah server beroperasi sesuai kebutuhan, mendeteksi gejala gangguan, serta menentukan tindakan yang perlu dilakukan.
+
+Contohnya, administrator memantau penggunaan CPU server. Jika penggunaan CPU terus-menerus tinggi dan aplikasi menjadi lambat, administrator dapat melakukan investigasi sebelum gangguan berdampak lebih luas kepada pengguna.
+
+### 2.2 Tujuan Monitoring
+
+Monitoring memiliki beberapa tujuan utama:
+
+1. Mengetahui kondisi server: memastikan server dan layanan beroperasi.
+2. Mendeteksi gangguan lebih awal: mengenali gejala sebelum berkembang menjadi kegagalan besar.
+3. Menjaga kinerja: memastikan sumber daya mencukupi kebutuhan aplikasi.
+4. Mendukung keamanan: mengidentifikasi aktivitas yang tidak biasa.
+5. Mendukung perencanaan kapasitas: mengetahui tren penggunaan sumber daya.
+6. Mendukung pengambilan keputusan: menyediakan data untuk pemeliharaan dan pengembangan sistem.
+
+### 2.3 Jenis Monitoring
+
+Monitoring server dapat dikelompokkan menjadi tiga kategori utama.
+
+1. Monitoring Ketersediaan<br />
+    Memastikan server dan layanan dapat diakses ketika dibutuhkan.<br />
+    Contoh: status VM, respons web server, dan keberhasilan koneksi ke layanan.
+
+2. Monitoring Kinerja<br />
+    Mengamati pemanfaatan sumber daya dan waktu respons layanan.<br />
+    Contoh: CPU, RAM, disk I/O, jaringan, dan latensi aplikasi.
+
+3. Monitoring Keamanan<br />
+    Mengamati aktivitas yang dapat mengindikasikan penyalahgunaan atau serangan.<br />
+    Contoh: login gagal berulang, perubahan hak akses, dan aktivitas layanan yang tidak dikenal.
+
+Ketiga jenis monitoring saling berkaitan. Sebagai contoh, peningkatan penggunaan CPU dapat disebabkan oleh pertambahan pengguna yang sah, aplikasi bermasalah, atau aktivitas berbahaya. Administrator perlu memeriksa konteks sebelum menentukan penyebabnya.
+
+## 3. Monitoring Ketersediaan Sistem
+
+### 3.1 Pengertian Availability
+
+Ketersediaan sistem (availability) adalah kemampuan sistem atau layanan untuk dapat digunakan ketika dibutuhkan.
+
+Server yang menyala belum tentu berarti layanan tersedia. Misalnya, sistem operasi aktif tetapi web server berhenti, sehingga pengguna tidak dapat membuka website.
+
+Karena itu, monitoring ketersediaan perlu dilakukan pada beberapa tingkat:
+
+- Host: apakah komputer fisik beroperasi?
+- Virtual machine: apakah VM berjalan?
+- Sistem operasi: apakah OS merespons?
+- Layanan: apakah DNS, web server, atau database berfungsi?
+- Aplikasi: apakah fungsi yang dibutuhkan pengguna dapat digunakan?
+
+### 3.2 Indikator Ketersediaan
+
+| Indikator                       | Penjelasan                                                 |
+| ------------------------------- | ---------------------------------------------------------- |
+| Status server                   | Menunjukkan apakah host atau VM beroperasi                 |
+| Status service                  | Menunjukkan apakah layanan berjalan                        |
+| Respons jaringan                | Menunjukkan apakah tujuan dapat dijangkau melalui jaringan |
+| Respons aplikasi                | Menunjukkan apakah aplikasi dapat memberikan respons       |
+| Uptime dan downtime             | Menunjukkan lama sistem beroperasi atau mengalami gangguan |
+| Tingkat keberhasilan permintaan | Menunjukkan proporsi permintaan yang berhasil diproses     |
+
+Tidak semua indikator dapat diperiksa dengan satu metode. Misalnya, ping yang berhasil hanya menunjukkan adanya respons jaringan tertentu, bukan membuktikan bahwa aplikasi web berfungsi normal.
+
+### 3.3 Menghitung Availability
+
+Ketersediaan dapat dihitung dengan rumus:
+
+$$
+\text{Availability} = \frac{\text{Waktu Operasional}}{\text{Total Waktu Pengamatan}} \times 100\%
+$$
+
+Jika waktu operasional dan downtime merupakan seluruh periode pengamatan, rumus tersebut juga dapat ditulis:
+
+$$
+\text{Availability} = \frac{T_{\text{total}} - T_{\text{down}}}{T_{\text{total}}} \times 100\%
+$$
+
+Contoh:
+
+Sebuah layanan diamati selama 30 hari. Total downtime yang tercatat adalah 3 jam.
+
+- Total waktu pengamatan: $30 \times 24 = 720$ jam.
+- Waktu operasional: $720 - 3 = 717$ jam.
+
+Dengan demikian:
+
+$$
+\text{Availability} = \frac{717}{720} \times 100\% = 99{,}583\%
+$$
+
+Artinya, layanan tersedia sekitar 99,583% selama periode pengamatan tersebut.
+
+### 3.4 Target Availability
+
+Target availability harus ditetapkan berdasarkan kebutuhan layanan, dampak gangguan, dan kemampuan organisasi.
+
+| Target Availability | Perkiraan Downtime Maksimum dalam 30 Hari |
+| ------------------- | ----------------------------------------- |
+| 99%                 | 7 jam 12 menit                            |
+| 99,5%               | 3 jam 36 menit                            |
+| 99,9%               | 43 menit 12 detik                         |
+| 99,99%              | 4 menit 19 detik                          |
+
+Angka tersebut merupakan perhitungan teoretis untuk periode 30 hari tanpa membedakan downtime terencana dan tidak terencana. Penghitungan resmi dapat berbeda bergantung pada definisi layanan, jadwal pemeliharaan, dan ketentuan SLA.
+
+### 3.5 Service Level Agreement (SLA)
+
+SLA adalah kesepakatan mengenai tingkat layanan yang harus dipenuhi, termasuk target ketersediaan, waktu respons, atau waktu penanganan gangguan.
+
+Contohnya, organisasi menetapkan bahwa sistem informasi akademik harus tersedia minimal 99,9% dalam satu bulan berdasarkan metode pengukuran yang disepakati.
+
+Target tersebut harus diikuti mekanisme monitoring, pencatatan downtime, dan prosedur penanganan insiden yang jelas.
+
+## 4. Monitoring Kinerja Server
+
+### 4.1 Mengapa Kinerja Perlu Dipantau?
+
+Server dapat tetap aktif tetapi memberikan layanan yang lambat. Hal ini dapat terjadi ketika CPU terlalu sibuk, RAM tidak mencukupi, penyimpanan mengalami keterlambatan, atau jaringan mengalami gangguan.
+
+Monitoring kinerja membantu administrator mengidentifikasi sumber masalah sebelum memutuskan tindakan perbaikan.
+
+### 4.2 Indikator Kinerja Utama
+
+| Indikator                        | Fungsi                                               | Gejala yang Perlu Diperhatikan                        |
+| -------------------------------- | ---------------------------------------------------- | ----------------------------------------------------- |
+| CPU utilization                  | Mengukur penggunaan kapasitas CPU                    | Penggunaan tinggi secara terus-menerus                |
+| RAM utilization                  | Mengukur pemakaian memori                            | Tekanan memori dan aktivitas swap yang tinggi         |
+| Disk utilization dan I/O latency | Mengamati penggunaan serta waktu respons penyimpanan | Operasi baca/tulis melambat                           |
+| Network throughput               | Mengukur volume data yang ditransfer                 | Bandwidth mendekati kapasitas atau trafik tidak biasa |
+| Packet loss                      | Mengukur paket yang tidak sampai ke tujuan           | Komunikasi jaringan tidak stabil                      |
+| Response time                    | Mengukur waktu respons layanan                       | Pengguna mengalami keterlambatan                      |
+| Error rate                       | Mengukur proporsi permintaan yang gagal              | Peningkatan kegagalan aplikasi                        |
+
+Administrator sebaiknya memeriksa tren dan pola penggunaan, bukan hanya satu pengukuran sesaat.
+
+### 4.3 CPU Utilization
+
+CPU utilization menunjukkan seberapa besar kapasitas pemrosesan yang digunakan.
+
+Jika penggunaan CPU meningkat terus-menerus, kemungkinan penyebabnya antara lain:
+
+- Jumlah permintaan meningkat.
+- Proses aplikasi mengalami masalah.
+- Ada pekerjaan terjadwal yang menggunakan banyak sumber daya.
+- Terjadi konfigurasi yang tidak efisien.
+- Ada proses yang tidak dikenal.
+
+CPU tinggi tidak selalu berarti server bermasalah. Beban tinggi mungkin normal ketika sistem memproses pekerjaan dalam jumlah besar. Penilaian harus mempertimbangkan kebutuhan aplikasi dan respons layanan.
+
+### 4.4 RAM Utilization
+
+RAM digunakan oleh sistem operasi, aplikasi, dan cache.
+
+Penggunaan memori yang tinggi perlu dianalisis bersama indikator lain, seperti swap, tekanan memori, dan respons aplikasi.
+
+Sebagai contoh, jika database server menggunakan sebagian besar RAM tetapi tetap memberikan respons yang baik, penggunaan tersebut belum tentu bermasalah. Sebaliknya, penggunaan RAM yang tinggi disertai proses swap intensif dan aplikasi lambat dapat mengindikasikan kekurangan memori atau masalah aplikasi.
+
+### 4.5 Disk dan Storage I/O
+
+Selain kapasitas penyimpanan, administrator perlu memperhatikan kinerja baca/tulis disk.
+
+Gejala masalah penyimpanan dapat berupa:
+
+- Aplikasi lambat saat membaca atau menyimpan data.
+- Database mengalami peningkatan waktu respons.
+- Proses backup berlangsung lebih lama.
+- Sistem mencatat kesalahan I/O.
+- Kapasitas disk mendekati penuh.
+
+Penyebabnya dapat berupa media penyimpanan yang bermasalah, beban I/O tinggi, kapasitas tidak memadai, atau konfigurasi penyimpanan yang tidak sesuai.
+
+### 4.6 Monitoring Jaringan
+
+Indikator jaringan yang dapat dipantau meliputi:
+
+- Bandwidth yang digunakan.
+- Latensi komunikasi.
+- Packet loss.
+- Status antarmuka jaringan.
+- Koneksi aktif.
+- Kesalahan pada antarmuka.
+- Trafik yang tidak biasa.
+
+Misalnya, server dapat merespons secara normal dari jaringan lokal tetapi tidak dapat diakses dari luar organisasi. Dalam kasus tersebut, administrator perlu memeriksa routing, firewall, DNS, dan konektivitas jaringan yang relevan.
+
+## 5. Tools Monitoring dan Pemeriksaan Sistem
+
+Administrator dapat menggunakan alat bawaan sistem operasi maupun perangkat lunak monitoring khusus.
+
+### 5.1 Tools pada Linux
+
+Beberapa perintah Linux yang umum digunakan adalah:
+
+| Perintah                        | Fungsi                                                     |
+| ------------------------------- | ---------------------------------------------------------- |
+| `top`                           | Memantau proses dan penggunaan sumber daya secara langsung |
+| `free -h`                       | Melihat informasi penggunaan memori                        |
+| `df -h`                         | Memeriksa penggunaan kapasitas filesystem                  |
+| `du -sh /path`                  | Memperkirakan penggunaan ruang pada direktori              |
+| `uptime`                        | Melihat waktu operasi dan load average                     |
+| `systemctl status nama-service` | Memeriksa status service systemd                           |
+| `journalctl`                    | Membaca log yang dikelola systemd-journald                 |
+| `ss -tulpn`                     | Melihat socket dan port yang sedang digunakan              |
+| `ip addr`                       | Memeriksa konfigurasi alamat IP antarmuka                  |
+| `ping`                          | Menguji keterjangkauan jaringan tertentu                   |
+
+Penggunaan perintah harus memperhatikan hak akses. Perintah yang menampilkan informasi proses atau port dapat membutuhkan hak administratif untuk menampilkan seluruh detail.
+
+Contoh pemeriksaan layanan web server pada sistem Linux yang menggunakan systemd:
+
+```
+systemctl status nginx
+```
+
+Untuk melihat log layanan:
+
+```
+journalctl -u nginx
+```
+
+Nama layanan dapat berbeda. Misalnya, pada beberapa instalasi Apache, nama service yang digunakan adalah `apache2` atau `httpd`.
+
+### 5.2 Tools pada Windows Server
+
+Beberapa alat yang dapat digunakan antara lain:
+
+- Task Manager: melihat penggunaan CPU, memori, dan proses.
+- Resource Monitor: menganalisis penggunaan sumber daya lebih terperinci.
+- Event Viewer: memeriksa log sistem, aplikasi, dan keamanan.
+- Performance Monitor: mengamati performance counter.
+- Services: memeriksa status layanan Windows.
+
+### 5.3 Tools Monitoring Terpusat
+
+Untuk infrastruktur yang terdiri atas banyak server, administrator dapat menggunakan sistem monitoring terpusat.
+
+Contoh perangkat lunak yang umum digunakan:
+
+- Prometheus: mengumpulkan dan menyimpan metrik time-series.
+- Grafana: menyajikan dashboard dan visualisasi data monitoring.
+- Zabbix: memantau server, jaringan, dan layanan.
+- Nagios: memeriksa status host dan layanan melalui mekanisme monitoring.
+
+Pemilihan alat perlu mempertimbangkan skala infrastruktur, dukungan sistem operasi, kebutuhan alert, keamanan akses, dan kemampuan administrator.
+
+## 6. Konsep Troubleshooting
+
+### 6.1 Pengertian Troubleshooting
+
+Troubleshooting adalah proses sistematis untuk mengidentifikasi penyebab gangguan dan menentukan tindakan perbaikan yang tepat.
+
+Troubleshooting bukan sekadar mencoba berbagai perintah sampai sistem kembali berfungsi. Administrator perlu mengumpulkan bukti, menguji hipotesis, mengidentifikasi penyebab, dan memvalidasi hasil perbaikan.
+
+### 6.2 Tahapan Troubleshooting
+
+1\. Identifikasi gejala
+
+Apa yang gagal dan siapa yang terdampak?
+
+2\. Kumpulkan bukti
+
+Periksa status layanan, log, metrik, dan konfigurasi.
+
+3\. Susun hipotesis
+
+Tentukan kemungkinan penyebab berdasarkan bukti.
+
+4\. Uji penyebab
+
+Lakukan pemeriksaan yang aman dan terarah.
+
+5\. Lakukan perbaikan
+
+Terapkan perubahan sesuai penyebab yang teridentifikasi.
+
+6\. Validasi dan dokumentasi
+
+Pastikan layanan pulih dan catat hasil penanganan.
+
+Jika perbaikan tidak berhasil, administrator perlu meninjau kembali hipotesis dan bukti yang telah dikumpulkan.
+
+## 6.3 Mengapa Troubleshooting Harus Sistematis?
+
+Misalnya, website tidak dapat diakses.
+
+Administrator langsung me-restart server tanpa pemeriksaan. Website mungkin kembali aktif, tetapi akar masalahnya tidak diketahui.
+
+Jika penyebabnya adalah kapasitas disk yang penuh, website dapat kembali gagal setelah beberapa waktu.
+
+Pendekatan yang lebih tepat adalah memeriksa:
+
+1. Apakah server dapat dijangkau?
+2. Apakah service web server berjalan?
+3. Apakah port layanan dapat diakses?
+4. Apakah konfigurasi DNS benar?
+5. Apakah kapasitas disk mencukupi?
+6. Apakah log menunjukkan kesalahan?
+7. Apakah aplikasi dan database berfungsi?
+
+Pemeriksaan dilakukan berdasarkan gejala dan hasil yang ditemukan, bukan dengan menjalankan semua langkah secara membabi buta.
+
+## 7. Analisis Log dan Investigasi Gangguan
+
+### 7.1 Pengertian Log
+
+Log adalah catatan kejadian yang dihasilkan oleh sistem operasi, aplikasi, layanan jaringan, atau perangkat keamanan.
+
+Log dapat berisi:
+
+- Waktu kejadian.
+- Jenis kejadian.
+- Identitas proses atau pengguna.
+- Pesan kesalahan.
+- Status operasi.
+- Informasi yang membantu investigasi.
+
+### 7.2 Jenis Log
+
+| Jenis Log             | Informasi yang Dicatat                          |
+| --------------------- | ----------------------------------------------- |
+| System log            | Kejadian pada sistem operasi                    |
+| Authentication log    | Aktivitas login dan autentikasi                 |
+| Application log       | Aktivitas dan kesalahan aplikasi                |
+| Web server access log | Permintaan yang diterima web server             |
+| Web server error log  | Kesalahan saat web server memproses permintaan  |
+| Database log          | Aktivitas dan kesalahan database                |
+| Security log          | Kejadian yang relevan untuk pemantauan keamanan |
+
+Lokasi dan format log berbeda bergantung pada sistem operasi, layanan, dan konfigurasi.
+
+### 7.3 Tingkat Keparahan Log
+
+Banyak sistem menggunakan tingkat keparahan seperti:
+
+- Debug: informasi rinci untuk keperluan debugging.
+- Info: informasi umum mengenai operasi.
+- Warning: kondisi yang perlu diperhatikan.
+- Error: kegagalan suatu operasi.
+- Critical atau Fatal: kondisi serius yang dapat mengganggu operasi sistem.
+
+Tidak semua perangkat lunak menggunakan istilah yang persis sama. Administrator perlu memahami dokumentasi sistem yang digunakan.
+
+### 7.4 Metode Investigasi
+
+Ketika gangguan terjadi, administrator sebaiknya:
+
+1. Mencatat waktu dan gejala awal.
+2. Mengidentifikasi layanan yang terdampak.
+3. Memeriksa log pada rentang waktu yang relevan.
+4. Membandingkan kondisi sebelum dan sesudah gangguan.
+5. Memeriksa perubahan konfigurasi terbaru.
+6. Menghubungkan informasi dari beberapa sumber.
+7. Menentukan penyebab yang paling didukung bukti.
+
+Log perlu ditafsirkan berdasarkan konteks. Satu pesan error tidak selalu menunjukkan akar masalah.
+
+## 8. Root Cause Analysis (RCA)
+
+### 8.1 Pengertian RCA
+
+Root Cause Analysis (RCA) adalah proses untuk menemukan penyebab mendasar suatu masalah, bukan hanya menangani gejala yang terlihat.
+
+Tujuan RCA adalah mengurangi kemungkinan gangguan yang sama terjadi kembali.
+
+### 8.2 Contoh: Website Tidak Dapat Diakses
+
+Gejala yang ditemukan adalah website tidak dapat diakses. Setelah pemeriksaan, administrator menemukan bahwa partisi yang menyimpan log telah penuh.
+
+Rangkaian analisis dapat berupa:
+
+- Gejala: website mengembalikan kesalahan dan sebagian fungsi gagal.
+- Temuan: filesystem mencapai kapasitas maksimum.
+- Penyebab langsung: aplikasi gagal menulis file yang dibutuhkan.
+- Akar masalah: log tumbuh terus-menerus tanpa kebijakan rotasi dan retensi yang memadai.
+- Perbaikan langsung: membebaskan ruang secara aman setelah mengidentifikasi file yang dapat ditangani.
+- Pencegahan: mengatur log rotation, retensi, dan peringatan kapasitas disk.
+
+Menghapus file secara sembarangan bukan tindakan yang tepat karena dapat menghilangkan bukti penting atau merusak aplikasi.
+
+### 8.3 Metode 5 Whys
+
+Metode 5 Whys digunakan untuk menggali penyebab dengan mengajukan pertanyaan “mengapa?” secara berulang.
+
+Contoh:
+
+1\. Mengapa website tidak dapat memproses permintaan? Karena aplikasi gagal menulis file sementara.
+
+2\. Mengapa aplikasi gagal menulis file sementara? Karena filesystem penuh.
+
+3\. Mengapa filesystem penuh? Karena file log bertambah besar.
+
+4\. Mengapa file log terus bertambah? Karena log rotation tidak berjalan.
+
+5\. Mengapa log rotation tidak berjalan? Karena konfigurasi pemeliharaan belum diuji setelah perubahan sistem.
+
+Kesimpulan awalnya adalah bahwa masalah tidak hanya berkaitan dengan kapasitas disk, tetapi juga proses pemeliharaan dan validasi konfigurasi.
+
+Metode ini membantu menyusun hipotesis, tetapi kesimpulan akhir tetap harus diverifikasi dengan bukti.
+
+## 9. Perbaikan dan Pemulihan Sistem
+
+### 9.1 Perbedaan Repair dan Recovery
+
+Repair adalah tindakan untuk memperbaiki komponen atau konfigurasi yang bermasalah.
+
+Recovery adalah proses memulihkan sistem, layanan, atau data ke kondisi operasional yang dapat diterima setelah gangguan.
+
+Contoh repair adalah memperbaiki konfigurasi web server yang salah. Contoh recovery adalah memulihkan database dari backup setelah data mengalami kerusakan.
+
+Keduanya dapat dilakukan dalam satu proses penanganan insiden, tetapi tidak selalu membutuhkan tindakan yang sama.
+
+### 9.2 Tahapan Perbaikan
+
+Proses perbaikan dapat mencakup:
+
+1. Memastikan cakupan gangguan.
+2. Mengumpulkan dan mengamankan bukti yang relevan.
+3. Menentukan penyebab berdasarkan hasil investigasi.
+4. Menilai risiko perubahan.
+5. Menentukan prosedur perbaikan.
+6. Membuat backup atau titik pemulihan jika sesuai.
+7. Menerapkan perubahan.
+8. Menguji layanan.
+9. Memantau kemungkinan gangguan berulang.
+10. Mendokumentasikan hasil.
+
+Pada insiden keamanan, administrator harus berhati-hati agar tindakan perbaikan tidak menghilangkan bukti yang diperlukan untuk investigasi.
+
+### 9.3 Jenis Recovery
+
+Pemulihan dapat dilakukan pada beberapa tingkat:
+
+| Jenis Recovery         | Contoh                                                                  |
+| ---------------------- | ----------------------------------------------------------------------- |
+| Service recovery       | Menjalankan kembali layanan yang berhenti setelah penyebabnya ditangani |
+| Configuration recovery | Memulihkan konfigurasi yang rusak                                       |
+| File recovery          | Mengembalikan file yang terhapus atau rusak                             |
+| Database recovery      | Memulihkan database dari backup atau mekanisme recovery database        |
+| VM recovery            | Memulihkan VM dari backup yang valid                                    |
+| Disaster recovery      | Memulihkan layanan penting setelah gangguan besar pada infrastruktur    |
+
+### 9.4 Recovery Point Objective dan Recovery Time Objective
+
+Dua parameter penting dalam perencanaan pemulihan adalah:
+
+- RPO: batas kehilangan data yang dapat diterima.
+- RTO: target waktu pemulihan layanan.
+
+Contoh:
+
+Sistem akademik memiliki RPO satu jam dan RTO empat jam.
+
+Artinya, organisasi menargetkan agar kehilangan data akibat insiden tidak melampaui rentang satu jam, serta layanan dapat dipulihkan dalam waktu empat jam, sesuai skenario dan asumsi perencanaan.
+
+Target tersebut harus didukung oleh strategi backup, kapasitas infrastruktur, prosedur recovery, serta pengujian berkala. Target yang terlalu ketat tanpa sumber daya yang memadai sulit dipenuhi.
+
+## 10. Backup dan Restore dalam Penanganan Gangguan
+
+Backup dan restore merupakan bagian penting dari recovery, terutama ketika gangguan menyebabkan kehilangan atau kerusakan data.
+
+### 10.1 Kapan Restore Dibutuhkan?
+
+Restore dapat dibutuhkan ketika:
+
+- File terhapus secara tidak sengaja.
+- Database mengalami kerusakan.
+- Konfigurasi penting tidak dapat diperbaiki.
+- Upgrade gagal dan sistem perlu dikembalikan.
+- Server mengalami kegagalan yang mengharuskan pemulihan pada lingkungan lain.
+- Data terdampak insiden keamanan.
+
+### 10.2 Prosedur Restore
+
+Secara umum, prosedur restore meliputi:
+
+1. Mengidentifikasi data atau sistem yang perlu dipulihkan.
+2. Menentukan backup yang sesuai dan memastikan integritasnya.
+3. Menyiapkan lingkungan pemulihan yang aman.
+4. Memulihkan data atau sistem.
+5. Menyesuaikan konfigurasi yang diperlukan.
+6. Memvalidasi integritas data.
+7. Menguji fungsi aplikasi dan layanan.
+8. Mengarahkan pengguna ke layanan yang telah pulih.
+9. Memantau sistem setelah pemulihan.
+10. Mendokumentasikan hasil dan pelajaran yang diperoleh.
+
+Jika insiden melibatkan malware atau akses tidak sah, jangan langsung memulihkan sistem ke lingkungan produksi tanpa memastikan bahwa sumber kompromi telah ditangani. Jika tidak, sistem dapat kembali terinfeksi atau tereksploitasi.
+
+### 10.3 Validasi Setelah Restore
+
+Keberhasilan restore tidak cukup diukur dari status proses yang selesai.
+
+Administrator juga harus memastikan:
+
+- File dapat dibaca.
+- Database konsisten.
+- Aplikasi dapat dijalankan.
+- Akun dan hak akses sesuai.
+- Layanan dapat diakses oleh pengguna yang berwenang.
+- Kontrol keamanan tetap berlaku.
+- Data yang dipulihkan sesuai dengan titik pemulihan yang dipilih.
+
+## 11. Evaluasi Sistem untuk Pengembangan Masa Depan
+
+### 11.1 Tujuan Evaluasi Sistem
+
+Evaluasi sistem bertujuan menentukan apakah infrastruktur yang berjalan masih memenuhi kebutuhan organisasi.
+
+Hasil monitoring dan troubleshooting dapat digunakan untuk menilai kebutuhan peningkatan kapasitas, perubahan arsitektur, peningkatan keamanan, atau perbaikan prosedur operasional.
+
+### 11.2 Aspek Evaluasi
+
+| Aspek        | Pertanyaan Evaluasi                                             |
+| ------------ | --------------------------------------------------------------- |
+| Ketersediaan | Apakah layanan memenuhi target availability?                    |
+| Kinerja      | Apakah respons sistem memenuhi kebutuhan pengguna?              |
+| Kapasitas    | Apakah CPU, RAM, dan penyimpanan masih mencukupi?               |
+| Keamanan     | Apakah terdapat kerentanan atau kontrol yang belum memadai?     |
+| Pemulihan    | Apakah backup dan restore dapat memenuhi target recovery?       |
+| Pemeliharaan | Apakah konfigurasi dan dokumentasi mutakhir?                    |
+| Biaya        | Apakah sumber daya digunakan secara efisien?                    |
+| Skalabilitas | Apakah infrastruktur mampu mengakomodasi pertumbuhan kebutuhan? |
+
+### 11.3 Perencanaan Kapasitas
+
+Perencanaan kapasitas menggunakan data historis dan perkiraan pertumbuhan untuk menentukan kapan sumber daya perlu ditingkatkan.
+
+Misalnya, monitoring menunjukkan penggunaan RAM database server meningkat dari waktu ke waktu, sementara respons query mulai melambat.
+
+Administrator perlu memeriksa apakah penyebabnya adalah pertumbuhan data, perubahan pola permintaan, query yang tidak efisien, atau kekurangan memori sebelum memutuskan untuk menambah RAM.
+
+Penambahan perangkat keras merupakan salah satu solusi, tetapi tidak selalu menjadi solusi yang paling tepat.
+
+### 11.4 Continuous Improvement
+
+Evaluasi sebaiknya menjadi proses berkelanjutan.
+
+Siklus sederhananya adalah:
+
+1. Plan: menentukan target dan rencana pengelolaan sistem.
+2. Do: menerapkan konfigurasi dan layanan.
+3. Check: memantau dan mengevaluasi hasil.
+4. Act: melakukan perbaikan berdasarkan temuan.
+
+Siklus tersebut membantu administrator memastikan bahwa infrastruktur berkembang mengikuti kebutuhan organisasi dan perubahan risiko.
+
+## 12. Studi Kasus Terintegrasi
+
+### Kasus: Gangguan Sistem Informasi Akademik
+
+Sebuah program studi menjalankan sistem informasi akademik pada lingkungan virtual dengan tiga VM:
+
+| VM   | Fungsi                           |
+| ---- | -------------------------------- |
+| VM 1 | Web server dan aplikasi akademik |
+| VM 2 | Database server                  |
+| VM 3 | File server                      |
+
+Pada saat periode pengisian KRS, pengguna melaporkan bahwa website menjadi lambat dan terkadang tidak dapat diakses.
+
+Administrator menemukan gejala berikut:
+
+1. VM web server masih berjalan.
+2. Penggunaan CPU web server meningkat.
+3. Penggunaan RAM database server mendekati kapasitas yang dialokasikan.
+4. Ruang kosong pada filesystem web server berkurang secara signifikan.
+5. Sebagian log aplikasi mencatat kegagalan operasi tulis.
+6. Belum ada laporan yang memastikan apakah seluruh pengguna terdampak.
+
+### Pertanyaan Analisis
+
+1. Apa perbedaan antara gejala, dugaan penyebab, dan akar masalah dalam kasus ini?
+2. Data tambahan apa yang perlu dikumpulkan sebelum melakukan perbaikan?
+3. Bagaimana administrator menentukan apakah masalah berasal dari web server, database, atau penyimpanan?
+4. Mengapa status VM yang masih berjalan tidak menjamin aplikasi tersedia?
+5. Apa tindakan yang aman untuk memeriksa dan menangani kapasitas filesystem yang menipis?
+6. Bagaimana administrator menentukan apakah perlu menambah RAM database server?
+7. Dalam kondisi apa restore diperlukan, dan kapan perbaikan konfigurasi lebih tepat?
+8. Metrik apa yang harus dipantau setelah perbaikan?
+9. Bagaimana administrator memastikan gangguan yang sama tidak terulang?
+10. Rekomendasi pengembangan apa yang dapat diberikan berdasarkan hasil investigasi?
+
+## 13. Aktivitas Diskusi Kelas
+
+Mahasiswa menggunakan proyek berkelanjutan yang telah dikembangkan sejak pertemuan pertama.
+
+Setiap kelompok diminta menyusun rancangan operasional dan pemeliharaan server yang mencakup:
+
+1. Daftar server, VM, dan layanan yang dipantau.
+2. Indikator monitoring ketersediaan dan kinerja.
+3. Indikator keamanan yang perlu diamati.
+4. Prosedur troubleshooting ketika layanan terganggu.
+5. Prosedur backup dan restore.
+6. Target RPO dan RTO yang sesuai dengan kebutuhan kasus.
+7. Prosedur dokumentasi insiden.
+8. Rekomendasi pengembangan sistem berdasarkan risiko dan kebutuhan kapasitas.
+
+Output diskusi: Dokumen monitoring, troubleshooting, dan recovery untuk infrastruktur server kelompok.
+
+## 14. Rangkuman Materi
+
+Pada pertemuan ke-7, mahasiswa telah mempelajari bahwa:
+
+1. Monitoring membantu administrator mengamati ketersediaan, kinerja, dan keamanan server.
+2. Server yang aktif belum tentu menyediakan layanan yang dapat digunakan.
+3. Availability dapat diukur berdasarkan waktu operasional selama periode pengamatan.
+4. Monitoring CPU, RAM, penyimpanan, jaringan, dan waktu respons membantu menemukan indikasi gangguan.
+5. Troubleshooting harus dilakukan secara sistematis dengan mengumpulkan bukti, menguji hipotesis, dan memvalidasi perbaikan.
+6. Log membantu investigasi, tetapi harus dianalisis berdasarkan konteks.
+7. Root cause analysis membantu mengidentifikasi penyebab mendasar agar gangguan tidak berulang.
+8. Recovery dapat melibatkan pemulihan konfigurasi, file, database, VM, atau keseluruhan layanan.
+9. Backup harus diuji melalui restore dan disesuaikan dengan target RPO serta RTO.
+10. Evaluasi sistem membantu organisasi merencanakan peningkatan kapasitas, keamanan, ketersediaan, dan efisiensi.
+
+## 15. Penutup Rangkaian Materi Teori
+
+Ketujuh pertemuan teori Administrator Sistem membentuk alur pembelajaran yang berkelanjutan:
+
+| Pertemuan | Topik                                                      | Fokus Utama                                                      |
+| --------- | ---------------------------------------------------------- | ---------------------------------------------------------------- |
+| 1         | Konsep dan Peran Administrator Sistem                      | Analisis kebutuhan pengguna dan identifikasi lingkungan sistem   |
+| 2         | Perancangan Arsitektur Server Environment                  | Merancang infrastruktur berdasarkan kebutuhan                    |
+| 3         | Sistem Operasi Server dan Administrasi Dasar               | Memahami OS dan konfigurasi dasar server                         |
+| 4         | Server Services dan Network Services                       | Menentukan layanan yang dibutuhkan                               |
+| 5         | Virtualisasi dan Pengelolaan Server                        | Mengelola VM, sumber daya, upgrade, dan migrasi                  |
+| 6         | Keamanan Sistem Server                                     | Menerapkan kontrol keamanan dan perlindungan data                |
+| 7         | Monitoring, Troubleshooting, Recovery, dan Evaluasi Sistem | Menjaga operasional, menangani gangguan, dan mengevaluasi sistem |
+
+Dengan demikian, mahasiswa tidak hanya mempelajari komponen server secara terpisah, tetapi juga memahami siklus pengelolaan sistem dari analisis kebutuhan, perancangan, implementasi, pengamanan, monitoring, hingga pemulihan dan evaluasi.
+
+Materi ini menjadi landasan untuk menyelesaikan proyek praktik berkelanjutan, yaitu membangun, mengamankan, menguji, dan mendokumentasikan lingkungan server berdasarkan kebutuhan organisasi yang dipilih oleh masing-masing kelompok.
