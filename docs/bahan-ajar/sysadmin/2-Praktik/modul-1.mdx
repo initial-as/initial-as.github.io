@@ -1,0 +1,517 @@
+---
+title: "1. Instalasi dan Konfigurasi Dasar Sistem Operasi Server"
+---
+
+# Instalasi dan Konfigurasi Dasar Sistem Operasi Server
+
+## 1. Identitas Praktikum
+
+| Komponen              | Keterangan                                                         |
+| --------------------- | ------------------------------------------------------------------ |
+| Program Studi         | Teknologi Informasi                                                |
+| Mata Kuliah           | Administrator Sistem                                               |
+| Pertemuan             | 1                                                                  |
+| Topik Praktikum       | Instalasi dan Konfigurasi Dasar Sistem Operasi Server              |
+| Alokasi Waktu         | 170 menit                                                          |
+| Bentuk Kegiatan       | Praktik individual atau berpasangan                                |
+| Metode Pembelajaran   | Hands-on Practice dan demonstrasi                                  |
+| Platform Virtualisasi | Oracle VirtualBox                                                  |
+| Sistem Operasi Server | Ubuntu Server LTS atau Debian                                      |
+| Luaran Praktikum      | VM server terinstal, terkonfigurasi, dan dapat diakses melalui SSH |
+
+## 2. Deskripsi Praktikum
+
+Sistem operasi server merupakan komponen utama yang mengelola sumber daya komputasi dan menyediakan lingkungan bagi layanan yang dibutuhkan oleh pengguna. Administrator sistem harus mampu melakukan instalasi, konfigurasi awal, serta verifikasi sistem operasi agar server dapat beroperasi secara stabil dan siap dikembangkan untuk menyediakan berbagai layanan.
+
+Pada praktikum ini, mahasiswa melakukan pembuatan mesin virtual, instalasi sistem operasi server berbasis Linux, konfigurasi identitas server, pengaturan jaringan, pembaruan paket, pengelolaan akun administratif, serta konfigurasi akses jarak jauh menggunakan Secure Shell (SSH).
+
+Mahasiswa diharapkan tidak hanya berhasil menginstal sistem operasi, tetapi juga mampu menjelaskan alasan setiap konfigurasi, melakukan pengujian, dan mendokumentasikan hasil implementasi.
+
+## 3. Capaian Pembelajaran Praktikum
+
+Setelah menyelesaikan praktikum, mahasiswa diharapkan mampu:
+
+1. Membuat dan mengonfigurasi mesin virtual untuk kebutuhan server.
+2. Menginstal sistem operasi server berbasis Linux sesuai rancangan.
+3. Mengonfigurasi hostname, akun administratif, dan parameter jaringan dasar.
+4. Melakukan pembaruan sistem serta memeriksa status layanan dan sumber daya.
+5. Mengonfigurasi dan menguji akses administratif jarak jauh melalui SSH.
+6. Memverifikasi hasil instalasi dan menyusun dokumentasi konfigurasi server.
+
+## 4. Dasar Teori
+
+### 4.1. Sistem Operasi Server
+
+Sistem operasi server merupakan perangkat lunak sistem yang mengelola sumber daya perangkat keras, menjalankan proses, mengatur akses pengguna, dan menyediakan lingkungan untuk layanan jaringan maupun aplikasi.
+
+Berbeda dengan sistem operasi desktop yang umumnya berorientasi pada interaksi pengguna secara langsung, sistem operasi server dirancang untuk mendukung layanan yang berjalan secara berkelanjutan, administrasi jarak jauh, dan pengelolaan sumber daya secara terkontrol.
+
+Contoh sistem operasi server berbasis Linux yang umum digunakan adalah Ubuntu Server dan Debian. Keduanya menyediakan lingkungan administrasi berbasis command-line interface (CLI), pengelolaan paket, sistem layanan, dan mekanisme pengaturan akun serta hak akses.
+
+### 4.2. Virtualisasi Server
+
+Virtualisasi memungkinkan beberapa lingkungan komputasi berjalan secara terisolasi pada satu perangkat keras fisik. Dalam praktikum ini, VirtualBox digunakan untuk membuat mesin virtual (virtual machine atau VM) yang berfungsi sebagai server.
+
+Setiap VM memiliki sumber daya virtual, seperti CPU, RAM, penyimpanan, dan antarmuka jaringan. Alokasi sumber daya harus mempertimbangkan kapasitas komputer fisik agar host dan VM dapat beroperasi secara memadai.
+
+Parameter awal VM yang disarankan adalah:
+
+| Komponen            | Konfigurasi awal                                                       |
+| ------------------- | ---------------------------------------------------------------------- |
+| Nama VM             | `SysAdmin`                                                      |
+| Tipe sistem         | Linux 64-bit, sesuai OS yang dipilih                                   |
+| CPU                 | 2 vCPU                                                                 |
+| RAM                 | Minimal 2 GB                                                                   |
+| Penyimpanan virtual | 25 GB, dinamis atau sesuai kebutuhan                                   |
+| Media instalasi     | ISO Ubuntu Server LTS atau Debian                                      |
+| Jaringan            | NAT untuk pembaruan awal; jaringan tambahan sesuai kebutuhan pengujian |
+
+Spesifikasi tersebut merupakan rekomendasi untuk praktikum dasar, bukan persyaratan universal. Mahasiswa perlu menyesuaikannya dengan persyaratan versi OS, kapasitas perangkat, dan rancangan pada pertemuan pertama.
+
+### 4.3. Identitas Server dan Pengelolaan Akun
+
+Setiap server perlu memiliki identitas yang jelas agar mudah dikenali dalam lingkungan jaringan. Salah satu parameter identitas tersebut adalah hostname, yaitu nama yang digunakan untuk mengidentifikasi sistem.
+
+Selain itu, administrator perlu memahami perbedaan akun pengguna biasa dan akun dengan hak administratif. Pada Ubuntu dan Debian, tugas administratif dapat dilakukan melalui mekanisme `sudo` apabila akun telah diberikan hak yang sesuai.
+
+Prinsip yang perlu diterapkan adalah penggunaan akun individual, pembatasan hak akses berdasarkan kebutuhan, serta penghindaran penggunaan akun administratif untuk aktivitas rutin yang tidak memerlukan hak istimewa.
+
+### 4.4. Konfigurasi Jaringan Server
+
+Konfigurasi jaringan memungkinkan server berkomunikasi dengan perangkat lain. Parameter jaringan yang umum meliputi:
+
+- Alamat IP.
+- Subnet mask atau prefix.
+- Default gateway.
+- DNS resolver.
+
+Alamat IP dapat diperoleh secara dinamis melalui DHCP atau ditetapkan secara statis. Untuk server yang memerlukan alamat tetap, penggunaan IP statis atau reservasi DHCP umumnya mempermudah pengelolaan layanan.
+
+Pada praktikum ini, mahasiswa menggunakan rancangan IP dari pertemuan pertama. Konfigurasi IP statis dilakukan hanya jika jaringan yang digunakan telah diketahui dan alamat yang ditetapkan tidak bertabrakan dengan perangkat lain.
+
+### 4.5. Manajemen Paket dan Pembaruan Sistem
+
+Distribusi Linux menyediakan pengelola paket untuk menginstal, memperbarui, dan menghapus perangkat lunak. Pada Ubuntu dan Debian, APT digunakan untuk mengelola paket dari repositori yang dikonfigurasi.
+
+Perintah berikut merupakan perintah dasar yang akan digunakan:
+
+| Perintah                      | Fungsi                                  |
+| ----------------------------- | --------------------------------------- |
+| `sudo apt update`             | Memperbarui indeks paket                |
+| `sudo apt upgrade`            | Memasang pembaruan paket yang tersedia  |
+| `sudo apt install nama-paket` | Menginstal paket                        |
+| `apt list --upgradable`       | Menampilkan paket yang dapat diperbarui |
+| `dpkg -l`                     | Menampilkan paket yang terpasang        |
+
+Pembaruan indeks paket tidak sama dengan pembaruan seluruh perangkat lunak. Oleh karena itu, `apt update` biasanya diikuti dengan `apt upgrade` ketika pembaruan memang akan diterapkan.
+
+### 4.6. Secure Shell (SSH)
+
+Secure Shell merupakan protokol yang memungkinkan pengguna mengakses dan mengelola sistem jarak jauh melalui koneksi terenkripsi. Pada server Linux, layanan SSH biasanya disediakan oleh paket OpenSSH Server.
+
+Dengan SSH, administrator dapat menjalankan perintah, memeriksa status sistem, serta mengelola layanan tanpa harus berinteraksi langsung dengan konsol VM.
+
+Pengujian SSH harus dilakukan dari perangkat atau lingkungan klien yang memiliki konektivitas ke server. Keberhasilan SSH bergantung pada beberapa faktor, termasuk status layanan, alamat IP, aturan firewall, dan mode jaringan virtual yang digunakan.
+
+## 5. Alat dan Bahan
+
+Mahasiswa menyiapkan perangkat berikut.
+
+| No. | Alat atau bahan                          | Keterangan                             |
+| --- | ---------------------------------------- | -------------------------------------- |
+| 1   | Komputer atau laptop                     | Mendukung virtualisasi perangkat keras |
+| 2   | [Oracle VirtualBox](https://www.virtualbox.org/wiki/Downloads)                        | Perangkat lunak virtualisasi           |
+| 3   | [Berkas ISO Ubuntu Server 26.04 LTS](https://ubuntu.com/download/server) | Media instalasi sistem operasi         |
+| 4   | Koneksi internet                         | Mengunduh pembaruan dan paket          |
+| 5   | Terminal Linux atau klien SSH            | Mengakses dan mengelola server         |
+| 6   | Aplikasi pengolah dokumen                | Menyusun laporan praktikum             |
+| 7   | Dokumen rancangan pertemuan pertama      | Acuan konfigurasi server               |
+
+:::info
+Untuk kemudahan praktikum, setiap mahasiswa disarankan untuk menggunakan VirtualBox dan Ubuntu Server dengan versi yang sama/seragam. Tampilan menu dan perintah dapat berbeda sesuai versi software yang digunakan.
+:::
+
+## 6. Keselamatan dan Ketentuan Praktikum
+
+1. Pastikan komputer memiliki kapasitas RAM dan ruang penyimpanan yang memadai sebelum membuat VM.
+   - Minimal RAM 8 GB, disarankan 16 GB atau lebih.
+   - Minimal penyimpanan 20 GB.
+2. Gunakan berkas ISO dari sumber resmi Ubuntu.
+3. Jangan mengubah konfigurasi jaringan fisik laboratorium tanpa izin.
+4. Gunakan alamat IP yang telah ditetapkan jika menggunakan mode bridge.
+5. Jangan memasukkan kata sandi atau kredensial pribadi ke dalam laporan praktikum.
+6. Simpan konfigurasi dan dokumentasi secara berkala.
+
+## 7. Prosedur Pelaksanaan Praktikum
+
+### Tahap 1 — Persiapan instalasi (15 menit)
+
+1. Siapkan berkas ISO Ubuntu Server LTS atau Debian.
+2. Buka Oracle VirtualBox.
+3. Pilih menu pembuatan mesin virtual baru.
+4. Berikan nama VM `SysAdmin`.
+5. Tentukan tipe OS Linux 64-bit sesuai distribusi yang digunakan.
+6. Alokasikan RAM, CPU, dan penyimpanan virtual sesuai kebutuhan.
+7. Hubungkan berkas ISO sebagai media instalasi.
+8. Pilih mode jaringan NAT untuk kebutuhan pembaruan awal jika sesuai dengan lingkungan praktikum.
+
+Catat spesifikasi VM yang digunakan pada lembar kerja.
+
+| Parameter               | Hasil konfigurasi |
+| ----------------------- | ----------------- |
+| Nama VM                 |                   |
+| Distribusi dan versi OS |                   |
+| CPU                     |                   |
+| RAM                     |                   |
+| Kapasitas disk          |                   |
+| Mode jaringan           |                   |
+| Nama berkas ISO         |                   |
+
+### Tahap 2 — Instalasi sistem operasi server (35 menit)
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/4C8jLS3Y7hc?si=BfQeQNWNrGcV4_9p" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+1. Jalankan VM yang telah dibuat.
+2. Pilih opsi instalasi sistem operasi.
+3. Tentukan bahasa dan pengaturan regional yang diperlukan.
+4. Pilih tata letak papan ketik (*layout keyboard*).
+5. Konfigurasikan antarmuka jaringan ke **Host-only Adapter**.
+6. Gunakan konfigurasi penyimpanan virtual yang sesuai. Untuk praktikum ini, penggunaan seluruh disk virtual dapat dipilih karena disk tersebut terpisah dari disk fisik host, tetapi pastikan target penyimpanan benar.
+7. Buat akun administrator dengan nama pengguna `sysadmin`.
+8. Tetapkan hostname `server`.
+9. Jika installer menyediakan pilihan instalasi OpenSSH Server, aktifkan pilihan tersebut.
+10. Selesaikan instalasi, kemudian lakukan restart sesuai instruksi installer.
+11. Lepaskan media ISO dari VM apabila installer meminta atau VM kembali masuk ke menu instalasi.
+12. Masuk ke sistem menggunakan akun yang telah dibuat.
+
+:::info
+Apabila SSH tidak dipasang melalui installer, layanan dapat dipasang setelah sistem berhasil dijalankan.
+:::
+
+### Tahap 3 — Verifikasi instalasi dan identitas server (20 menit)
+
+Setelah berhasil masuk, jalankan perintah berikut satu per satu.
+
+a. Memeriksa hostname
+
+   ```
+   hostname
+   ```
+   atau
+   ```
+   hostnamectl
+   ```
+
+Hasil yang diharapkan menunjukkan nama host yang sesuai dengan rancangan.
+
+b. Memeriksa versi sistem operasi
+
+```
+cat /etc/os-release
+```
+
+Catat nama distribusi dan versi yang digunakan.
+
+c. Memeriksa kernel
+
+```
+uname -r
+```
+
+Perintah tersebut menampilkan versi kernel Linux yang sedang digunakan.
+
+d. Memeriksa sumber daya
+
+```
+lscpu
+```
+```
+free -h
+```
+```
+df -h
+```
+
+Gunakan hasilnya untuk memverifikasi jumlah CPU yang terlihat oleh VM, kapasitas memori, dan penggunaan penyimpanan.
+
+e. Memeriksa identitas pengguna
+
+```
+whoami
+```
+```
+id
+```
+
+Perintah tersebut membantu memverifikasi akun yang sedang digunakan serta identitas dan grup pengguna.
+
+Catat hasil pengujian dan bandingkan dengan spesifikasi rancangan pada pertemuan pertama. Perbedaan antara kapasitas disk virtual dan ruang kosong yang tersedia perlu dianalisis berdasarkan partisi, filesystem, dan penggunaan aktual.
+
+### Tahap 4 — Konfigurasi dasar dan pembaruan sistem (25 menit)
+
+a. Memeriksa status jaringan
+
+```
+ip -br address
+```
+```
+ip route
+```
+
+Identifikasi antarmuka jaringan yang aktif, alamat IP, dan default route. Nama antarmuka tidak selalu sama pada setiap VM.
+
+b. Memperbarui indeks paket
+
+```
+sudo apt update
+```
+
+Periksa apakah repositori dapat diakses dan tidak terdapat kesalahan yang menghalangi pembaruan.
+
+c. Memasang pembaruan yang tersedia
+
+```
+sudo apt upgrade
+```
+
+Tinjau daftar perubahan sebelum menyetujui proses pembaruan. Jika sistem meminta konfirmasi, lanjutkan sesuai instruksi yang ditampilkan (biasanya dengan menekan <kbd>y</kbd> lalu <kbd>Enter</kbd>).
+
+d. Memasang utilitas pendukung
+
+```
+sudo apt install openssh-server curl
+```
+
+Perintah ini akan memasang paket Open SSH Server dan Curl. Jika paket sudah terpasang, APT akan menyesuaikan tindakannya berdasarkan keadaan sistem.
+
+e. Memeriksa waktu sistem
+
+```
+timedatectl
+```
+
+Catat informasi waktu dan zona waktu. Jika zona waktu salah, sesuaikan zona waktu dengan lokasi sekarang.
+
+```
+timedatectl list-timezones
+```
+```
+sudo timedatectl set-timezone Region/City
+```
+Contoh:
+```
+sudo timedatectl set-timezone Asia/Taipei
+```
+
+f. Memeriksa status layanan SSH
+
+```
+sudo systemctl status ssh
+```
+
+Pada Ubuntu Server dan Debian, unit layanan umumnya bernama `ssh`. Jika layanan belum aktif, jalankan:
+
+```
+sudo systemctl enable --now ssh
+```
+
+Kemudian periksa kembali statusnya. Jika terjadi kegagalan, analisis pesan kesalahan sebelum melakukan perubahan lebih lanjut.
+
+### Tahap 5 — Konfigurasi dan verifikasi SSH (25 menit)
+
+SSH digunakan untuk mengelola server dari perangkat klien. Sebelum menguji koneksi, pastikan layanan SSH aktif dan alamat IP server dapat dijangkau dari klien.
+
+a. Memeriksa alamat IP server
+
+```
+ip -br address
+```
+
+Catat alamat IP pada antarmuka yang digunakan untuk komunikasi dengan klien.
+
+b. Memeriksa port SSH
+
+```
+sudo ss -lntp
+```
+
+Cari proses yang mendengarkan pada port TCP 22 atau port SSH lain yang telah dikonfigurasi.
+
+c. Menguji dari komputer klien
+
+Jika klien memiliki aplikasi SSH dan dapat menjangkau alamat IP server, jalankan:
+
+```
+ssh nama_pengguna@alamat_ip_server
+```
+
+Ganti `nama_pengguna` dan `alamat_ip_server` dengan nilai aktual. Pada koneksi pertama, verifikasi identitas host sebelum menerima kunci host. Setelah itu, autentikasi menggunakan akun yang telah dibuat. Contoh:
+
+```
+ssh sysadmin@192.168.0.100
+```
+
+d. Memverifikasi akses
+
+Setelah koneksi berhasil, jalankan:
+
+```
+hostname
+```
+```
+whoami
+```
+```
+uptime
+```
+
+Hasilnya harus menunjukkan identitas server dan pengguna yang sesuai.
+
+e. Memahami keterbatasan mode NAT
+
+:::warning
+Pada VirtualBox, VM dengan mode NAT umumnya dapat memulai koneksi keluar, tetapi tidak otomatis menerima koneksi masuk dari jaringan host atau klien lain. Untuk menguji SSH dari host, mahasiswa dapat menggunakan port forwarding dengan pemetaan port host ke port 22 VM, atau menggunakan mode jaringan lain seperti *Bridged* atau *Host-only Adapter*.
+:::
+
+Contoh pemetaan port host `2222` ke port VM `22`:
+
+- Host IP: `127.0.0.1`
+- Host Port: `2222`
+- Guest Port: `22`
+
+Koneksi dari host kemudian dapat diuji menggunakan:
+
+```
+ssh -p 2222 nama_pengguna@127.0.0.1
+```
+
+Gunakan port forwarding hanya apabila sesuai dengan rancangan dan kebijakan laboratorium. Jangan mengaktifkan akses SSH dari jaringan yang tidak dipercaya tanpa pengendalian yang memadai.
+
+### Tahap 6 — Dokumentasi dan pemeriksaan akhir (15 menit)
+
+Lakukan pemeriksaan akhir dengan menjalankan perintah berikut (sebaiknya dijalankan per baris agar lebih mudah dibaca).
+
+```
+hostnamectl
+cat /etc/os-release
+ip -br address
+ip route
+free -h
+df -h
+systemctl is-active ssh
+```
+
+Masukkan hasil pemeriksaan ke tabel berikut.
+
+| Parameter             | Hasil yang diharapkan           | Hasil aktual | Status |
+| --------------------- | ------------------------------- | ------------ | ------ |
+| Sistem operasi        | Sesuai rancangan                |              |        |
+| Hostname              | `sysadmin`                      |              |        |
+| CPU dan RAM           | Sesuai alokasi VM               |              |        |
+| Alamat IP             | Sesuai skema jaringan           |              |        |
+| Konektivitas jaringan | Sesuai mode jaringan            |              |        |
+| SSH                   | Aktif dan dapat diuji           |              |        |
+| Pembaruan paket       | Berhasil tanpa kesalahan kritis |              |        |
+| Akses administratif   | Sesuai akun yang dibuat         |              |        |
+
+Isi kolom status dengan berhasil, belum berhasil, atau perlu perbaikan. Jika suatu pengujian gagal, dokumentasikan pesan kesalahan dan tindakan korektif yang telah dilakukan.
+
+## 8. Tugas Praktikum
+
+Mahasiswa diminta menyelesaikan tugas berikut berdasarkan hasil implementasi.
+
+### Tugas 1. Instalasi sistem operasi server
+
+Lakukan instalasi Ubuntu Server 26.04 LTS atau Debian pada VirtualBox.
+
+Dokumentasikan:
+
+1. Nama dan versi sistem operasi.
+2. Spesifikasi mesin virtual.
+3. Tahapan utama instalasi.
+4. Konfigurasi identitas server.
+5. Kendala yang ditemukan selama instalasi, jika ada.
+
+### Tugas 2. Konfigurasi dan verifikasi sistem
+
+Lakukan konfigurasi dasar sistem operasi, kemudian verifikasi hasilnya menggunakan perintah Linux yang telah dipraktikkan.
+
+Mahasiswa harus menyertakan hasil pemeriksaan hostname, versi OS, kernel, CPU, RAM, penyimpanan, dan konfigurasi jaringan.
+
+### Tugas 3. Pembaruan sistem dan pengelolaan layanan SSH
+
+Lakukan pembaruan indeks paket dan pembaruan sistem. Pastikan layanan SSH terpasang dan berjalan, kemudian lakukan pengujian koneksi dari klien atau melalui port forwarding apabila menggunakan NAT.
+
+Jika koneksi tidak berhasil, identifikasi penyebabnya berdasarkan status layanan, alamat IP, mode jaringan, dan pesan kesalahan yang diperoleh.
+
+## 9. Pertanyaan Analisis
+
+Jawablah pertanyaan berikut dengan argumentasi teknis yang didukung hasil praktikum.
+
+1. Mengapa sistem operasi server berbasis CLI dapat menjadi pilihan yang sesuai untuk lingkungan server?
+2. Apa dampak alokasi CPU, RAM, dan penyimpanan yang terlalu kecil atau terlalu besar terhadap lingkungan virtualisasi?
+3. Mengapa pembaruan indeks paket melalui `apt update` perlu dibedakan dari pemasangan pembaruan melalui `apt upgrade`?
+4. Apa perbedaan fungsi hostname dan alamat IP dalam pengelolaan server?
+5. Mengapa penggunaan akun dengan hak administratif perlu dibatasi?
+6. Mengapa layanan SSH dapat aktif pada VM tetapi tetap tidak dapat diakses dari komputer host?
+7. Apa perbedaan penggunaan NAT dan bridged networking pada VirtualBox dalam konteks akses jaringan ke server?
+8. Jika server berhasil diinstal tetapi tidak memperoleh alamat IP, langkah pemeriksaan apa yang sebaiknya dilakukan secara berurutan?
+9. Mengapa hasil instalasi dan konfigurasi harus didokumentasikan sebelum server digunakan untuk menyediakan layanan produksi?
+
+## 10. Format Laporan Praktikum
+
+Laporan disusun secara sistematis menggunakan bahasa Indonesia akademik yang formal, objektif, dan berdasarkan hasil implementasi aktual. Struktur laporan yang digunakan adalah:
+
+1. Halaman sampul: identitas mahasiswa atau kelompok, mata kuliah, judul praktikum, program studi, dan tahun akademik.
+2. Bab I Pendahuluan: latar belakang, tujuan, dan ruang lingkup praktikum.
+3. Bab II Dasar Teori: sistem operasi server, virtualisasi, pengelolaan paket, jaringan, dan SSH.
+4. Bab III Alat dan Bahan: perangkat keras, perangkat lunak, distribusi Linux, dan spesifikasi VM.
+5. Bab IV Langkah Kerja: tahapan instalasi dan konfigurasi yang dilakukan.
+6. Bab V Hasil dan Pembahasan: bukti instalasi, hasil perintah, status layanan, serta pengujian SSH.
+7. Bab VI Kesimpulan: rangkuman hasil praktikum dan kendala yang berhasil atau belum berhasil diselesaikan.
+8. Daftar Pustaka: sumber dokumentasi teknis yang benar-benar digunakan.
+
+Ketentuan laporan:
+
+- Kertas A4, margin 3 cm.
+- Font Times New Roman 12 pt dengan spasi 1,5.
+- Setiap tangkapan layar diberi nomor, judul, dan penjelasan.
+- Tangkapan layar harus berasal dari hasil praktikum mahasiswa sendiri.
+- Perintah yang dijalankan dan hasilnya harus dapat dibaca.
+- Kata sandi, token, dan informasi autentikasi tidak boleh ditampilkan dalam laporan.
+
+## 11. Penilaian Praktikum
+
+| Komponen penilaian                          | Bobot |
+| ------------------------------------------- | ----- |
+| Instalasi sistem operasi dan konfigurasi VM | 20%   |
+| Konfigurasi dasar OS dan jaringan           | 20%   |
+| Pembaruan sistem dan konfigurasi SSH        | 20%   |
+| Pengujian serta analisis hasil              | 20%   |
+| Dokumentasi dan kualitas laporan            | 10%   |
+| Jawaban pertanyaan analisis                 | 10%    |
+| Total                                       | 100%  |
+
+## 12. Indikator Keberhasilan
+
+Praktikum dinyatakan memenuhi target apabila mahasiswa mampu:
+
+1. Membuat VM sesuai spesifikasi yang direncanakan.
+2. Menginstal dan menjalankan sistem operasi server.
+3. Memverifikasi identitas OS dan sumber daya sistem.
+4. Memeriksa konfigurasi jaringan dan melakukan pembaruan sistem.
+5. Menjalankan layanan SSH dan menguji akses administratif melalui jalur jaringan yang sesuai.
+6. Mendokumentasikan konfigurasi aktual serta menjelaskan kendala yang ditemukan.
+
+Apabila pengujian SSH dari komputer host belum berhasil karena keterbatasan mode jaringan, mahasiswa harus menjelaskan kondisi tersebut dan menunjukkan hasil pemeriksaan yang relevan. Kegagalan koneksi tidak boleh langsung disimpulkan sebagai kerusakan layanan SSH tanpa pemeriksaan lebih lanjut.
+
+## 13. Keterkaitan dengan Praktikum Berikutnya
+
+Hasil praktikum ini menjadi fondasi bagi Pertemuan 2: Konfigurasi User, Permission, dan Sumber Daya Berbagi Pakai. Setelah menyelesaikan seluruh tahap praktikum 1, buat dan simpan Snapshot VM dengan nama `praktikum 1`. Dengan demikian, mahasiswa membangun satu lingkungan server secara bertahap, mulai dari instalasi OS, pengelolaan akun, penyediaan layanan, pengamanan, monitoring, hingga backup dan pemulihan.
+
+## 14. Referensi
+
+1. Peta Okupasi Nasional Bidang Teknologi Informasi dan Komunikasi (TIK) 2025. TIK.INF0603 – Administrator Sistem (System Administrator).
+2. Ubuntu. Ubuntu Server Documentation. Dokumentasi resmi Ubuntu Server.
+3. Debian Project. Debian Administrator's Handbook dan dokumentasi resmi Debian.
+4. Oracle. Oracle VM VirtualBox User Manual.
