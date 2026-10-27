@@ -58,15 +58,15 @@ Parameter awal VM yang disarankan adalah:
 
 | Komponen            | Konfigurasi awal                                                       |
 | ------------------- | ---------------------------------------------------------------------- |
-| Nama VM             | `SysAdmin`                                                      |
-| Tipe sistem         | Linux 64-bit, sesuai OS yang dipilih                                   |
-| CPU                 | 2 vCPU                                                                 |
-| RAM                 | Minimal 2 GB                                                                   |
+| Nama VM             | `Ubuntu SysAdmin`                                                      |
+| Tipe sistem         | Linux 64-bit, Ubuntu                                                   |
+| CPU                 | Minimal 1 vCPU                                                         |
+| RAM                 | Minimal 2 GB                                                           |
 | Penyimpanan virtual | 25 GB, dinamis atau sesuai kebutuhan                                   |
-| Media instalasi     | ISO Ubuntu Server LTS atau Debian                                      |
+| Media instalasi     | ISO Ubuntu Server 26.04 LTS                                            |
 | Jaringan            | NAT untuk pembaruan awal; jaringan tambahan sesuai kebutuhan pengujian |
 
-Spesifikasi tersebut merupakan rekomendasi untuk praktikum dasar, bukan persyaratan universal. Mahasiswa perlu menyesuaikannya dengan persyaratan versi OS, kapasitas perangkat, dan rancangan pada pertemuan pertama.
+Spesifikasi tersebut merupakan rekomendasi untuk praktikum dasar, bukan persyaratan universal. Mahasiswa perlu menyesuaikannya dengan persyaratan versi OS dan kapasitas perangkat.
 
 ### 4.3. Identitas Server dan Pengelolaan Akun
 
@@ -87,7 +87,7 @@ Konfigurasi jaringan memungkinkan server berkomunikasi dengan perangkat lain. Pa
 
 Alamat IP dapat diperoleh secara dinamis melalui DHCP atau ditetapkan secara statis. Untuk server yang memerlukan alamat tetap, penggunaan IP statis atau reservasi DHCP umumnya mempermudah pengelolaan layanan.
 
-Pada praktikum ini, mahasiswa menggunakan rancangan IP dari pertemuan pertama. Konfigurasi IP statis dilakukan hanya jika jaringan yang digunakan telah diketahui dan alamat yang ditetapkan tidak bertabrakan dengan perangkat lain.
+Konfigurasi IP statis dilakukan hanya jika jaringan yang digunakan telah diketahui dan alamat yang ditetapkan tidak bertabrakan dengan perangkat lain.
 
 ### 4.5. Manajemen Paket dan Pembaruan Sistem
 
@@ -125,7 +125,6 @@ Mahasiswa menyiapkan perangkat berikut.
 | 4   | Koneksi internet                         | Mengunduh pembaruan dan paket          |
 | 5   | Terminal Linux atau klien SSH            | Mengakses dan mengelola server         |
 | 6   | Aplikasi pengolah dokumen                | Menyusun laporan praktikum             |
-| 7   | Dokumen rancangan pertemuan pertama      | Acuan konfigurasi server               |
 
 :::info
 Untuk kemudahan praktikum, setiap mahasiswa disarankan untuk menggunakan VirtualBox dan Ubuntu Server dengan versi yang sama/seragam. Tampilan menu dan perintah dapat berbeda sesuai versi software yang digunakan.
@@ -138,7 +137,7 @@ Untuk kemudahan praktikum, setiap mahasiswa disarankan untuk menggunakan Virtual
    - Minimal penyimpanan 20 GB.
 2. Gunakan berkas ISO dari sumber resmi Ubuntu.
 3. Jangan mengubah konfigurasi jaringan fisik laboratorium tanpa izin.
-4. Gunakan alamat IP yang telah ditetapkan jika menggunakan mode bridge.
+4. Gunakan alamat IP yang telah ditetapkan, terutama jika menggunakan mode *Bridged Adapter*.
 5. Jangan memasukkan kata sandi atau kredensial pribadi ke dalam laporan praktikum.
 6. Simpan konfigurasi dan dokumentasi secara berkala.
 
@@ -179,20 +178,20 @@ Catat spesifikasi VM yang digunakan pada lembar kerja.
 6. Gunakan konfigurasi penyimpanan virtual yang sesuai. Untuk praktikum ini, penggunaan seluruh disk virtual dapat dipilih karena disk tersebut terpisah dari disk fisik host, tetapi pastikan target penyimpanan benar.
 7. Buat akun administrator dengan nama pengguna `sysadmin`.
 8. Tetapkan hostname `server`.
-9. Jika installer menyediakan pilihan instalasi OpenSSH Server, aktifkan pilihan tersebut.
+9. Jika installer menyediakan pilihan instalasi OpenSSH Server, aktifkan pilihan tersebut. Apabila SSH tidak dipasang melalui installer, layanan dapat dipasang nanti, setelah sistem berhasil dijalankan.
 10. Selesaikan instalasi, kemudian lakukan restart sesuai instruksi installer.
 11. Lepaskan media ISO dari VM apabila installer meminta atau VM kembali masuk ke menu instalasi.
 12. Masuk ke sistem menggunakan akun yang telah dibuat.
 
-:::info
-Apabila SSH tidak dipasang melalui installer, layanan dapat dipasang setelah sistem berhasil dijalankan.
+:::tip
+Untuk mendapatkan pengalaman instalasi sistem operasi secara manual dari awal, **hindari penggunaan _Unattended Installation_** yang ada di VirtualBox.
 :::
 
 ### Tahap 3 — Verifikasi instalasi dan identitas server (20 menit)
 
 Setelah berhasil masuk, jalankan perintah berikut satu per satu.
 
-a. Memeriksa hostname
+1. Memeriksa hostname
 
    ```
    hostname
@@ -202,89 +201,87 @@ a. Memeriksa hostname
    hostnamectl
    ```
 
-Hasil yang diharapkan menunjukkan nama host yang sesuai dengan rancangan.
+   Hasil yang diharapkan menunjukkan nama host yang sesuai dengan rancangan.
 
-b. Memeriksa versi sistem operasi
+2. Memeriksa versi sistem operasi
 
-```
-cat /etc/os-release
-```
+   ```
+   cat /etc/os-release
+   ```
 
-Catat nama distribusi dan versi yang digunakan.
+   Catat nama distribusi dan versi yang digunakan.
 
-c. Memeriksa kernel
+3. Memeriksa kernel
 
-```
-uname -r
-```
+   ```
+   uname -r
+   ```
 
-Perintah tersebut menampilkan versi kernel Linux yang sedang digunakan.
+   Perintah tersebut menampilkan versi kernel Linux yang sedang digunakan.
 
-d. Memeriksa sumber daya
+4. Memeriksa sumber daya
 
-```
-lscpu
-```
-```
-free -h
-```
-```
-df -h
-```
+   ```
+   lscpu
+   ```
+   ```
+   free -h
+   ```
+   ```
+   df -h
+   ```
 
-Gunakan hasilnya untuk memverifikasi jumlah CPU yang terlihat oleh VM, kapasitas memori, dan penggunaan penyimpanan.
+   Gunakan hasilnya untuk memverifikasi jumlah CPU yang terlihat oleh VM, kapasitas memori, dan penggunaan penyimpanan.
 
-e. Memeriksa identitas pengguna
+5. Memeriksa identitas pengguna
 
-```
-whoami
-```
-```
-id
-```
+   ```
+   whoami
+   ```
+   ```
+   id
+   ```
 
-Perintah tersebut membantu memverifikasi akun yang sedang digunakan serta identitas dan grup pengguna.
-
-Catat hasil pengujian dan bandingkan dengan spesifikasi rancangan pada pertemuan pertama. Perbedaan antara kapasitas disk virtual dan ruang kosong yang tersedia perlu dianalisis berdasarkan partisi, filesystem, dan penggunaan aktual.
+   Perintah tersebut membantu memverifikasi akun yang sedang digunakan serta identitas dan grup pengguna.
 
 ### Tahap 4 — Konfigurasi dasar dan pembaruan sistem (25 menit)
 
-a. Memeriksa status jaringan
+1. Memeriksa status jaringan
 
-```
-ip -br address
-```
-```
-ip route
-```
+   ```
+   ip -br address
+   ```
+   ```
+   ip route
+   ```
 
-Identifikasi antarmuka jaringan yang aktif, alamat IP, dan default route. Nama antarmuka tidak selalu sama pada setiap VM.
+   Identifikasi antarmuka jaringan yang aktif, alamat IP, dan default route. Nama antarmuka tidak selalu sama pada setiap VM.
 
-b. Memperbarui indeks paket
+2. Memperbarui indeks paket
 
-```
-sudo apt update
-```
+   ```
+   sudo apt update
+   ```
 
-Periksa apakah repositori dapat diakses dan tidak terdapat kesalahan yang menghalangi pembaruan.
+   Periksa apakah repositori dapat diakses dan tidak terdapat kesalahan yang menghalangi pembaruan.
 
-c. Memasang pembaruan yang tersedia
+3. Memasang pembaruan yang tersedia
 
-```
-sudo apt upgrade
-```
+   ```
+   sudo apt upgrade
+   ```
 
-Tinjau daftar perubahan sebelum menyetujui proses pembaruan. Jika sistem meminta konfirmasi, lanjutkan sesuai instruksi yang ditampilkan (biasanya dengan menekan <kbd>y</kbd> lalu <kbd>Enter</kbd>).
+   Tinjau daftar perubahan sebelum menyetujui proses pembaruan. Jika sistem meminta konfirmasi, lanjutkan sesuai instruksi yang ditampilkan (biasanya dengan menekan <kbd>y</kbd> lalu <kbd>Enter</kbd>).
 
-d. Memasang utilitas pendukung
+4. Memasang utilitas pendukung
 
-```
-sudo apt install openssh-server curl
-```
+   ```
+   sudo apt install openssh-server curl
+   ```
 
-Perintah ini akan memasang paket Open SSH Server dan Curl. Jika paket sudah terpasang, APT akan menyesuaikan tindakannya berdasarkan keadaan sistem.
+   Perintah ini akan memasang paket Open SSH Server dan Curl. Jika paket sudah terpasang, APT akan menyesuaikan tindakannya berdasarkan keadaan sistem.
 
-e. Memeriksa waktu sistem
+5. Memeriksa waktu sistem
 
 ```
 timedatectl
@@ -292,100 +289,103 @@ timedatectl
 
 Catat informasi waktu dan zona waktu. Jika zona waktu salah, sesuaikan zona waktu dengan lokasi sekarang.
 
-```
-timedatectl list-timezones
-```
-```
-sudo timedatectl set-timezone Region/City
-```
-Contoh:
-```
-sudo timedatectl set-timezone Asia/Taipei
-```
+   ```
+   timedatectl list-timezones
+   ```
+   ```
+   sudo timedatectl set-timezone Region/City
+   ```
+   Contoh:
+   ```
+   sudo timedatectl set-timezone Asia/Taipei
+   ```
 
-f. Memeriksa status layanan SSH
+6. Memeriksa status layanan SSH
 
-```
-sudo systemctl status ssh
-```
+   ```
+   sudo systemctl status ssh
+   ```
 
-Pada Ubuntu Server dan Debian, unit layanan umumnya bernama `ssh`. Jika layanan belum aktif, jalankan:
+   Pada Ubuntu Server dan Debian, unit layanan umumnya bernama `ssh`. Jika layanan belum aktif, jalankan:
 
-```
-sudo systemctl enable --now ssh
-```
+   ```
+   sudo systemctl enable --now ssh
+   ```
 
 Kemudian periksa kembali statusnya. Jika terjadi kegagalan, analisis pesan kesalahan sebelum melakukan perubahan lebih lanjut.
 
 ### Tahap 5 — Konfigurasi dan verifikasi SSH (25 menit)
 
-SSH digunakan untuk mengelola server dari perangkat klien. Sebelum menguji koneksi, pastikan layanan SSH aktif dan alamat IP server dapat dijangkau dari klien.
+SSH digunakan untuk mengelola server dari perangkat klien. Sebelum menguji koneksi, pastikan layanan SSH aktif dan alamat IP server dapat dijangkau dari klien (lakukan uji koneksi dengan ping).
 
-a. Memeriksa alamat IP server
+1. Memahami keterbatasan mode NAT
 
-```
-ip -br address
-```
+   Pada VirtualBox, VM dengan mode NAT umumnya dapat memulai koneksi keluar, tetapi tidak otomatis menerima koneksi masuk dari jaringan host atau klien lain. Untuk menguji SSH dari host, mahasiswa dapat menggunakan port forwarding dengan pemetaan port host ke port 22 VM, atau menggunakan mode jaringan lain seperti *Bridged* atau *Host-only Adapter*.
 
-Catat alamat IP pada antarmuka yang digunakan untuk komunikasi dengan klien.
+   Contoh pemetaan port host `2222` ke port VM `22`:
 
-b. Memeriksa port SSH
+   - Host IP: `127.0.0.1`
+   - Host Port: `2222`
+   - Guest Port: `22`
 
-```
-sudo ss -lntp
-```
+   Koneksi dari host kemudian dapat diuji menggunakan:
 
-Cari proses yang mendengarkan pada port TCP 22 atau port SSH lain yang telah dikonfigurasi.
+   ```
+   ssh -p 2222 nama_pengguna@127.0.0.1
+   ```
 
-c. Menguji dari komputer klien
+   :::tip
+   Cara yang lebih mudah adalah dengan menggunakan dual-adapter. Matikan VM, kemudian aktifkan Adapter 2 di pengaturan jaringan VirtualBox, lalu pilih Bridged Adapter atau Host-only Adapter sebagai koneksi di Adapter 2 (biarkan Adapter 1 tetap NAT). Dengan demikian, VM dapat terhubung ke Internet melalui Adapter 1, dan host dapat langsung terhubung ke VM melalui Adapter 2.
+   **Tidak perlu melakukan port-forwarding lagi jika sudah menggunakan dual-adapter.**
+   :::
 
-Jika klien memiliki aplikasi SSH dan dapat menjangkau alamat IP server, jalankan:
+2. Memeriksa alamat IP server
 
-```
-ssh nama_pengguna@alamat_ip_server
-```
+   ```
+   ip -br address
+   ```
 
-Ganti `nama_pengguna` dan `alamat_ip_server` dengan nilai aktual. Pada koneksi pertama, verifikasi identitas host sebelum menerima kunci host. Setelah itu, autentikasi menggunakan akun yang telah dibuat. Contoh:
+   Catat alamat IP pada antarmuka yang digunakan untuk komunikasi dengan klien.
 
-```
-ssh sysadmin@192.168.0.100
-```
+3. Memeriksa port SSH
 
-d. Memverifikasi akses
+   ```
+   sudo ss -lntp
+   ```
 
-Setelah koneksi berhasil, jalankan:
+   Cari proses yang mendengarkan pada port TCP 22 atau port SSH lain yang telah dikonfigurasi.
 
-```
-hostname
-```
-```
-whoami
-```
-```
-uptime
-```
+4. Menguji dari komputer klien
 
-Hasilnya harus menunjukkan identitas server dan pengguna yang sesuai.
+   Jika klien memiliki aplikasi SSH dan dapat menjangkau alamat IP server, jalankan:
 
-e. Memahami keterbatasan mode NAT
+   ```
+   ssh nama_pengguna@alamat_ip_server
+   ```
 
-:::warning
-Pada VirtualBox, VM dengan mode NAT umumnya dapat memulai koneksi keluar, tetapi tidak otomatis menerima koneksi masuk dari jaringan host atau klien lain. Untuk menguji SSH dari host, mahasiswa dapat menggunakan port forwarding dengan pemetaan port host ke port 22 VM, atau menggunakan mode jaringan lain seperti *Bridged* atau *Host-only Adapter*.
-:::
+   Ganti `nama_pengguna` dan `alamat_ip_server` dengan nilai aktual. Pada koneksi pertama, verifikasi identitas host sebelum menerima kunci host. Setelah itu, autentikasi menggunakan akun yang telah dibuat. Contoh:
 
-Contoh pemetaan port host `2222` ke port VM `22`:
+   ```
+   ssh sysadmin@192.168.0.100
+   ```
 
-- Host IP: `127.0.0.1`
-- Host Port: `2222`
-- Guest Port: `22`
+5. Memverifikasi akses
 
-Koneksi dari host kemudian dapat diuji menggunakan:
+   Setelah koneksi berhasil, jalankan:
 
-```
-ssh -p 2222 nama_pengguna@127.0.0.1
-```
+   ```
+   hostname
+   ```
+   ```
+   whoami
+   ```
+   ```
+   uptime
+   ```
 
-Gunakan port forwarding hanya apabila sesuai dengan rancangan dan kebijakan laboratorium. Jangan mengaktifkan akses SSH dari jaringan yang tidak dipercaya tanpa pengendalian yang memadai.
+   Hasilnya harus menunjukkan identitas server dan pengguna yang sesuai.
+
+
 
 ### Tahap 6 — Dokumentasi dan pemeriksaan akhir (15 menit)
 
