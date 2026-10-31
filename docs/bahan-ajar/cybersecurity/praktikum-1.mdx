@@ -9,7 +9,7 @@ title: "1. Membangun Laboratorium Cybersecurity Virtual"
 
 ---
 
-## Capaian Pembelajaran Praktikum
+## 1. Capaian Pembelajaran Praktikum
 
 Setelah menyelesaikan praktikum ini mahasiswa mampu:
 
@@ -25,13 +25,13 @@ Setelah menyelesaikan praktikum ini mahasiswa mampu:
 
 ## Dasar Teori
 
-### 1. Laboratorium Cybersecurity
+### 1.1. Laboratorium Cybersecurity
 
 Laboratorium Cybersecurity merupakan lingkungan terisolasi yang digunakan untuk melakukan simulasi serangan, pertahanan, monitoring, dan investigasi keamanan tanpa mempengaruhi jaringan sebenarnya. Pada mata kuliah ini, seluruh aktivitas akan dilakukan di dalam Virtual Machine.
 
 ---
 
-### 2. Virtualisasi
+### 1.2. Virtualisasi
 
 Virtualisasi memungkinkan satu komputer menjalankan beberapa sistem operasi secara bersamaan. Keuntungan virtualisasi:
 
@@ -47,7 +47,7 @@ Software virtualisasi yang umum digunakan:
 
 ---
 
-### 3. Arsitektur Praktikum
+### 1.3. Arsitektur Praktikum
 
 Diagram berikut menunjukkan arsitektur laboratorium yang akan dibangun dalam praktikum ini.
 
@@ -69,7 +69,7 @@ Diagram berikut menunjukkan arsitektur laboratorium yang akan dibangun dalam pra
 
 ---
 
-## Peralatan
+## 2. Peralatan
 
 | Software                | Fungsi                         | Tautan Unduhan                   |
 | ----------------------- | ------------------------------ | -------------------------------- |
@@ -81,7 +81,7 @@ Diagram berikut menunjukkan arsitektur laboratorium yang akan dibangun dalam pra
 
 ---
 
-## Spesifikasi Minimum
+## 3. Spesifikasi Minimum
 
 Agar semua program dapat berjalan lancar, komputer host disarankan memiliki spesifikasi sebagai berikut:
 
@@ -93,9 +93,9 @@ Agar semua program dapat berjalan lancar, komputer host disarankan memiliki spes
 
 ---
 
-## Langkah Praktikum
+## 4. Langkah Praktikum
 
-### A. Instalasi VirtualBox
+### 4.1. Instalasi VirtualBox
 
 1. Download VirtualBox.
 2. Install dengan konfigurasi default.
@@ -103,7 +103,7 @@ Agar semua program dapat berjalan lancar, komputer host disarankan memiliki spes
 
 ---
 
-### B. Membuat Host-Only Network
+### 4.2. Membuat Host-Only Network
 
 Buka Oracle VirtualBox, klik menu File → Tools → Network (atau gunakan tombol pintas <kbd>Ctrl</kbd> + <kbd>H</kbd>). Pada tab Host-only Networks, tambahkan jaringan:
 
@@ -111,11 +111,11 @@ Buka Oracle VirtualBox, klik menu File → Tools → Network (atau gunakan tombo
 192.168.56.1/24
 ```
 
-Jika jaringan tersebut sudah ada terlebih dahulu, maka tidak perlu ditambahkan lagi. DHCP dapat dinonaktifkan agar konfigurasi IP dilakukan secara manual.
+Jika jaringan tersebut sudah ada, maka tidak perlu ditambahkan lagi. DHCP dapat dinonaktifkan agar konfigurasi IP dilakukan secara manual.
 
 ---
 
-### C. Membuat Ubuntu Server
+### 4.3. Membuat Ubuntu Server
 
 Spesifikasi
 
@@ -135,7 +135,7 @@ Install Ubuntu Server.
 
 ---
 
-### D. Membuat Kali Linux
+### 4.4. Membuat Kali Linux
 
 Konfigurasi
 
@@ -150,15 +150,15 @@ Hostname: ```kali```
 
 ---
 
-## Konfigurasi Jaringan
+### 4.5. Konfigurasi Jaringan
 
 **Konfigurasi Adapter**
 
-| Host               | Adapter 1                                                | Adapter 2 |
-| ------------------ | -------------------------------------------------------- | --------- |
-| Ubuntu Server (VM) | NAT                                                      | Host-Only |
-| Kali Linux (VM)    | NAT                                                      | Host-Only |
-| Windows (Host)     | Adapter fisik ke Internet + VirtualBox Host-Only Adapter ||
+| Host               | Adapter 1                 | Adapter 2 |
+| ------------------ | ------------------------- | --------- |
+| Ubuntu Server (VM) | NAT                       | Host-Only |
+| Kali Linux (VM)    | NAT                       | Host-Only |
+| Windows (Host)     | Adapter fisik ke Internet | Host-Only |
 
 **Konfigurasi Alamat IP**
 
@@ -173,17 +173,28 @@ Semua host menggunakan subnet mask: ```255.255.255.0``` serta tidak memerlukan I
 **Cara Konfigurasi IP**
 
 1. Windows<br />
-    Pengaturan IP untuk Windows dilakukan di VirtualBox (<kbd>Ctrl</kbd> + <kbd>H</kbd>), gunakan IP ```192.168.56.1```
+    Pengaturan IP untuk Windows dilakukan di *Control Panel*, gunakan IP ```192.168.56.1```.
 2. Ubuntu
     - Ketik perintah ```ip a```. Kemudian cari interface adapter 2 berdasarkan MAC Address (misalnya interface enp0s8 memiliki MAC Address yang sama dengan adapter 2).
     - Gunakan nano untuk mengubah konfigurasi IP: `sudo nano /etc/netplan/00-installer-config.yaml`
     - Gunakan konfigurasi berikut, letakkan di interface yang sesuai (pada contoh di bawah digunakan interface enp0s8):
         ```yaml title="/etc/netplan/00-installer-config.yaml"
-            network:
+        # This is the network config written by 'subiquity'
+        network:
+          ethernets:
+            enp0s3:
+              dhcp4: true
+              dhcp6: true
+              match:
+                macaddress: 08:00:27:2a:81:ec
+              set-name: enp0s3
+            // highlight-start
             enp0s8:
-                dhcp4: false
-                addresses:
-                - 192.168.56.10/24
+              dhcp4: false
+              addresses:
+              - 192.168.56.10/24
+            // highlight-end
+          version: 2
         ```
     - Lakukan validasi konfigurasi jaringan dengan perintah `sudo netplan try`, jika tidak ada error yang muncul, tekan <kbd>Enter</kbd>.
     - Ketik perintah `sudo netplan apply` untuk menerapkan konfigurasi jaringan yang telah dibuat.
@@ -193,7 +204,7 @@ Semua host menggunakan subnet mask: ```255.255.255.0``` serta tidak memerlukan I
 
 ---
 
-## Pengujian Koneksi
+### 4.6. Pengujian Koneksi
 
 Seluruh perangkat harus dapat saling berkomunikasi.
 
@@ -208,7 +219,7 @@ Seluruh perangkat harus dapat saling berkomunikasi.
 
 ---
 
-## Snapshot
+## 5. Snapshot
 
 Setelah seluruh VM berhasil dibuat, buat snapshot dengan nama
 
@@ -220,7 +231,7 @@ Snapshot ini akan digunakan sebelum memulai praktikum berikutnya.
 
 ---
 
-## Tugas Praktikum
+## 6. Tugas Praktikum
 
 1. Buatlah diagram topologi jaringan lab virtual yang digunakan dalam praktikum ini menggunakan aplikasi diagram (misalnya draw.io). Gambarkan lengkap dengan alamat IP masing-masing host.<br />**TOPOLOGINYA JANGAN DI-GENERATE DENGAN AI !!**
 
@@ -230,7 +241,7 @@ Snapshot ini akan digunakan sebelum memulai praktikum berikutnya.
 
 ---
 
-## Laporan Praktikum
+## 7. Laporan Praktikum
 
 Laporan harus memuat:
 
@@ -245,7 +256,7 @@ Laporan harus memuat:
 
 ---
 
-## Rubrik Penilaian
+## 8. Rubrik Penilaian
 
 | Aspek                              | Bobot |
 | ---------------------------------- | ----: |
