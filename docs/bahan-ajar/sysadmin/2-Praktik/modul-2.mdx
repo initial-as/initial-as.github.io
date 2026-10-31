@@ -1,0 +1,732 @@
+---
+title: "2. Konfigurasi User, Permission, dan Sumber Daya Berbagi Pakai (File Sharing)"
+---
+
+# Konfigurasi User, Permission, dan Sumber Daya Berbagi Pakai (*File Sharing*)
+
+## 1. Identitas Praktikum
+
+| Komponen              | Keterangan                                                  |
+| --------------------- | ----------------------------------------------------------- |
+| Program Studi         | Teknologi Informasi                                         |
+| Mata Kuliah           | Administrasi dan Pemeliharaan Sistem                        |
+| Pertemuan             | 2                                                           |
+| Topik Praktikum       | Konfigurasi User, Permission, dan Sumber Daya Berbagi Pakai |
+| Alokasi Waktu         | 170 menit                                                   |
+| Sistem Operasi Server | Ubuntu Server LTS atau Debian                               |
+| Metode Pembelajaran   | Hands-on Practice dan demonstrasi                           |
+| Platform Virtualisasi | Oracle VM VirtualBox                                        |
+| Perangkat Lunak       | Samba                                                       |
+| Prasyarat             | Telah menyelesaikan Praktikum Pertemuan 1                   |
+
+## 2. Deskripsi Praktikum
+
+Praktikum ini membahas pengelolaan akun pengguna (user account), grup (group), dan hak akses (permission) pada sistem operasi Linux. Mahasiswa juga akan mempelajari konfigurasi layanan berbagi berkas (file sharing) menggunakan Samba agar direktori pada server dapat diakses oleh pengguna melalui jaringan lokal.
+
+Kegiatan praktikum merupakan kelanjutan dari pertemuan sebelumnya. Mahasiswa diwajibkan menggunakan virtual machine (VM) yang telah dibuat dan dikonfigurasi pada Praktikum Pertemuan 1. Dengan demikian, setiap konfigurasi yang dilakukan menjadi bagian dari pembangunan lingkungan server secara bertahap.
+
+Pada akhir praktikum, mahasiswa diharapkan mampu membangun layanan berbagi berkas dengan mekanisme autentikasi dan pembatasan hak akses berdasarkan kelompok pengguna.
+
+## 3. Capaian Pembelajaran Praktikum
+
+Setelah menyelesaikan praktikum ini, mahasiswa diharapkan mampu:
+
+1. Menjelaskan konsep akun pengguna dan grup pada sistem operasi Linux.
+2. Membuat dan mengelola akun pengguna serta grup pada server.
+3. Mengatur hak akses berkas dan direktori menggunakan mekanisme permission Linux.
+4. Menginstalasi dan mengonfigurasi layanan Samba sebagai layanan berbagi berkas.
+5. Mengatur autentikasi pengguna dan hak akses terhadap direktori yang dibagikan.
+6. Melakukan pengujian akses sumber daya berbagi pakai dari komputer klien.
+7. Melakukan pemeriksaan dan dokumentasi konfigurasi layanan file sharing.
+
+## 4. Kompetensi yang Relevan
+
+Praktikum ini berkaitan dengan kompetensi administrator sistem, khususnya:
+
+1. Mengelola akun pengguna dan grup pada sistem operasi server.
+2. Mengelola hak akses terhadap berkas dan direktori.
+3. Mengonfigurasi layanan berbagi berkas pada jaringan.
+4. Melakukan pengujian dan pemeliharaan layanan server.
+
+Kompetensi tersebut merupakan bagian dari penerapan kemampuan administrasi sistem dalam lingkungan server berbasis Linux.
+
+## 5. Dasar Teori
+
+### 5.1. User Account pada Linux
+
+User account merupakan identitas yang digunakan untuk mengakses dan menggunakan sumber daya pada sistem operasi. Setiap pengguna memiliki identitas unik berupa User ID (UID). Linux secara umum mengenal beberapa jenis akun pengguna, yaitu:
+
+1. Root: akun dengan hak akses tertinggi dalam sistem.
+2. Regular user: akun pengguna biasa untuk aktivitas operasional.
+3. System user: akun yang digunakan oleh layanan atau proses sistem.
+
+Administrator dapat membuat akun baru menggunakan perintah:
+
+```
+sudo adduser nama_pengguna
+```
+
+Untuk memeriksa informasi pengguna:
+
+```
+id nama_pengguna
+```
+
+### 5.2. Group Management
+
+Group merupakan mekanisme untuk mengelompokkan beberapa pengguna agar pengelolaan hak akses terhadap sumber daya menjadi lebih mudah. Perintah untuk membuat grup:
+
+```
+sudo addgroup nama_grup
+```
+
+Menambahkan pengguna ke dalam grup:
+
+```
+sudo usermod -aG nama_grup nama_pengguna
+```
+
+Memeriksa keanggotaan grup:
+
+```
+groups nama_pengguna
+```
+
+Penggunaan grup memungkinkan administrator memberikan hak akses kepada sekelompok pengguna tanpa harus mengatur permission setiap pengguna secara terpisah.
+
+:::info
+Pada Ubuntu Server dan Debian, terdapat dua kelompok perintah untuk mengelola pengguna dan grup.
+| Perintah   | Fungsi                                                                |
+| ---------- | --------------------------------------------------------------------- |
+| `adduser`  | Membuat akun pengguna dengan prosedur interaktif yang lebih sederhana |
+| `addgroup` | Membuat grup dengan prosedur yang lebih sederhana                     |
+| `useradd`  | Membuat akun pengguna menggunakan utilitas tingkat rendah             |
+| `groupadd` | Membuat grup menggunakan utilitas tingkat rendah                      |
+:::
+
+### 5.3. File Permission pada Linux
+
+Linux menerapkan mekanisme permission untuk mengatur hak akses terhadap berkas dan direktori. Secara umum, terdapat tiga kategori pengguna:
+
+1. Owner: pemilik berkas atau direktori.
+2. Group: kelompok pengguna yang memiliki hak akses terhadap berkas atau direktori.
+3. Others: pengguna lain di luar pemilik dan grup.
+
+Terdapat tiga jenis hak akses utama:
+
+| Permission | Simbol | Nilai | Keterangan                                               |
+| ---------- | ------ | ----- | -------------------------------------------------------- |
+| Read       | r      | 4     | Membaca berkas atau melihat isi direktori                |
+| Write      | w      | 2     | Mengubah berkas atau membuat dan menghapus isi direktori |
+| Execute    | x      | 1     | Menjalankan berkas atau mengakses direktori              |
+
+Contoh pengaturan permission:
+
+```
+sudo chmod 770 /srv/shared
+```
+
+Perintah untuk mengubah kepemilikan direktori:
+
+```
+sudo chown pemilik:grup /srv/shared
+```
+
+### 5.4. Samba sebagai File Sharing Service
+
+Samba merupakan perangkat lunak yang mengimplementasikan protokol SMB/CIFS sehingga sistem berbasis Linux dapat menyediakan layanan berbagi berkas yang dapat diakses oleh sistem operasi lain, termasuk Windows. Samba memungkinkan administrator untuk:
+
+1. Membagikan direktori melalui jaringan lokal.
+2. Mengatur autentikasi pengguna.
+3. Membatasi akses terhadap direktori tertentu.
+4. Mengelola hak akses pengguna terhadap sumber daya bersama.
+
+Layanan utama Samba pada server Linux adalah `smbd`. Konfigurasi layanan umumnya disimpan pada:
+
+```
+/etc/samba/smb.conf
+```
+
+### 5.5. Mekanisme Hak Akses pada Samba
+
+Hak akses file sharing Samba dipengaruhi oleh dua lapisan pengaturan:
+
+1. Filesystem permission: hak akses yang ditetapkan oleh sistem operasi Linux terhadap direktori dan berkas.
+2. Samba share permission: aturan akses yang ditetapkan melalui konfigurasi layanan Samba.
+
+Pengguna hanya dapat mengakses sumber daya apabila memenuhi ketentuan pada kedua lapisan tersebut. Oleh karena itu, konfigurasi Samba harus disesuaikan dengan permission pada sistem berkas Linux.
+
+## 6. Alat dan Bahan
+
+Perangkat dan perangkat lunak yang diperlukan dalam praktikum ini adalah:
+
+| No. | Alat/Bahan                    | Keterangan                     |
+| --- | ----------------------------- | ------------------------------ |
+| 1   | Komputer atau laptop          | Perangkat utama praktikum      |
+| 2   | Oracle VM VirtualBox          | Menjalankan virtual machine    |
+| 3   | Ubuntu Server LTS atau Debian | Sistem operasi server          |
+| 4   | Terminal Linux                | Melakukan konfigurasi server   |
+| 5   | Samba                         | Layanan file sharing           |
+| 6   | Komputer host atau VM klien   | Menguji akses file sharing     |
+| 7   | Koneksi jaringan virtual      | Menghubungkan server dan klien |
+
+Ketentuan lingkungan praktikum:
+
+1. Gunakan VM server yang telah dibuat pada pertemuan 2.
+2. Pastikan server dapat diakses melalui jaringan.
+3. Untuk pengujian dari komputer host, gunakan konfigurasi jaringan VirtualBox yang memungkinkan host berkomunikasi dengan VM, seperti Host-only atau Bridged Adapter.
+4. Jika menggunakan NAT, diperlukan konfigurasi tambahan agar klien dapat menjangkau server.
+
+## 7. Keselamatan dan Ketentuan Praktikum
+
+1. Gunakan akun administrator hanya ketika diperlukan untuk menjalankan perintah yang membutuhkan hak akses khusus.
+2. Hindari memberikan permission `777` pada direktori secara sembarangan.
+3. Gunakan kata sandi yang memadai untuk akun pengguna Samba.
+4. Pastikan direktori yang dibagikan tidak berisi data pribadi atau data sensitif.
+5. Lakukan konfigurasi secara bertahap dan dokumentasikan setiap perubahan.
+6. Jangan mengubah konfigurasi jaringan atau layanan yang telah berhasil pada pertemuan sebelumnya tanpa alasan yang jelas.
+
+## 8. Langkah Kerja Praktikum
+
+Total alokasi waktu: 170 menit
+
+### 8.1. Pemeriksaan Kondisi Awal Server (10 menit)
+
+Sebelum memulai konfigurasi, pastikan server dari praktikum pertemuan 2 dapat berjalan dengan baik.
+
+Jalankan perintah berikut:
+
+```
+hostnamectl
+ip -br address
+ip route
+systemctl status ssh
+```
+
+Catat informasi berikut:
+
+1. Hostname server.
+2. Alamat IP server.
+3. Status konektivitas jaringan.
+4. Status layanan SSH.
+
+Pastikan server memiliki koneksi jaringan yang dapat digunakan untuk mengakses repositori paket.
+
+### 8.2. Membuat User dan Group (25 menit)
+
+Pada tahap ini, mahasiswa akan membuat grup khusus untuk pengguna yang memiliki hak akses terhadap direktori bersama.
+
+1. Membuat grup
+
+   Buat grup dengan nama `fileusers`:
+
+   ```
+   sudo groupadd fileusers
+   ```
+
+   Periksa apakah grup berhasil dibuat:
+
+   ```
+   getent group fileusers
+   ```
+
+2. Membuat akun pengguna
+
+   Buat dua akun pengguna untuk simulasi pengelolaan akses:
+
+   ```
+   sudo adduser user1
+   sudo adduser user2
+   ```
+
+   Ikuti instruksi untuk menentukan kata sandi masing-masing akun.
+
+3. Menambahkan pengguna ke dalam grup
+
+   Tambahkan kedua pengguna ke grup `fileusers`:
+
+   ```
+   sudo usermod -aG fileusers user1
+   sudo usermod -aG fileusers user2
+   ```
+
+   Periksa keanggotaan grup:
+
+   ```
+   groups user1
+   groups user2
+   ```
+
+   Pastikan kedua akun telah menjadi anggota grup `fileusers`.
+
+4. Membuat akun pengguna tambahan
+
+   Buat satu akun yang tidak menjadi anggota grup `fileusers` untuk keperluan pengujian pembatasan akses:
+
+   ```
+   sudo adduser user3
+   ```
+
+   Akun `user3` digunakan untuk menguji apakah pengguna di luar grup dapat mengakses direktori bersama.
+
+### 8.3. Membuat dan Mengatur Permission Direktori (25 menit)
+
+1. Membuat direktori bersama
+
+   Buat direktori yang akan digunakan sebagai lokasi penyimpanan berkas bersama:
+
+   ```
+   sudo mkdir -p /srv/shared
+   ```
+
+2. Mengatur kepemilikan direktori
+
+   Tetapkan grup `fileusers` sebagai grup pemilik direktori:
+
+   ```
+   sudo chown root:fileusers /srv/shared
+   ```
+
+3. Mengatur permission direktori
+
+   Berikan permission `2770`:
+
+   ```
+   sudo chmod 2770 /srv/shared
+   ```
+
+   Penjelasan permission:
+
+   - Angka `2` mengaktifkan setgid sehingga berkas atau direktori baru di dalamnya mewarisi grup direktori induk.
+   - Angka `7` memberikan hak baca, tulis, dan eksekusi kepada pemilik.
+   - Angka `7` memberikan hak baca, tulis, dan eksekusi kepada grup.
+   - Angka `0` tidak memberikan hak akses kepada pengguna lain.
+
+   Periksa hasil konfigurasi:
+
+   ```
+   ls -ld /srv/shared
+   ```
+
+4. Membuat berkas pengujian
+
+   Buat satu berkas untuk menguji akses direktori:
+
+   ```
+   sudo touch /srv/shared/dokumen-praktikum.txt
+   sudo chown root:fileusers /srv/shared/dokumen-praktikum.txt
+   sudo chmod 660 /srv/shared/dokumen-praktikum.txt
+   ```
+
+   Periksa permission:
+
+   ```
+   ls -l /srv/shared
+   ```
+
+### 8.4. Instalasi Samba (15 menit)
+
+Instalasi layanan Samba dilakukan melalui package manager Linux.
+
+1. Memperbarui daftar paket
+
+   ```
+   sudo apt update
+   ```
+
+2. Menginstal Samba
+
+   ```
+   sudo apt install samba smbclient -y
+   ```
+
+3. Memeriksa status layanan
+
+   ```
+   sudo systemctl status smbd
+   ```
+
+4. Mengaktifkan layanan Samba
+
+   ```
+   sudo systemctl enable --now smbd
+   ```
+
+   Pastikan layanan Samba berada dalam kondisi aktif:
+
+   ```
+   systemctl is-active smbd
+   ```
+
+   Hasil yang diharapkan:
+
+   ```
+   active
+   ```
+
+### 8.5. Konfigurasi Samba File Sharing (30 menit)
+
+1. Membuat salinan konfigurasi awal
+
+   Sebelum mengubah konfigurasi Samba, buat salinan berkas konfigurasi:
+
+   ```
+   sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.backup
+   ```
+
+2. Mengatur kata sandi Samba
+
+   Tambahkan akun pengguna `user1` dan `user2` ke database autentikasi Samba:
+
+   ```
+   sudo smbpasswd -a user1
+   sudo smbpasswd -a user2
+   ```
+
+   Masukkan kata sandi yang akan digunakan untuk autentikasi Samba. Perlu diperhatikan bahwa akun Samba harus berkaitan dengan akun pengguna Linux yang valid.
+
+3. Mengedit konfigurasi Samba
+
+   Buka berkas konfigurasi:
+
+   ```
+   sudo nano /etc/samba/smb.conf
+   ```
+
+   Tambahkan konfigurasi berikut pada bagian akhir berkas:
+
+   ```
+   [Shared]
+      comment = Direktori Berbagi Praktikum
+      path = /srv/shared
+      browseable = yes
+      read only = no
+      guest ok = no
+      valid users = @fileusers
+      force group = fileusers
+      create mask = 0660
+      directory mask = 2770
+   ```
+
+   Penjelasan konfigurasi:
+
+   | Parameter        | Fungsi                                                          |
+   | ---------------- | --------------------------------------------------------------- |
+   | `[Shared]`       | Nama direktori berbagi yang ditampilkan kepada klien            |
+   | `comment`        | Keterangan direktori bersama                                    |
+   | `path`           | Lokasi direktori pada server                                    |
+   | `browseable`     | Mengizinkan share ditampilkan dalam daftar sumber daya          |
+   | `read only`      | Menentukan apakah share hanya dapat dibaca                      |
+   | `guest ok`       | Mengatur akses tanpa autentikasi                                |
+   | `valid users`    | Membatasi pengguna yang dapat mengakses share                   |
+   | `force group`    | Mengatur grup yang digunakan untuk operasi berkas melalui Samba |
+   | `create mask`    | Menentukan permission maksimum untuk berkas baru                |
+   | `directory mask` | Menentukan permission maksimum untuk direktori baru             |
+
+4. Memeriksa validitas konfigurasi
+
+   Sebelum memulai ulang layanan, jalankan:
+
+   ```
+   testparm
+   ```
+
+   Pastikan tidak terdapat kesalahan sintaks pada konfigurasi.
+
+5. Memulai ulang layanan Samba
+
+   ```
+   sudo systemctl restart smbd
+   ```
+
+   Periksa status layanan:
+
+   ```
+   sudo systemctl status smbd
+   ```
+
+### 8.6. Pengujian Akses File Sharing (35 menit)
+
+Pengujian dilakukan untuk memastikan bahwa pengguna yang memiliki hak akses dapat mengakses direktori bersama, sedangkan pengguna yang tidak memiliki hak akses ditolak.
+
+1. Mengidentifikasi alamat IP server
+
+   Jalankan:
+
+   ```
+   ip -br address
+   ```
+
+   Catat alamat IP server yang akan digunakan oleh komputer klien.
+
+2. Menguji konfigurasi share dari server
+
+   Gunakan perintah:
+
+   ```
+   smbclient -L localhost -U user1
+   ```
+
+   Masukkan kata sandi Samba milik `user1`.
+
+   Pastikan share dengan nama `Shared` muncul pada daftar sumber daya.
+
+3. Menguji akses menggunakan user1
+
+   Jalankan:
+
+   ```
+   smbclient //localhost/Shared -U user1
+   ```
+
+   Jika berhasil, akan muncul prompt `smb:`.
+
+   Lakukan pengujian berikut:
+
+   ```
+   smb: \> ls
+   smb: \> put /etc/hostname hostname-user1.txt
+   smb: \> ls
+   smb: \> exit
+   ```
+
+   Perintah `put` digunakan untuk mengunggah berkas dari sistem lokal ke direktori bersama.
+
+4. Menguji akses menggunakan user2
+
+   Jalankan:
+
+   ```
+   smbclient //localhost/Shared -U user2
+   ```
+
+   Lakukan pengujian:
+
+   ```
+   smb: \> ls
+   smb: \> put /etc/hostname hostname-user2.txt
+   smb: \> ls
+   smb: \> exit
+   ```
+
+   Pastikan `user2` dapat melihat dan menambahkan berkas pada direktori bersama.
+
+5. Menguji akses menggunakan user3
+
+   Jalankan:
+
+   ```
+   smbclient //localhost/Shared -U user3
+   ```
+
+   Pengujian ini dilakukan untuk memastikan bahwa pengguna yang tidak termasuk dalam grup `fileusers` tidak dapat mengakses direktori bersama. Hasil yang diharapkan adalah akses ditolak.
+
+6. Pengujian dari komputer klien
+
+   Jika menggunakan Windows sebagai klien, buka File Explorer dan masukkan alamat berikut pada address bar:
+
+   ```
+   \\ALAMAT_IP_SERVER\Shared
+   ```
+
+   Contoh:
+
+   ```
+   \\192.168.56.10\Shared
+   ```
+
+   Masukkan kredensial Samba menggunakan `user1` atau `user2`. Lakukan pengujian membuat, membaca, dan menghapus berkas sesuai hak akses yang diberikan. Catatan: alamat IP di atas hanya contoh. Gunakan alamat IP aktual server pada lingkungan praktikum.
+
+### 8.7. Pemeriksaan dan Dokumentasi (15 menit)
+
+Pada tahap terakhir, mahasiswa melakukan pemeriksaan keseluruhan konfigurasi. Jalankan perintah berikut:
+
+```
+getent group fileusers
+id user1
+id user2
+id user3
+ls -ld /srv/shared
+ls -l /srv/shared
+testparm
+systemctl is-active smbd
+```
+
+Dokumentasikan hasil pengujian dalam tabel berikut.
+
+| No. | Pengujian                | User  | Hasil yang Diharapkan | Hasil Aktual |
+| --- | ------------------------ | ----- | --------------------- | ------------ |
+| 1   | Melihat isi direktori    | user1 | Berhasil              | ...          |
+| 2   | Membuat berkas           | user1 | Berhasil              | ...          |
+| 3   | Melihat isi direktori    | user2 | Berhasil              | ...          |
+| 4   | Membuat berkas           | user2 | Berhasil              | ...          |
+| 5   | Mengakses direktori      | user3 | Ditolak               | ...          |
+| 6   | Melihat share dari klien | user1 | Berhasil              | ...          |
+| 7   | Memeriksa layanan Samba  | -     | Aktif                 | ...          |
+
+:::tip
+Catatan untuk pelaksanaan praktikum:
+
+- Gunakan satu VM server yang sama dengan pertemuan 1 agar konfigurasi berkelanjutan.
+- Pastikan akun `user1` dan `user2` telah ditambahkan ke grup `fileusers`. Jika perubahan keanggotaan grup belum terbaca pada sesi pengguna yang sedang aktif, lakukan login ulang.
+- Pada pengujian Windows, pastikan konektivitas jaringan dan aturan firewall mengizinkan koneksi SMB, umumnya melalui TCP port 445.
+- Gunakan jaringan lokal terisolasi untuk praktikum dan hindari membuka layanan SMB ke jaringan publik.
+:::
+
+## 9. Penugasan Praktikum
+
+Mahasiswa diwajibkan menyelesaikan beberapa tugas berikut.
+
+### 9.1. Tugas 1: Pengelolaan User dan Group
+
+1. Buat grup baru dengan nama `dosen`.
+2. Buat dua akun pengguna dengan nama `dosen1` dan `dosen2`.
+3. Masukkan kedua pengguna ke dalam grup `dosen`.
+4. Buat satu akun pengguna bernama `mahasiswa1` yang tidak menjadi anggota grup `dosen`.
+5. Dokumentasikan hasil konfigurasi menggunakan perintah `id` dan `groups`.
+
+### 9.2. Tugas 2: Konfigurasi Direktori Berbagi
+
+1. Buat direktori `/srv/dosen`.
+2. Tetapkan grup `dosen` sebagai grup pemilik direktori.
+3. Atur permission direktori agar hanya pemilik dan anggota grup yang dapat mengaksesnya.
+4. Aktifkan mekanisme setgid pada direktori.
+5. Buat satu berkas pengujian di dalam direktori tersebut.
+
+### 9.3. Tugas 3: Konfigurasi Samba
+
+1. Tambahkan direktori `/srv/dosen` sebagai share baru dengan nama `DokumenDosen`.
+2. Batasi akses hanya untuk anggota grup `dosen`.
+3. Aktifkan autentikasi pengguna.
+4. Lakukan pemeriksaan konfigurasi menggunakan `testparm`.
+5. Restart layanan Samba dan pastikan layanan berjalan dengan baik.
+
+### 9.4. Tugas 4: Pengujian Hak Akses
+
+Lakukan pengujian dengan skenario berikut:
+
+1. `dosen1` dapat mengakses dan membuat berkas.
+2. `dosen2` dapat mengakses dan membuat berkas.
+3. `mahasiswa1` tidak dapat mengakses direktori.
+4. Pengguna yang telah diautentikasi dapat melihat dan mengelola berkas sesuai permission yang ditetapkan.
+
+Dokumentasikan seluruh hasil pengujian.
+
+## 10. Pertanyaan Analisis
+
+Jawablah pertanyaan berikut berdasarkan hasil praktikum.
+
+1. Apa perbedaan antara user dan group dalam sistem operasi Linux?
+2. Mengapa administrator sistem perlu mengelompokkan pengguna ke dalam grup?
+3. Jelaskan perbedaan permission `770`, `775`, dan `777`.
+4. Apa fungsi setgid pada direktori bersama?
+5. Mengapa permission direktori Linux tetap perlu diperhatikan meskipun akses telah dibatasi melalui konfigurasi Samba?
+6. Apa perbedaan antara akun pengguna Linux dan akun autentikasi Samba?
+7. Mengapa akses pengguna `user3` ditolak ketika mencoba mengakses share `Shared`?
+8. Apa fungsi parameter `valid users` pada konfigurasi Samba?
+9. Apa risiko keamanan jika administrator mengaktifkan `guest ok = yes` pada direktori yang berisi dokumen internal?
+10. Jika layanan Samba aktif tetapi komputer klien tidak dapat mengakses direktori bersama, aspek apa saja yang perlu diperiksa?
+
+## 11. Format Laporan Praktikum
+
+Laporan praktikum disusun secara sistematis dengan struktur sebagai berikut:
+
+### 11.1. Halaman Judul
+
+Memuat:
+
+1. Nama mata kuliah.
+2. Judul praktikum.
+3. Nama dan NIM mahasiswa.
+4. Program studi.
+
+### 11.2. Tujuan Praktikum
+
+Menjelaskan tujuan dan kompetensi yang ingin dicapai dalam kegiatan praktikum.
+
+### 11.3. Dasar Teori
+
+Memuat penjelasan mengenai:
+
+1. Konsep user dan group.
+2. Linux file permission.
+3. Konsep Samba dan file sharing.
+
+### 11.4. Alat dan Bahan
+
+Menjelaskan perangkat keras dan perangkat lunak yang digunakan.
+
+### 11.5. Langkah Kerja
+
+Memuat:
+
+1. Penjelasan tahapan konfigurasi.
+2. Perintah yang digunakan.
+3. Screenshot setiap tahapan penting.
+
+### 11.6. Hasil Praktikum
+
+Memuat:
+
+1. Hasil konfigurasi user dan group.
+2. Hasil pengaturan permission.
+3. Hasil konfigurasi Samba.
+4. Hasil pengujian akses menggunakan beberapa akun pengguna.
+
+### 11.7. Analisis dan Pembahasan
+
+Memuat analisis keberhasilan dan kegagalan pengujian, pembahasan mekanisme pembatasan hak akses, serta jawaban pertanyaan analisis.
+
+### 11.8. Kesimpulan
+
+Berisi ringkasan hasil praktikum dan kompetensi yang telah dicapai.
+
+### 11.9. Lampiran
+
+Memuat screenshot konfigurasi, dokumentasi hasil pengujian, dan konfigurasi Samba yang digunakan.
+
+Ketentuan penulisan:
+
+1. Laporan menggunakan bahasa Indonesia formal dan akademik.
+2. Setiap screenshot harus disertai keterangan.
+3. Perintah Linux harus ditampilkan menggunakan format kode.
+4. Hasil pengujian harus sesuai dengan kondisi aktual, bukan sekadar hasil yang diharapkan.
+
+## 12. Penilaian Praktikum
+
+Penilaian dilakukan berdasarkan aspek keterampilan konfigurasi, ketepatan pengujian, analisis, dan dokumentasi.
+
+| No. | Aspek Penilaian                                  | Bobot |
+| --- | ------------------------------------------------ | ----- |
+| 1   | Pembuatan dan pengelolaan user serta group       | 15%   |
+| 2   | Konfigurasi permission dan kepemilikan direktori | 20%   |
+| 3   | Instalasi dan konfigurasi Samba                  | 25%   |
+| 4   | Pengujian akses dan autentikasi pengguna         | 20%   |
+| 5   | Analisis hasil praktikum                         | 10%   |
+| 6   | Kelengkapan dan sistematika laporan              | 10%   |
+|     | Total                                            | 100%  |
+
+## 13. Indikator Keberhasilan
+
+Praktikum dinyatakan berhasil apabila mahasiswa mampu memenuhi indikator berikut:
+
+1. Membuat dan mengelola akun pengguna serta grup pada server Linux.
+2. Mengatur kepemilikan dan permission direktori sesuai kebutuhan.
+3. Menginstalasi dan menjalankan layanan Samba.
+4. Mengonfigurasi direktori berbagi dengan autentikasi pengguna.
+5. Membuktikan bahwa pengguna yang memiliki hak akses dapat mengakses direktori bersama.
+6. Membuktikan bahwa pengguna di luar grup yang ditentukan tidak dapat mengakses direktori bersama.
+7. Mengakses direktori bersama dari komputer klien.
+8. Mendokumentasikan seluruh konfigurasi dan hasil pengujian.
+
+## 14. Keterkaitan dengan Praktikum Pertemuan Berikutnya
+
+Praktikum pertemuan 2 menghasilkan sebuah server Linux yang telah memiliki mekanisme pengelolaan pengguna, grup, hak akses, serta layanan berbagi berkas menggunakan Samba. Setelah menyelesaikan seluruh tahap praktikum 2, **buat dan simpan Snapshot VM dengan nama `praktikum 2`**.
+
+Konfigurasi tersebut akan menjadi dasar untuk praktikum pertemuan 3, yaitu Konfigurasi Network Services (DNS dan DHCP). Pada pertemuan berikutnya, mahasiswa akan melanjutkan pengembangan server dengan mengimplementasikan layanan jaringan agar pengelolaan dan akses terhadap sumber daya server dapat dilakukan secara lebih terstruktur.
+
+## 15. Referensi
+
+1. Canonical. Ubuntu Server Documentation. [Ubuntu Server Documentation](https://documentation.ubuntu.com/server/?utm_source=chatgpt.com).
+2. Samba Team. Samba Documentation. [Samba Documentation](https://www.samba.org/samba/docs/?utm_source=chatgpt.com).
+3. Debian Project. Debian Administrator's Handbook. [Debian Administrator's Handbook](https://debian-handbook.info/?utm_source=chatgpt.com).
