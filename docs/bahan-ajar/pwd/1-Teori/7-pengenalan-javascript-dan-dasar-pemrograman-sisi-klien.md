@@ -1,5 +1,5 @@
 ---
-title: "PWD 7 - Pengenalan JavaScript dan Dasar Pemrograman Sisi Klien"
+title: "7. Pengenalan JavaScript dan Dasar Pemrograman Sisi Klien"
 ---
 
 # Pengenalan JavaScript dan Dasar Pemrograman Sisi Klien
