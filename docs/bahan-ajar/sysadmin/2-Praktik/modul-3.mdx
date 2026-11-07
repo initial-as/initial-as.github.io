@@ -1,0 +1,959 @@
+---
+title: "3. Konfigurasi Network Services (DNS dan DHCP)"
+---
+
+# Konfigurasi Network Services (DNS dan DHCP)
+
+## 1. Identitas Praktikum
+
+| Komponen              | Keterangan                                      |
+| --------------------- | ----------------------------------------------- |
+| Program Studi         | Teknologi Informasi                             |
+| Mata Kuliah           | Administrasi dan Pemeliharaan Sistem            |
+| Pertemuan             | 3                                               |
+| Topik Praktikum       | Konfigurasi Network Services (DNS dan DHCP)     |
+| Alokasi Waktu         | 170 menit                                       |
+| Sistem Operasi        | Ubuntu Server LTS atau Debian                   |
+| Bentuk Kegiatan       | Praktik individual atau berpasangan             |
+| Metode Pembelajaran   | Hands-on Practice dan demonstrasi               |
+| Platform Virtualisasi | Oracle VM VirtualBox                            |
+| Perangkat Lunak       | BIND9 dan Kea DHCP                              |
+| Prasyarat             | Telah menyelesaikan Praktikum Pertemuan 1 dan 2 |
+
+## 2. Deskripsi Praktikum
+
+Praktikum ini membahas konfigurasi layanan jaringan (network services) pada sistem operasi Linux, khususnya Domain Name System (DNS) dan Dynamic Host Configuration Protocol (DHCP). Kedua layanan tersebut merupakan komponen penting dalam pengelolaan jaringan komputer dan lingkungan server.
+
+DNS berfungsi menerjemahkan nama domain atau hostname menjadi alamat IP sehingga perangkat dalam jaringan dapat mengakses server menggunakan nama yang lebih mudah diingat. Sementara itu, DHCP berfungsi memberikan konfigurasi alamat IP dan parameter jaringan kepada perangkat klien secara otomatis.
+
+Pada praktikum ini, mahasiswa akan mengimplementasikan layanan DNS menggunakan BIND9 dan layanan DHCP menggunakan Kea DHCP. Kedua layanan dikonfigurasikan pada VM server yang sama dengan praktikum sebelumnya.
+
+Mahasiswa akan membangun lingkungan jaringan virtual untuk menguji komunikasi antara server dan klien. Server akan menggunakan alamat IP statis, sedangkan klien akan memperoleh alamat IP secara otomatis melalui DHCP dan menggunakan DNS server yang telah dikonfigurasi.
+
+## 3. Capaian Pembelajaran Praktikum
+
+Setelah menyelesaikan praktikum ini, mahasiswa diharapkan mampu:
+
+1. Menjelaskan konsep dan fungsi DNS serta DHCP dalam jaringan komputer.
+2. Mengidentifikasi kebutuhan konfigurasi jaringan pada server dan klien.
+3. Mengonfigurasi alamat IP statis pada server Linux.
+4. Menginstalasi dan mengonfigurasi layanan DNS menggunakan BIND9.
+5. Membuat dan mengelola zona DNS serta record domain.
+6. Menginstalasi dan mengonfigurasi layanan DHCP menggunakan Kea DHCP.
+7. Melakukan pengujian layanan DNS dan DHCP dari komputer klien.
+8. Melakukan pemeriksaan, pemecahan masalah, dan dokumentasi konfigurasi layanan jaringan.
+
+## 4. Kompetensi yang Relevan
+
+Praktikum ini berkaitan dengan kompetensi administrator sistem, khususnya:
+
+1. Mengidentifikasi kebutuhan layanan jaringan pada lingkungan server.
+2. Mengonfigurasi alamat IP dan parameter jaringan server.
+3. Mengimplementasikan layanan DNS.
+4. Mengimplementasikan layanan DHCP.
+5. Melakukan pengujian konektivitas dan layanan jaringan.
+6. Melakukan pemeriksaan serta pemecahan masalah pada layanan jaringan.
+
+## 5. Dasar Teori
+
+### 5.1. Network Services
+
+Network services merupakan layanan yang disediakan oleh suatu sistem komputer atau server untuk mendukung komunikasi dan pertukaran informasi antarperangkat dalam jaringan.
+
+Dalam lingkungan server, network services memungkinkan perangkat klien memperoleh konfigurasi jaringan, menemukan alamat server berdasarkan nama domain, serta mengakses sumber daya melalui jaringan. Beberapa contoh network services adalah:
+
+1. Domain Name System (DNS).
+2. Dynamic Host Configuration Protocol (DHCP).
+3. File Transfer Protocol (FTP).
+4. Web Server.
+5. Secure Shell (SSH).
+
+Pada praktikum ini, layanan yang akan dikonfigurasi adalah DNS dan DHCP.
+
+### 5.2. Domain Name System (DNS)
+
+Domain Name System (DNS) merupakan sistem yang digunakan untuk menerjemahkan nama domain atau hostname menjadi alamat IP. DNS memudahkan pengguna dan perangkat dalam mengakses server tanpa harus mengingat alamat IP secara langsung. Sebagai contoh, pengguna dapat mengakses server menggunakan nama:
+
+```
+ar-raniry.ac.id
+```
+
+DNS kemudian menerjemahkan nama tersebut menjadi alamat IP, misalnya:
+
+```
+192.168.56.10
+```
+
+Beberapa jenis DNS record yang umum digunakan adalah:
+
+| Jenis Record | Fungsi                                       |
+| ------------ | -------------------------------------------- |
+| A            | Menghubungkan nama domain dengan alamat IPv4 |
+| AAAA         | Menghubungkan nama domain dengan alamat IPv6 |
+| CNAME        | Membuat alias untuk nama domain lain         |
+| MX           | Menentukan server penerima email             |
+| NS           | Menentukan nameserver untuk suatu zona       |
+| PTR          | Melakukan pemetaan alamat IP ke nama domain  |
+
+Pada praktikum ini, mahasiswa akan membuat DNS record tipe A dan NS untuk mengenalkan server melalui nama domain lokal.
+
+### 5.3. BIND9
+
+BIND9 (Berkeley Internet Name Domain) merupakan perangkat lunak DNS server yang banyak digunakan pada sistem operasi Linux. BIND9 dapat berfungsi sebagai DNS server otoritatif untuk mengelola zona domain tertentu maupun sebagai DNS resolver sesuai konfigurasi. Beberapa berkas konfigurasi BIND9 pada Ubuntu Server atau Debian antara lain:
+
+| Berkas                         | Fungsi                                                                    |
+| ------------------------------ | ------------------------------------------------------------------------- |
+| `/etc/bind/named.conf`         | Konfigurasi utama BIND                                                    |
+| `/etc/bind/named.conf.options` | Pengaturan opsi DNS                                                       |
+| `/etc/bind/named.conf.local`   | Konfigurasi zona lokal                                                    |
+| `/var/cache/bind/`             | Lokasi penyimpanan berkas zona lokal yang dapat ditulis oleh layanan BIND |
+
+Layanan BIND9 umumnya dijalankan melalui service `bind9`.
+
+### 5.4. Dynamic Host Configuration Protocol (DHCP)
+
+Dynamic Host Configuration Protocol (DHCP) merupakan protokol yang memungkinkan server memberikan konfigurasi jaringan secara otomatis kepada perangkat klien. Tanpa DHCP, administrator harus mengatur alamat IP dan parameter jaringan setiap perangkat secara manual. Informasi yang dapat diberikan oleh DHCP antara lain:
+
+1. IP address.
+2. Subnet mask.
+3. Default gateway.
+4. DNS server.
+5. Lease time atau durasi penggunaan alamat IP.
+
+DHCP menggunakan mekanisme komunikasi yang dikenal dengan DORA:
+
+1. **Discover**: klien mencari DHCP server.
+2. **Offer**: DHCP server menawarkan alamat IP kepada klien.
+3. **Request**: klien meminta penggunaan alamat IP yang ditawarkan.
+4. **Acknowledge**: DHCP server mengonfirmasi pemberian alamat IP.
+
+### 5.5. Kea DHCP
+
+Kea DHCP merupakan perangkat lunak DHCP server yang dikembangkan oleh Internet Systems Consortium (ISC). Kea digunakan untuk menyediakan layanan pemberian alamat IP secara otomatis kepada perangkat klien.
+
+Pada praktikum ini, mahasiswa akan menggunakan Kea DHCP untuk memberikan alamat IPv4 kepada klien dalam jaringan lokal. Berkas konfigurasi utama Kea DHCP IPv4 pada Ubuntu Server atau Debian umumnya berada di:
+
+```
+/etc/kea/kea-dhcp4.conf
+```
+
+Layanan DHCP IPv4 Kea dijalankan melalui service:
+
+```
+kea-dhcp4-server
+```
+
+### 5.6. Hubungan DNS dan DHCP
+
+DNS dan DHCP merupakan dua layanan jaringan yang saling melengkapi. DHCP bertanggung jawab memberikan konfigurasi jaringan kepada klien, termasuk alamat DNS server yang harus digunakan. Sementara itu, DNS bertanggung jawab menerjemahkan nama domain menjadi alamat IP. Contoh penerapan:
+
+- DHCP memberikan alamat IP `192.168.56.100` kepada klien.
+- DHCP memberikan alamat DNS server `192.168.56.10`.
+- Klien menggunakan DNS server tersebut untuk mencari alamat IP `server.sysadmin.test`.
+- DNS memberikan jawaban `192.168.56.10`.
+
+Dengan demikian, klien dapat menemukan server menggunakan nama domain tanpa harus mengetahui alamat IP server secara langsung.
+
+## 6. Alat dan Bahan
+
+Perangkat dan perangkat lunak yang diperlukan dalam praktikum ini adalah:
+
+| No. | Alat/Bahan                    | Keterangan                     |
+| --- | ----------------------------- | ------------------------------ |
+| 1   | Komputer atau laptop          | Perangkat utama praktikum      |
+| 2   | Oracle VM VirtualBox          | Menjalankan virtual machine    |
+| 3   | Ubuntu Server LTS atau Debian | Sistem operasi server          |
+| 4   | Ubuntu Desktop atau Windows   | Sistem operasi klien           |
+| 5   | BIND9                         | Perangkat lunak DNS server     |
+| 6   | Kea DHCP                      | Perangkat lunak DHCP server    |
+| 7   | Terminal Linux                | Melakukan konfigurasi server   |
+| 8   | Perangkat pengujian DNS       | `dig`, `nslookup`, atau `host` |
+| 9   | Koneksi jaringan virtual      | Menghubungkan server dan klien |
+
+Ketentuan lingkungan praktikum:
+
+1. Gunakan VM server yang telah dibuat pada pertemuan 1 dan dikembangkan pada pertemuan 2.
+2. Siapkan satu VM tambahan sebagai klien, atau gunakan komputer host jika konfigurasi jaringan memungkinkan.
+3. Gunakan jaringan virtual yang memungkinkan server dan klien berkomunikasi.
+4. Untuk pengujian DHCP, disarankan menggunakan jaringan Internal Network atau Host-only yang terisolasi.
+5. Pastikan tidak terdapat DHCP server lain yang aktif pada segmen jaringan pengujian.
+
+## 7. Keselamatan dan Ketentuan Praktikum
+
+1. Lakukan konfigurasi pada jaringan virtual yang terisolasi.
+2. Hindari mengaktifkan DHCP server pada jaringan yang telah memiliki DHCP server aktif tanpa koordinasi dengan administrator jaringan.
+3. Jangan menggunakan alamat IP yang telah digunakan oleh perangkat lain.
+4. Gunakan alamat IP statis untuk server agar alamat DNS server tidak berubah.
+5. Simpan salinan konfigurasi (_backup_) sebelum melakukan perubahan pada berkas sistem.
+6. Pastikan konfigurasi DNS dan DHCP diperiksa sebelum layanan dijalankan.
+7. Jangan mengubah konfigurasi jaringan utama komputer host secara sembarangan.
+
+## 8. Langkah Kerja Praktikum
+
+Total alokasi waktu: 170 menit
+
+### 8.1. Pemeriksaan Kondisi Awal Server (10 menit)
+
+Pastikan server yang digunakan merupakan VM yang telah dikonfigurasi pada pertemuan sebelumnya. Jalankan perintah berikut:
+
+```
+hostnamectl
+ip -br address
+ip route
+systemctl is-active ssh
+systemctl is-active smbd
+```
+
+Catat informasi berikut:
+
+1. Hostname server.
+2. Alamat IP server.
+3. Interface jaringan yang digunakan.
+4. Status layanan SSH.
+5. Status layanan Samba.
+
+Pada praktikum ini, layanan Samba yang telah dikonfigurasi pada pertemuan 2 tetap dipertahankan.
+
+### 8.2. Perancangan Skema Jaringan (15 menit)
+
+Sebelum melakukan konfigurasi, mahasiswa harus memahami skema jaringan yang akan digunakan. Topologi praktikum dirancang sebagai berikut:
+
+```text
+            Server Linux
+            192.168.56.10/24
+            Services: DHCP & DNS
+                   │
+                   │
+                   │
+            Virtual Network
+            192.168.56.0/24
+            (VirtualBox Host-only Adapter
+            atau Internal Network)
+                   │
+                   │
+                   │
+            Client
+            IP otomatis dari DHCP server
+            DNS server: 192.168.56.10
+```
+
+Gunakan skema alamat IP berikut:
+
+| Komponen        | Konfigurasi                                        |
+| --------------- | -------------------------------------------------- |
+| Network Address | 192.168.56.0/24                                    |
+| Subnet Mask     | 255.255.255.0                                      |
+| IP Server       | 192.168.56.10                                      |
+| DNS Server      | 192.168.56.10                                      |
+| Domain Lokal    | sysadmin.test                                           |
+| Hostname Server | server.sysadmin.test                                    |
+| DHCP Pool       | 192.168.56.100–192.168.56.150                      |
+| Default Gateway | Tidak digunakan pada jaringan praktikum terisolasi |
+
+Alamat IP di atas merupakan skema contoh yang digunakan secara konsisten dalam modul ini. Jika jaringan VirtualBox yang digunakan memiliki subnet berbeda, sesuaikan seluruh konfigurasi agar berada pada satu subnet yang sama.
+
+Ketentuan VirtualBox:
+
+1. Atur adapter jaringan server dan klien agar terhubung ke jaringan virtual yang sama.
+2. Untuk pengujian DHCP, gunakan Internal Network atau Host-only.
+3. Jika menggunakan Host-only, pastikan DHCP bawaan VirtualBox dinonaktifkan pada jaringan tersebut agar tidak terjadi konflik dengan Kea DHCP.
+4. Jangan menggunakan adapter NAT sebagai satu-satunya jaringan pengujian DHCP karena klien tidak dapat menerima penawaran DHCP dari server melalui jaringan NAT biasa.
+
+### 8.3. Konfigurasi IP Statis pada Server (20 menit)
+
+DNS server dan DHCP server memerlukan alamat IP yang tetap agar klien dapat mengakses layanan secara konsisten. Pada tahap ini, mahasiswa akan mengatur alamat IP statis pada server.
+
+1. Mengidentifikasi interface jaringan
+
+   Jalankan:
+
+   ```
+   ip -br link
+   ip -br address
+   ```
+
+   Identifikasi nama interface yang terhubung ke jaringan praktikum, misalnya `enp0s8`.
+   :::warning
+   Nama interface pada setiap VM dapat berbeda. Pastikan Anda berhasil mengindentifikasi interface yang sesuai sebelum melanjutkan ke tahap berikutnya.
+   :::
+
+2. Memeriksa konfigurasi Netplan
+
+   Pada Ubuntu Server yang menggunakan Netplan, periksa berkas konfigurasi:
+
+   ```
+   ls /etc/netplan/
+   ```
+
+   Buka berkas konfigurasi yang tersedia, misalnya:
+
+   ```
+   sudo nano /etc/netplan/00-installer-config.yaml
+   ```
+
+   Sesuaikan konfigurasi interface jaringan praktikum. Contoh berikut menggunakan interface `enp0s8`:
+
+   ```
+   network:
+   version: 2
+   ethernets:
+      enp0s8:
+         dhcp4: false
+         addresses:
+         - 192.168.56.10/24
+   ```
+
+   Jika server masih memerlukan koneksi internet melalui adapter lain, pertahankan konfigurasi adapter tersebut. Jangan mengganti seluruh konfigurasi jaringan tanpa memeriksa konfigurasi awal.
+
+3. Menerapkan konfigurasi
+
+   Jalankan:
+
+   ```
+   sudo netplan generate
+   sudo netplan apply
+   ```
+
+4. Memeriksa alamat IP
+
+   ```
+   ip -br address
+   ip route
+   ```
+
+   Pastikan interface jaringan praktikum telah menggunakan alamat IP `192.168.56.10/24`.
+
+5. Menguji konektivitas
+
+   Jika klien telah memiliki alamat IP yang sesuai, lakukan pengujian:
+
+   ```
+   ping 192.168.56.10
+   ```
+
+   Pengujian ini dapat dilakukan dari komputer klien setelah jaringan klien dikonfigurasi.
+
+### 8.4. Instalasi dan Konfigurasi DNS Server BIND9 (35 menit)
+
+Pada tahap ini, mahasiswa akan menginstalasi dan mengonfigurasi BIND9 sebagai DNS server untuk domain lokal `sysadmin.test`.
+
+1. Memperbarui daftar paket
+
+   ```
+   sudo apt update
+   ```
+
+2. Menginstal BIND9 dan perangkat pengujian
+
+   ```
+   sudo apt install bind9 bind9-utils dnsutils -y
+   ```
+
+3. Memeriksa status layanan
+
+   ```
+   sudo systemctl status bind9
+   ```
+
+   Aktifkan layanan BIND9:
+
+   ```
+   sudo systemctl enable --now bind9
+   ```
+
+   :::tip
+      Jika layanan tidak berjalan, periksa log menggunakan perintah `sudo journalctl -u bind9 -n 50 --no-pager`.
+   :::
+
+4. Mengatur opsi BIND9
+
+   Buka berkas konfigurasi:
+
+   ```
+   sudo nano /etc/bind/named.conf.options
+   ```
+
+   Sesuaikan bagian `options` agar layanan dapat menerima permintaan DNS dari jaringan praktikum:
+
+   ```
+   options {
+      directory "/var/cache/bind";
+
+      listen-on { any; };
+      listen-on-v6 { none; };
+
+      allow-query { localhost; 192.168.56.0/24; };
+
+      recursion no;
+
+      dnssec-validation auto;
+   };
+   ```
+
+   Konfigurasi tersebut membatasi permintaan DNS ke localhost dan subnet praktikum. BIND9 akan digunakan sebagai DNS server otoritatif untuk domain lokal, bukan sebagai resolver internet.
+
+5. Membuat konfigurasi zona DNS
+
+   Buka berkas:
+
+   ```
+   sudo nano /etc/bind/named.conf.local
+   ```
+
+   Tambahkan konfigurasi berikut:
+
+   ```
+   zone "sysadmin.test" {
+      type master;
+      file "/etc/bind/db.sysadmin.test";
+   };
+   ```
+
+   Konfigurasi tersebut mendefinisikan zona DNS dengan nama `sysadmin.test`.
+
+6. Membuat berkas zona DNS
+
+   Buat berkas zona:
+
+   ```
+   sudo nano /etc/bind/db.sysadmin.test
+   ```
+
+   Masukkan konfigurasi berikut:
+
+   ```
+   $TTL 604800
+   @   IN  SOA server.sysadmin.test. admin.sysadmin.test. (
+         2026110701
+         604800
+         86400
+         2419200
+         604800
+   )
+
+   @       IN  NS  server.sysadmin.test.
+   @       IN  A   192.168.56.10
+   server  IN  A   192.168.56.10
+   ```
+
+   Penjelasan konfigurasi:
+
+   | Komponen | Fungsi                                       |
+   | -------- | -------------------------------------------- |
+   | `$TTL`   | Menentukan waktu penyimpanan cache DNS       |
+   | `SOA`    | Menentukan informasi otoritatif zona DNS     |
+   | `NS`     | Menentukan nameserver untuk zona             |
+   | `A`      | Menghubungkan nama domain dengan alamat IPv4 |
+   | `server` | Subdomain yang digunakan sebagai nama server |
+
+   Angka serial pada SOA harus diperbarui setiap kali berkas zona mengalami perubahan.
+
+7. Memeriksa konfigurasi DNS
+
+   Periksa sintaks konfigurasi utama:
+
+   ```
+   sudo named-checkconf
+   ```
+
+   Periksa konfigurasi zona:
+
+   ```
+   sudo named-checkzone sysadmin.test /etc/bind/db.sysadmin.test
+   ```
+
+   Pastikan hasil pemeriksaan menunjukkan status `OK`.
+
+8. Memulai ulang layanan BIND9
+
+   ```
+   sudo systemctl restart bind9
+   ```
+
+   Periksa status layanan:
+
+   ```
+   sudo systemctl status bind9
+   ```
+
+### 8.5. Pengujian DNS Server (15 menit)
+
+Setelah konfigurasi DNS selesai, lakukan pengujian dari sisi server.
+
+1. Menguji domain lokal
+
+   ```
+   dig @127.0.0.1 server.sysadmin.test
+   ```
+
+   Periksa bagian ANSWER SECTION. Hasil yang diharapkan menunjukkan alamat IP:
+
+   ```
+   server.sysadmin.test.    604800    IN    A    192.168.56.10
+   ```
+
+2. Menguji domain utama
+
+   ```
+   dig @127.0.0.1 sysadmin.test
+   ```
+
+   Pastikan domain `sysadmin.test` mengarah ke alamat IP server.
+
+3. Menguji menggunakan nslookup
+
+   ```
+   nslookup server.sysadmin.test 127.0.0.1
+   ```
+
+   Pastikan hasil resolusi nama menunjukkan alamat IP server.
+
+4. Memeriksa port DNS
+
+   ```
+   sudo ss -lntup | grep ':53'
+   ```
+
+   Pastikan layanan DNS mendengarkan pada port 53 sesuai konfigurasi.
+
+### 8.6. Instalasi dan Konfigurasi DHCP Server Kea (30 menit)
+
+Pada tahap ini, mahasiswa akan menginstalasi dan mengonfigurasi Kea DHCP untuk memberikan alamat IP secara otomatis kepada klien.
+
+1. Menginstal Kea DHCP
+
+   Jalankan:
+
+   ```
+   sudo apt update
+   sudo apt install kea-dhcp4-server -y
+   ```
+
+2. Mengidentifikasi interface jaringan
+
+   Pastikan nama interface jaringan praktikum telah diketahui:
+
+   ```
+   ip -br link
+   ```
+
+   Pada contoh konfigurasi ini digunakan interface `enp0s8`. **Sesuaikan dengan interface aktual pada server**.
+
+3. Membuat salinan konfigurasi
+
+   Sebelum melakukan perubahan, buat salinan berkas konfigurasi:
+
+   ```
+   sudo cp /etc/kea/kea-dhcp4.conf /etc/kea/kea-dhcp4.conf.backup
+   ```
+
+4. Mengedit konfigurasi DHCP
+
+   Buka berkas konfigurasi:
+
+   ```
+   sudo nano /etc/kea/kea-dhcp4.conf
+   ```
+
+   Sesuaikan konfigurasi menjadi:
+
+   ```
+   {
+   "Dhcp4": {
+      "interfaces-config": {
+         "interfaces": [ "enp0s8" ]
+      },
+
+      "lease-database": {
+         "type": "memfile",
+         "persist": true,
+         "name": "/var/lib/kea/kea-leases4.csv"
+      },
+
+      "valid-lifetime": 3600,
+
+      "subnet4": [
+         {
+         "id": 1,
+         "subnet": "192.168.56.0/24",
+
+         "pools": [
+            {
+               "pool": "192.168.56.100 - 192.168.56.150"
+            }
+         ],
+
+         "option-data": [
+            {
+               "name": "subnet-mask",
+               "data": "255.255.255.0"
+            },
+            {
+               "name": "domain-name",
+               "data": "sysadmin.test"
+            },
+            {
+               "name": "domain-name-servers",
+               "data": "192.168.56.10"
+            }
+         ]
+         }
+      ]
+   }
+   }
+   ```
+
+   :::warning
+   Perhatikan bahwa nama interface `enp0s8` harus disesuaikan dengan interface yang digunakan server.
+   :::
+
+   Penjelasan parameter konfigurasi:
+
+   | Parameter             | Fungsi                                                      |
+   | --------------------- | ----------------------------------------------------------- |
+   | `interfaces`          | Menentukan interface jaringan yang digunakan DHCP           |
+   | `lease-database`      | Menentukan penyimpanan informasi alamat IP yang dipinjamkan |
+   | `valid-lifetime`      | Menentukan masa berlaku alamat IP dalam detik               |
+   | `subnet`              | Menentukan subnet jaringan yang dilayani                    |
+   | `pools`               | Menentukan rentang alamat IP yang dibagikan                 |
+   | `subnet-mask`         | Menentukan subnet mask klien                                |
+   | `domain-name`         | Menentukan domain lokal yang digunakan                      |
+   | `domain-name-servers` | Menentukan alamat DNS server untuk klien                    |
+
+   Pada konfigurasi ini, DHCP tidak memberikan default gateway karena jaringan praktikum dirancang sebagai jaringan lokal terisolasi tanpa akses router.
+
+5. Memeriksa konfigurasi Kea
+
+   Jalankan:
+
+   ```
+   sudo kea-dhcp4 -t /etc/kea/kea-dhcp4.conf
+   ```
+
+   Pastikan tidak terdapat kesalahan pada konfigurasi.
+
+6. Mengaktifkan layanan Kea DHCP
+
+   ```
+   sudo systemctl enable --now kea-dhcp4-server
+   ```
+
+   Periksa status layanan:
+
+   ```
+   sudo systemctl status kea-dhcp4-server
+   ```
+
+   Pastikan layanan berjalan dalam kondisi aktif.
+
+   :::tip
+   Jika layanan tidak berjalan, periksa log menggunakan perintah `sudo journalctl -u kea-dhcp4-server -n 50 --no-pager`.
+   :::
+
+### 8.7. Pengujian DHCP dan DNS dari Komputer Klien (30 menit)
+
+Pada tahap ini, mahasiswa akan melakukan pengujian layanan DNS dan DHCP menggunakan komputer klien.
+
+1. Mengatur jaringan klien
+
+   Pastikan VM klien menggunakan jaringan virtual yang sama dengan server. Pada konfigurasi jaringan klien, pilih opsi memperoleh alamat IP secara otomatis (obtain an IP address automatically).
+
+   Jika menggunakan Ubuntu Desktop, mahasiswa dapat mengatur metode IPv4 menjadi Automatic (DHCP) melalui pengaturan jaringan.
+
+2. Meminta alamat IP dari DHCP server
+
+   - Pada klien Ubuntu, identifikasi nama interface jaringan:
+
+      ```
+      ip -br address
+      ```
+
+      Kemudian jalankan:
+
+      ```
+      sudo dhclient -r nama_interface
+      sudo dhclient nama_interface
+      ```
+
+      Ganti `nama_interface` dengan nama interface aktual, misalnya `enp0s3`.
+
+   - Pada klien Windows, buka Command Prompt sebagai administrator dan jalankan:
+
+      ```
+      ipconfig /release
+      ipconfig /renew
+      ```
+
+3. Memeriksa alamat IP klien
+
+   - Pada Ubuntu:
+
+      ```
+      ip -br address
+      ip route
+      ```
+
+   - Pada Windows:
+
+      ```
+      ipconfig /all
+      ```
+
+   Pastikan klien memperoleh alamat IP dalam rentang:
+
+   ```
+   192.168.56.100 - 192.168.56.150
+   ```
+
+   Periksa juga informasi DNS server. Alamat DNS yang diharapkan adalah:
+
+   ```
+   192.168.56.10
+   ```
+
+4. Menguji konektivitas ke server
+
+   Dari komputer klien, jalankan:
+
+   ```
+   ping 192.168.56.10
+   ```
+
+   Pastikan klien dapat berkomunikasi dengan server. Jika menggunakan Windows, jalankan perintah yang sama melalui Command Prompt.
+
+5. Menguji resolusi DNS dari klien
+
+   Pada Ubuntu, jalankan:
+
+   ```
+   nslookup server.sysadmin.test
+   ```
+
+   Atau:
+
+   ```
+   dig server.sysadmin.test
+   ```
+
+   Pada Windows, jalankan:
+
+   ```
+   nslookup server.sysadmin.test
+   ```
+
+   Pastikan hasil resolusi DNS menunjukkan alamat IP `192.168.56.10`.
+
+6. Menguji akses menggunakan hostname
+
+   Lakukan pengujian:
+
+   ```
+   ping server.sysadmin.test
+   ```
+
+   Jika konfigurasi berhasil, nama `server.sysadmin.test` dapat diterjemahkan menjadi alamat IP server.
+
+   :::info
+   jika ping tidak mendapatkan balasan, periksa terlebih dahulu hasil resolusi DNS dan konektivitas jaringan. Kegagalan balasan ICMP dapat disebabkan oleh aturan firewall dan tidak selalu menunjukkan kegagalan DNS.
+   :::
+
+### 8.8. Pemeriksaan dan Dokumentasi (15 menit)
+
+Pada tahap terakhir, mahasiswa melakukan pemeriksaan keseluruhan konfigurasi DNS dan DHCP.
+
+Jalankan perintah berikut pada server:
+
+```
+ip -br address
+systemctl is-active bind9
+systemctl is-active kea-dhcp4-server
+sudo named-checkconf
+sudo named-checkzone sysadmin.test /etc/bind/db.sysadmin.test
+sudo kea-dhcp4 -t /etc/kea/kea-dhcp4.conf
+```
+
+Periksa informasi alamat IP yang telah diberikan DHCP melalui berkas lease:
+
+```
+sudo cat /var/lib/kea/kea-leases4.csv
+```
+
+Dokumentasikan hasil pengujian dalam tabel berikut.
+
+| No. | Pengujian                         | Hasil yang Diharapkan | Hasil Aktual |
+| --- | --------------------------------- | --------------------- | ------------ |
+| 1   | Konfigurasi IP statis server      | 192.168.56.10         | ...          |
+| 2   | Status layanan BIND9              | Aktif                 | ...          |
+| 3   | Status layanan Kea DHCP           | Aktif                 | ...          |
+| 4   | Pemeriksaan zona DNS              | OK                    | ...          |
+| 5   | Resolusi `server.sysadmin.test`        | 192.168.56.10         | ...          |
+| 6   | Pemberian IP kepada klien         | 192.168.56.100–150    | ...          |
+| 7   | Pemberian DNS server kepada klien | 192.168.56.10         | ...          |
+| 8   | Konektivitas klien ke server      | Berhasil              | ...          |
+| 9   | Resolusi DNS dari klien           | Berhasil              | ...          |
+
+## 9. Penugasan Praktikum
+
+Mahasiswa diwajibkan menyelesaikan beberapa tugas berikut.
+
+### 9.1. Tugas 1: Konfigurasi DNS Record
+
+1. Buat DNS record tambahan dengan nama `files.sysadmin.test`.
+2. Arahkan record tersebut ke alamat IP server `192.168.56.10`.
+3. Tambahkan record A untuk nama `web.sysadmin.test` yang juga mengarah ke alamat IP server.
+4. Periksa validitas konfigurasi zona menggunakan `named-checkzone`.
+5. Restart layanan BIND9 dan lakukan pengujian menggunakan `dig` atau `nslookup`.
+
+### 9.2. Tugas 2: Konfigurasi DHCP
+
+1. Ubah rentang alamat IP DHCP menjadi `192.168.56.120–192.168.56.170`.
+2. Pertahankan alamat IP server dan DNS server.
+3. Ubah masa berlaku alamat IP (lease lifetime) menjadi 7200 detik.
+4. Periksa konfigurasi menggunakan perintah `kea-dhcp4 -t`.
+5. Restart layanan Kea DHCP dan pastikan layanan berjalan dengan baik.
+
+### 9.3. Tugas 3: Pengujian dari Komputer Klien
+
+1. Hubungkan komputer klien ke jaringan virtual yang sama dengan server.
+2. Pastikan komputer klien memperoleh alamat IP secara otomatis.
+3. Periksa alamat DNS server yang diterima klien.
+4. Uji resolusi nama `server.sysadmin.test`, `files.sysadmin.test`, dan `web.sysadmin.test`.
+5. Dokumentasikan hasil pengujian.
+
+### 9.4. Tugas 4: Analisis Layanan DNS dan DHCP
+
+Buat analisis singkat mengenai hubungan antara DNS dan DHCP berdasarkan hasil praktikum. Analisis harus mencakup:
+
+1. Perbedaan fungsi DNS dan DHCP.
+2. Manfaat pemberian konfigurasi IP secara otomatis.
+3. Pengaruh konfigurasi DNS server terhadap proses resolusi nama.
+4. Risiko penggunaan DHCP server ganda dalam satu segmen jaringan.
+5. Manfaat penggunaan alamat IP statis pada server.
+
+## 10. Pertanyaan Analisis
+
+Jawablah pertanyaan berikut berdasarkan hasil praktikum.
+
+1. Mengapa server yang menjalankan layanan DNS dan DHCP sebaiknya menggunakan alamat IP statis?
+2. Jelaskan perbedaan fungsi DNS dan DHCP dalam jaringan komputer.
+3. Bagaimana proses penerjemahan nama domain menjadi alamat IP pada DNS?
+4. Apa fungsi DNS record tipe A dan NS?
+5. Jelaskan tahapan DORA pada proses pemberian alamat IP oleh DHCP.
+6. Apa fungsi parameter `valid-lifetime` pada konfigurasi Kea DHCP?
+7. Mengapa rentang alamat IP DHCP tidak boleh mencakup alamat IP statis server?
+8. Apa yang terjadi apabila terdapat dua DHCP server aktif pada satu segmen jaringan tanpa koordinasi?
+9. Jika klien berhasil memperoleh alamat IP tetapi tidak dapat melakukan resolusi nama domain, komponen apa saja yang perlu diperiksa?
+10. Jika layanan DNS dan DHCP berstatus aktif tetapi klien tidak dapat mengakses server, bagaimana langkah sistematis untuk mengidentifikasi penyebab masalah?
+
+## 11. Format Laporan Praktikum
+
+Laporan praktikum disusun secara sistematis dengan struktur sebagai berikut:
+
+### 11.1. Halaman Judul
+
+Memuat:
+
+1. Nama mata kuliah.
+2. Judul praktikum.
+3. Nama dan NIM mahasiswa.
+4. Program studi.
+
+### 11.2. Tujuan Praktikum
+
+Menjelaskan tujuan dan kompetensi yang ingin dicapai dalam kegiatan praktikum.
+
+### 11.3. Dasar Teori
+
+Memuat penjelasan mengenai:
+
+1. Network services.
+2. Konsep DNS dan DNS record.
+3. BIND9 sebagai DNS server.
+4. Konsep DHCP dan mekanisme DORA.
+5. Kea DHCP sebagai DHCP server.
+
+### 11.4. Alat dan Bahan
+
+Menjelaskan perangkat keras dan perangkat lunak yang digunakan.
+
+### 11.5. Langkah Kerja
+
+Memuat:
+
+1. Perancangan topologi jaringan.
+2. Konfigurasi IP statis server.
+3. Instalasi dan konfigurasi BIND9.
+4. Instalasi dan konfigurasi Kea DHCP.
+5. Pengujian DNS dan DHCP dari komputer klien.
+6. Screenshot setiap tahapan penting.
+
+### 11.6. Hasil Praktikum
+
+Memuat:
+
+1. Hasil konfigurasi IP statis server.
+2. Hasil konfigurasi DNS dan zona domain.
+3. Hasil konfigurasi DHCP dan rentang alamat IP.
+4. Hasil pemberian alamat IP kepada klien.
+5. Hasil pengujian resolusi DNS.
+6. Hasil pengujian konektivitas jaringan.
+
+### 11.7. Analisis dan Pembahasan
+
+Memuat analisis keberhasilan dan kegagalan konfigurasi, hubungan antara layanan DNS dan DHCP, serta jawaban pertanyaan analisis.
+
+### 11.8. Kesimpulan
+
+Berisi ringkasan hasil praktikum dan kompetensi yang telah dicapai.
+
+### 11.9. Lampiran
+
+Memuat screenshot konfigurasi, topologi jaringan, hasil pengujian, serta berkas konfigurasi DNS dan DHCP yang digunakan. Ketentuan penulisan:
+
+1. Laporan menggunakan bahasa Indonesia formal dan akademik.
+2. Setiap screenshot harus disertai keterangan.
+3. Perintah Linux harus ditampilkan menggunakan format kode.
+4. Topologi jaringan harus mencantumkan alamat IP server dan klien.
+5. Hasil pengujian harus sesuai dengan kondisi aktual, bukan sekadar hasil yang diharapkan.
+
+## 12. Penilaian Praktikum
+
+Penilaian dilakukan berdasarkan aspek keterampilan konfigurasi, ketepatan pengujian, analisis, dan dokumentasi.
+
+| No. | Aspek Penilaian                                | Bobot |
+| --- | ---------------------------------------------- | ----- |
+| 1   | Perancangan topologi dan konfigurasi IP statis | 15%   |
+| 2   | Instalasi dan konfigurasi DNS BIND9            | 25%   |
+| 3   | Instalasi dan konfigurasi DHCP Kea             | 25%   |
+| 4   | Pengujian DNS, DHCP, dan konektivitas klien    | 20%   |
+| 5   | Analisis hasil praktikum                       | 10%   |
+| 6   | Kelengkapan dan sistematika laporan            | 5%    |
+|     | Total                                          | 100%  |
+
+## 13. Indikator Keberhasilan
+
+Praktikum dinyatakan berhasil apabila mahasiswa mampu memenuhi indikator berikut:
+
+1. Mengonfigurasi alamat IP statis pada server Linux.
+2. Menginstalasi dan menjalankan layanan BIND9.
+3. Membuat zona DNS dan record domain lokal.
+4. Melakukan pemeriksaan validitas konfigurasi DNS.
+5. Menginstalasi dan menjalankan layanan Kea DHCP.
+6. Mengonfigurasi rentang alamat IP yang akan diberikan kepada klien.
+7. Membuktikan bahwa klien memperoleh alamat IP secara otomatis.
+8. Membuktikan bahwa klien menggunakan DNS server yang telah dikonfigurasi.
+9. Melakukan pengujian resolusi nama domain dari komputer klien.
+10. Mendokumentasikan seluruh konfigurasi dan hasil pengujian.
+
+## 14. Keterkaitan dengan Praktikum Pertemuan Berikutnya
+
+Praktikum pertemuan 4 menghasilkan server Linux yang telah dilengkapi dengan layanan DNS dan DHCP. Server mampu memberikan konfigurasi alamat IP secara otomatis kepada klien serta menyediakan layanan penerjemahan nama domain lokal. Setelah menyelesaikan seluruh tahap praktikum 3, **buat dan simpan Snapshot VM dengan nama `praktikum 3`**.
+
+Konfigurasi tersebut akan menjadi dasar untuk praktikum pertemuan 5, yaitu Application Services dan Virtual Server. Pada pertemuan berikutnya, mahasiswa akan melanjutkan pengembangan server dengan menginstalasi dan mengonfigurasi layanan web server menggunakan Apache atau Nginx. Mahasiswa juga akan memanfaatkan DNS yang telah dikonfigurasi agar layanan web dapat diakses menggunakan nama domain lokal.
+
+## 15. Referensi
+
+1. Canonical. Ubuntu Server Documentation. [Ubuntu Server Documentation](https://documentation.ubuntu.com/server/).
+2. Internet Systems Consortium. BIND 9 Administrator Reference Manual. [BIND 9 Documentation](https://bind9.readthedocs.io/).
+3. Internet Systems Consortium. Kea Administrator Reference Manual. [Kea Documentation](https://kea.readthedocs.io/).
+4. Debian Project. Debian Administrator's Handbook. [Debian Administrator's Handbook](https://debian-handbook.info/).
