@@ -22,7 +22,7 @@ Pada tutorial ini, kita akan mengubah **Raspberry Pi berbasis Debian 11 (Bullsey
 
 * **Jalur Utama:** Ethernet (`eth0`) dengan *route metric* rendah (prioritas tinggi).
 * **Jalur Cadangan (*Fallback*):** Wi-Fi (`wlan0`) dengan *route metric* lebih tinggi.
-* **Subnet Virtual ZeroTier:** `172.29.0.0/16` (sesuaikan dengan *Network ID* Anda).
+* **Subnet Virtual ZeroTier:** `172.29.0.0/16`.
 
 ---
 
@@ -43,7 +43,6 @@ Sebelum memasang ZeroTier, pastikan paket sistem Raspberry Pi sudah mutakhir dan
 ```bash
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y curl gnupg ca-certificates
-
 ```
 
 ### 2. Instal Paket ZeroTier One
@@ -52,7 +51,6 @@ Jalankan skrip instalasi resmi ZeroTier yang akan menambahkan repositori Debian 
 
 ```bash
 curl -s https://install.zerotier.com | sudo bash
-
 ```
 
 *(Alternatif manual dengan verifikasi GPG penuh untuk Debian 11 jika tidak ingin langsung mengeksekusi skrip bash):*
@@ -62,7 +60,6 @@ curl -s 'https://raw.githubusercontent.com/zerotier/ZeroTierOne/main/doc/contact
 echo "deb [signed-by=/usr/share/keyrings/zerotierone-archive-keyring.gpg] http://download.zerotier.com/debian/bullseye bullseye main" | sudo tee /etc/apt/sources.list.d/zerotier.list
 sudo apt update
 sudo apt install -y zerotier-one
-
 ```
 
 ### 3. Jalankan Layanan dan Verifikasi Status ZeroTier
@@ -72,7 +69,6 @@ Pastikan layanan `zerotier-one` aktif dan otomatis berjalan setiap kali Raspberr
 ```bash
 sudo systemctl enable --now zerotier-one
 sudo zerotier-cli status
-
 ```
 
 Output yang sukses akan menampilkan `200 info <NODE_ID> <VERSI> ONLINE`.
@@ -83,7 +79,6 @@ Hubungkan Raspberry Pi ke Network ID yang sudah dibuat pada Langkah 1:
 
 ```bash
 sudo zerotier-cli join <NETWORK_ID_ANDA>
-
 ```
 
 Output terminal akan menampilkan `200 join OK`.
@@ -97,7 +92,6 @@ Selanjutnya:
 
 ```bash
 ip a
-
 ```
 
 Perhatikan interface berawalan `zt` (contoh: `ztks5qyut4`) yang sudah memiliki alamat IP ZeroTier.
@@ -127,7 +121,6 @@ Buka file konfigurasi:
 
 ```bash
 sudo nano /etc/dhcpcd.conf
-
 ```
 
 Tambahkan baris berikut di bagian paling bawah file:
@@ -143,14 +136,12 @@ metric 100
 # Jalur cadangan menggunakan Wi-Fi
 interface wlan0
 metric 200
-
 ```
 
 Simpan file (`Ctrl+O`, `Enter`, lalu `Ctrl+X`), lalu terapkan konfigurasi:
 
 ```bash
 sudo systemctl restart dhcpcd
-
 ```
 
 Verifikasi tabel *routing* dengan perintah `ip route show | grep default` (untuk IPv4) dan `ip -6 route show | grep default` (untuk IPv6). Pastikan rute `eth0` memiliki prioritas metric lebih rendah dibanding `wlan0`.
@@ -167,7 +158,6 @@ Buka file `/etc/sysctl.conf`:
 
 ```bash
 sudo nano /etc/sysctl.conf
-
 ```
 
 Tambahkan atau hilangkan tanda pagar (`#`) pada baris berikut:
@@ -182,14 +172,12 @@ net.ipv6.conf.default.forwarding=1
 
 # Pastikan Pi tetap menerima Router Advertisement (SLAAC) dari router/ISP saat forwarding aktif
 net.ipv6.conf.all.accept_ra=2
-
 ```
 
 Terapkan perubahan:
 
 ```bash
 sudo sysctl -p
-
 ```
 
 ### 2. Pasang Rules Firewall IPv4 (`iptables`)
@@ -205,7 +193,6 @@ sudo iptables -A FORWARD -i zt+ -j ACCEPT
 
 # 3. Lakukan NAT (Masquerade) untuk paket IPv4 dari subnet ZeroTier menuju internet
 sudo iptables -t nat -A POSTROUTING -s 172.29.0.0/16 ! -d 172.29.0.0/16 -j MASQUERADE
-
 ```
 
 *(Catatan: Ganti `172.29.0.0/16` sesuai dengan subnet IPv4 jaringan ZeroTier Anda).*
@@ -223,7 +210,6 @@ sudo ip6tables -A FORWARD -i zt+ -j ACCEPT
 
 # 3. Lakukan NAT66 (Masquerade) untuk paket IPv6 dari subnet ZeroTier menuju internet
 sudo ip6tables -t nat -A POSTROUTING -s fd00::/8 ! -d fd00::/8 -j MASQUERADE
-
 ```
 
 ### 4. Simpan Semua Aturan Secara Permanen
@@ -233,7 +219,6 @@ Instal `iptables-persistent` agar rules `iptables` (IPv4) dan `ip6tables` (IPv6)
 ```bash
 sudo apt install -y iptables-persistent
 sudo netfilter-persistent save
-
 ```
 
 ---
