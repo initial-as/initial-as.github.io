@@ -192,10 +192,10 @@ groups auditor
 
 ### C. Pengujian Hak Akses
 
-Masuk sebagai:
+Masuk sebagai auditor:
 
 ```bash
-su - auditor
+su auditor
 ```
 
 Coba jalankan:
@@ -210,40 +210,52 @@ Diskusikan hasilnya.
 
 ### D. Ownership File
 
+Jika Anda masih menggunakan user auditor, kembali ke user student terlebih dahulu.
+
+```bash
+exit
+```
+
 Buat folder:
 
 ```bash
 mkdir praktikum3
 ```
 
+Masuk ke direktori praktikum3:
+
+```bash
+cd praktikum3
+```
+
 Buat file:
 
 ```bash
-touch praktikum3/rahasia.txt
+touch rahasia.txt
 ```
 
 Lihat ownership:
 
 ```bash
-ls -l praktikum3
+ls -l
 ```
 
 Ubah owner:
 
 ```bash
-sudo chown auditor praktikum3/rahasia.txt
+sudo chown auditor rahasia.txt
 ```
 
 Ubah owner dan group:
 
 ```bash
-sudo chown auditor:adminlab praktikum3/rahasia.txt
+sudo chown auditor:adminlab rahasia.txt
 ```
 
 Verifikasi:
 
 ```bash
-ls -l praktikum3
+ls -l
 ```
 
 ---
@@ -253,19 +265,17 @@ ls -l praktikum3
 Login menggunakan akun user auditor. Atur permission berikut.
 
 ```bash
-chmod 600 praktikum3/rahasia.txt
+chmod 600 rahasia.txt
 ```
 
-Login menggunakan user lain.
-
-Apakah file dapat dibaca?
+Login menggunakan user lain. Apakah file dapat dibaca?
 
 ---
 
 Ubah menjadi
 
 ```bash
-chmod 644 praktikum3/rahasia.txt
+chmod 644 rahasia.txt
 ```
 
 Lakukan pengujian kembali.
@@ -275,14 +285,10 @@ Lakukan pengujian kembali.
 Ubah menjadi
 
 ```bash
-chmod 777 praktikum3/rahasia.txt
+chmod 777 rahasia.txt
 ```
 
-Diskusikan:
-
-Apakah konfigurasi tersebut aman?
-
-Mengapa?
+Diskusikan: Apakah konfigurasi tersebut aman? Mengapa?
 
 ---
 
@@ -300,9 +306,7 @@ Atur:
 chmod 700 data
 ```
 
-Masuk sebagai user lain.
-
-Apakah direktori dapat dibuka?
+Masuk sebagai user lain. Apakah direktori dapat dibuka?
 
 ---
 
@@ -340,6 +344,14 @@ Periksa status:
 ```bash
 sudo systemctl status ssh
 ```
+
+Jika statusnya `Active: inactive (dead)`, aktifkan ssh dengan perintah:
+
+```
+sudo systemctl enable --now ssh
+```
+
+Parameter `--now` berfungsi agar ssh segera diaktifkan tanpa memerlukan reboot.
 
 Edit konfigurasi:
 
@@ -500,11 +512,12 @@ Verifikasi grup masing-masing.
 Buat struktur direktori seperti berikut:
 
 ```text
-/home/auditor/
-    └──project/
-        ├── laporan.pdf
-        ├── backup.tar.gz
-        └── script.sh
+/home/
+    └──auditor/
+        └──project/
+            ├── laporan.pdf
+            ├── backup.tar.gz
+            └── script.sh
 ```
 
 Atur permission sehingga:
