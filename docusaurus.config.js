@@ -191,7 +191,7 @@ const config = {
       },
       tableOfContents: {
         minHeadingLevel: 2,
-        maxHeadingLevel: 2, // Change to your desired max level (2-6)
+        maxHeadingLevel: 3, // Change to your desired max level (2-6)
       },
     }),
 };

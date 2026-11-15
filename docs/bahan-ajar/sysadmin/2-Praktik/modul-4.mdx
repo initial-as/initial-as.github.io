@@ -1,0 +1,916 @@
+---
+title: "4. Application Services dan Virtual Server (Apache Web Server dan Virtual Hosting)"
+---
+
+# Application Services dan Virtual Server (Apache Web Server dan Virtual Hosting)
+
+## 1. Identitas Praktikum
+
+| Komponen              | Keterangan                                           |
+| --------------------- | ---------------------------------------------------- |
+| Program Studi         | Teknologi Informasi / Pendidikan Teknologi Informasi |
+| Mata Kuliah           | Administrasi dan Pemeliharaan Sistem                 |
+| Pertemuan             | 4                                                    |
+| Topik Praktikum       | Application Services dan Virtual Server              |
+| Alokasi Waktu         | 170 menit                                            |
+| Sistem Operasi        | Ubuntu Server LTS atau Debian                        |
+| Bentuk Kegiatan       | Praktik individual atau berpasangan                  |
+| Metode Pembelajaran   | Hands-on Practice dan demonstrasi                    |
+| Platform Virtualisasi | Oracle VirtualBox                                    |
+| Perangkat Lunak       | Apache2, DNS BIND9, dan curl                         |
+| Prasyarat             | Telah menyelesaikan Praktikum Pertemuan 1, 2, dan 3  |
+
+## 2. Deskripsi Praktikum
+
+Praktikum ini membahas instalasi, konfigurasi, dan pengelolaan *application services* pada sistem operasi server, khususnya layanan web server menggunakan Apache. Mahasiswa akan mempelajari bagaimana server menyediakan layanan aplikasi yang dapat diakses oleh komputer klien melalui jaringan.
+
+Selain mengonfigurasi web server, mahasiswa akan menerapkan konsep *virtual hosting* untuk menjalankan beberapa website menggunakan satu server fisik atau virtual dengan memanfaatkan nama domain yang berbeda.
+
+Pada praktikum ini, mahasiswa akan menggunakan Apache sebagai web server dan mengintegrasikannya dengan layanan DNS BIND9 yang telah dikonfigurasi pada pertemuan sebelumnya. Dengan demikian, website yang dibuat dapat diakses menggunakan nama domain lokal, bukan hanya melalui alamat IP server.
+
+Praktikum ini merupakan kelanjutan dari pembangunan lingkungan server pada pertemuan 1 sampai dengan pertemuan 3. Konfigurasi DNS, DHCP, Samba, dan SSH yang telah dibuat sebelumnya tetap dipertahankan.
+
+## 3. Capaian Pembelajaran Praktikum
+
+Setelah menyelesaikan praktikum ini, mahasiswa diharapkan mampu:
+
+1. Menjelaskan konsep *application services* dan web server dalam lingkungan server.
+2. Menjelaskan konsep virtual hosting dan fungsinya dalam pengelolaan website.
+3. Menginstalasi dan mengonfigurasi Apache web server pada Linux.
+4. Membuat dan mengelola direktori serta berkas website pada server.
+5. Mengonfigurasi *name-based virtual host* menggunakan Apache.
+6. Mengintegrasikan layanan web server dengan DNS lokal.
+7. Melakukan pengujian akses website melalui alamat IP dan nama domain.
+8. Melakukan pemeriksaan, pemecahan masalah, dan dokumentasi konfigurasi web server.
+
+## 4. Kompetensi yang Relevan
+
+Praktikum ini berkaitan dengan kompetensi administrator sistem, khususnya:
+
+1. Mengidentifikasi kebutuhan layanan aplikasi pada lingkungan server.
+2. Menginstalasi dan mengonfigurasi perangkat lunak layanan server.
+3. Mengelola layanan web server pada sistem operasi Linux.
+4. Mengonfigurasi virtual hosting untuk beberapa website.
+5. Mengintegrasikan layanan aplikasi dengan layanan jaringan.
+6. Melakukan pengujian dan pemeliharaan layanan aplikasi server.
+
+## 5. Dasar Teori
+
+### 5.1. Application Services
+
+Application services merupakan layanan yang disediakan oleh server untuk menjalankan atau menyediakan aplikasi yang dapat digunakan oleh komputer klien melalui jaringan. Dalam lingkungan server, application services memungkinkan pengguna mengakses berbagai aplikasi tanpa harus menjalankan seluruh proses aplikasi pada perangkat masing-masing. Contoh application services antara lain:
+
+1. Web server.
+2. Database server.
+3. Mail server.
+4. File sharing server.
+5. Application server.
+
+Pada praktikum ini, mahasiswa akan mengimplementasikan web server sebagai salah satu bentuk application services.
+
+### 5.2. Web Server
+
+Web server merupakan perangkat lunak yang bertugas menerima permintaan dari klien melalui protokol HTTP atau HTTPS dan mengirimkan respons berupa halaman web maupun sumber daya lainnya. Proses komunikasi antara klien dan web server secara umum berlangsung sebagai berikut:
+
+1. Pengguna memasukkan alamat website pada browser.
+2. Browser memperoleh alamat IP server melalui proses DNS resolution.
+3. Browser mengirimkan HTTP request ke server.
+4. Web server memproses permintaan tersebut.
+5. Web server mengirimkan HTTP response kepada klien.
+6. Browser menampilkan halaman website kepada pengguna.
+
+Web server umumnya menggunakan port berikut:
+
+| Protokol | Port Default | Fungsi                             |
+| -------- | ------------ | ---------------------------------- |
+| HTTP     | 80           | Komunikasi web tanpa enkripsi      |
+| HTTPS    | 443          | Komunikasi web dengan enkripsi TLS |
+
+### 5.3. Apache Web Server
+
+Apache HTTP Server merupakan perangkat lunak web server yang bersifat open source dan banyak digunakan untuk menyediakan layanan website. Apache mendukung berbagai fitur, antara lain:
+
+1. Menyediakan halaman web melalui protokol HTTP.
+2. Mengelola beberapa website menggunakan virtual hosting.
+3. Mengatur akses terhadap direktori website.
+4. Mendukung modul tambahan untuk memperluas fungsionalitas.
+5. Mengelola konfigurasi website secara terpisah.
+
+Pada Ubuntu Server dan Debian, Apache dapat diinstalasi melalui package manager:
+
+```
+sudo apt install apache2
+```
+
+Beberapa direktori dan berkas penting Apache adalah:
+
+| Direktori/Berkas                | Fungsi                                   |
+| ------------------------------- | ---------------------------------------- |
+| `/etc/apache2/`                 | Direktori konfigurasi Apache             |
+| `/etc/apache2/sites-available/` | Konfigurasi virtual host yang tersedia   |
+| `/etc/apache2/sites-enabled/`   | Konfigurasi virtual host yang diaktifkan |
+| `/var/www/html/`                | Direktori default website                |
+| `/var/log/apache2/access.log`   | Catatan permintaan yang diterima server  |
+| `/var/log/apache2/error.log`    | Catatan kesalahan layanan Apache         |
+
+### 5.4. Virtual Hosting
+
+Virtual hosting merupakan teknik yang memungkinkan satu web server melayani beberapa website menggunakan satu alamat IP atau satu server. Dengan virtual hosting, administrator dapat mengelola beberapa website tanpa harus menyediakan satu server fisik atau virtual untuk setiap website. Terdapat beberapa jenis virtual hosting:
+
+1. **Name-based virtual hosting:** beberapa website menggunakan alamat IP yang sama, tetapi dibedakan berdasarkan nama domain atau hostname.
+2. **IP-based virtual hosting:** setiap website menggunakan alamat IP yang berbeda.
+3. **Port-based virtual hosting:** website dibedakan berdasarkan nomor port yang digunakan.
+
+Pada praktikum ini, mahasiswa akan menggunakan *name-based virtual hosting*. Sebagai contoh, satu server dengan alamat IP `192.168.56.10` dapat melayani dua website:
+
+| Nama Domain       | Alamat IP     |
+| ----------------- | ------------- |
+| `web.pti.test`    | 192.168.56.10 |
+| `portal.pti.test` | 192.168.56.10 |
+
+Apache akan menentukan website yang harus ditampilkan berdasarkan informasi hostname pada HTTP request yang diterima.
+
+### 5.5. Apache Virtual Host Configuration
+
+Konfigurasi virtual host Apache pada Ubuntu Server atau Debian umumnya disimpan pada direktori:
+
+```
+/etc/apache2/sites-available/
+```
+
+Setiap website dapat memiliki berkas konfigurasi tersendiri.
+
+Contoh konfigurasi virtual host:
+
+```
+<VirtualHost *:80>
+    ServerName web.pti.test
+    DocumentRoot /var/www/web.pti.test/public_html
+
+    ErrorLog ${APACHE_LOG_DIR}/web-error.log
+    CustomLog ${APACHE_LOG_DIR}/web-access.log combined
+</VirtualHost>
+```
+
+Beberapa parameter penting dalam konfigurasi tersebut adalah:
+
+| Parameter      | Fungsi                                                 |
+| -------------- | ------------------------------------------------------ |
+| `VirtualHost`  | Menentukan alamat dan port yang digunakan virtual host |
+| `ServerName`   | Menentukan nama domain website                         |
+| `DocumentRoot` | Menentukan direktori utama berkas website              |
+| `ErrorLog`     | Menentukan lokasi log kesalahan website                |
+| `CustomLog`    | Menentukan lokasi log aktivitas akses website          |
+
+Apache menyediakan perintah untuk mengaktifkan dan menonaktifkan konfigurasi virtual host:
+
+```
+sudo a2ensite nama-konfigurasi.conf
+```
+
+Untuk menonaktifkan virtual host:
+
+```
+sudo a2dissite nama-konfigurasi.conf
+```
+
+### 5.6. Integrasi DNS dan Web Server
+
+Web server dapat diakses melalui nama domain apabila DNS telah dikonfigurasi untuk mengarahkan nama domain tersebut ke alamat IP server.
+
+Dalam praktikum sebelumnya, mahasiswa telah membuat DNS server lokal menggunakan BIND9. Layanan tersebut akan digunakan untuk mengarahkan nama domain website ke alamat IP server.
+
+Sebagai contoh:
+
+```
+web.pti.test    A    192.168.56.10
+```
+
+Dengan konfigurasi tersebut, klien dapat mengakses website melalui alamat:
+
+```
+http://web.pti.test
+```
+
+DNS bertugas menerjemahkan nama domain menjadi alamat IP, sedangkan Apache bertugas menentukan dan menyajikan konten website berdasarkan nama domain yang diminta klien.
+
+### 5.7. Nginx sebagai Alternatif Web Server
+
+Selain Apache, terdapat perangkat lunak web server lain yang banyak digunakan, yaitu Nginx. Nginx merupakan web server yang juga mendukung virtual hosting dan dapat digunakan sebagai alternatif Apache. Beberapa perbedaan umum antara Apache dan Nginx adalah:
+
+| Aspek                    | Apache                                 | Nginx                                         |
+| ------------------------ | -------------------------------------- | --------------------------------------------- |
+| Konfigurasi virtual host | VirtualHost                            | Server block                                  |
+| Direktori konfigurasi    | `/etc/apache2/`                        | `/etc/nginx/`                                 |
+| Pengelolaan website      | `a2ensite` dan `a2dissite`             | Symlink konfigurasi                           |
+| Model pemrosesan         | Multi-Processing Modules (MPM)         | Event-driven architecture                     |
+| Penggunaan               | Web server dan application integration | Web server, reverse proxy, dan load balancing |
+
+Pada praktikum ini, Apache digunakan sebagai implementasi utama. Nginx dapat digunakan sebagai alternatif web server atau pun dikombinasikan sebagai reverse proxy.
+
+:::info
+Apache dan Nginx dapat diinstal pada satu server, tetapi tidak dapat menggunakan alamat IP dan port yang sama secara bersamaan tanpa konfigurasi tambahan. Untuk praktikum ini, gunakan salah satu web server sebagai layanan utama.
+:::
+
+## 6. Alat dan Bahan
+
+Perangkat yang diperlukan dalam praktikum ini adalah:
+
+| No. | Alat/Bahan                    | Keterangan                                           |
+| --- | ----------------------------- | ---------------------------------------------------- |
+| 1   | Komputer atau laptop          | Perangkat utama praktikum                            |
+| 2   | Oracle VM VirtualBox          | Menjalankan virtual machine                          |
+| 3   | Ubuntu Server LTS atau Debian | Sistem operasi server                                |
+| 4   | Ubuntu Desktop atau Windows   | Sistem operasi klien                                 |
+| 5   | Apache2                       | Web server                                           |
+| 6   | BIND9                         | DNS server yang telah dikonfigurasi pada pertemuan 3 |
+| 7   | curl                          | Pengujian HTTP request                               |
+| 8   | Browser                       | Mengakses website dari komputer klien                |
+| 9   | Terminal Linux                | Melakukan konfigurasi server                         |
+| 10  | Koneksi jaringan virtual      | Menghubungkan server dan klien                       |
+
+**Ketentuan lingkungan praktikum:**
+
+1. Gunakan VM server yang telah dibuat pada pertemuan 1 dan dikembangkan pada pertemuan 2 dan 3.
+2. Pastikan layanan DNS BIND9 dapat berjalan dengan baik.
+3. Pastikan komputer klien dapat berkomunikasi dengan server.
+4. Gunakan domain lokal `pti.test` dan alamat IP server `192.168.56.10` sesuai skema praktikum sebelumnya.
+5. Pastikan tidak terdapat layanan web server lain yang menggunakan port 80 pada server.
+
+## 7. Keselamatan dan Ketentuan Praktikum
+
+1. Lakukan konfigurasi menggunakan akun administrator hanya ketika diperlukan.
+2. Buat salinan konfigurasi sebelum melakukan perubahan pada berkas sistem.
+3. Hindari mengubah permission direktori website menjadi `777`.
+4. Pastikan direktori website memiliki kepemilikan dan permission yang sesuai.
+5. Periksa konfigurasi Apache sebelum melakukan restart layanan.
+6. Pertahankan konfigurasi DNS, DHCP, Samba, dan SSH dari praktikum sebelumnya.
+7. Gunakan jaringan lokal terisolasi untuk pengujian website.
+8. Jangan membuka layanan web server ke jaringan publik tanpa mempertimbangkan aspek keamanan.
+
+## 8. Langkah Kerja Praktikum
+
+Total alokasi waktu: 170 menit
+
+### 8.1. Pemeriksaan Kondisi Awal Server (10 menit)
+
+Pastikan server yang digunakan merupakan VM yang telah dikonfigurasi pada pertemuan sebelumnya. Jalankan perintah berikut:
+
+```
+hostnamectl
+ip -br address
+systemctl is-active ssh
+systemctl is-active smbd
+systemctl is-active bind9
+systemctl is-active kea-dhcp4-server
+```
+
+Catat informasi berikut:
+
+1. Hostname server.
+2. Alamat IP server.
+3. Status layanan SSH.
+4. Status layanan Samba.
+5. Status layanan DNS BIND9.
+6. Status layanan DHCP Kea.
+
+Pastikan layanan DNS dapat berjalan dengan baik sebelum melanjutkan konfigurasi web server.
+
+### 8.2. Pemeriksaan dan Persiapan DNS (15 menit)
+
+Pada tahap ini, mahasiswa akan memastikan domain website telah diarahkan ke alamat IP server melalui DNS lokal.
+
+1. Memeriksa konfigurasi zona DNS
+
+   Buka berkas konfigurasi zona:
+
+   ```
+   sudo nano /etc/bind/db.pti.test
+   ```
+
+   Pastikan terdapat record untuk domain website:
+
+   ```
+   @       IN  NS  server.pti.test.
+   @       IN  A   192.168.56.10
+   server  IN  A   192.168.56.10
+   web     IN  A   192.168.56.10
+   portal  IN  A   192.168.56.10
+   ```
+
+   Jika record `web` dan `portal` belum tersedia, tambahkan keduanya.
+
+   Perbarui nomor serial SOA setiap kali melakukan perubahan pada berkas zona.
+
+2. Memeriksa konfigurasi zona DNS
+
+   Jalankan:
+
+   ```
+   sudo named-checkconf
+   sudo named-checkzone pti.test /etc/bind/db.pti.test
+   ```
+
+   Pastikan hasil pemeriksaan menunjukkan status `OK`.
+
+3. Memulai ulang layanan BIND9
+
+   ```
+   sudo systemctl restart bind9
+   ```
+
+4. Menguji resolusi nama domain
+
+   Jalankan:
+
+   ```
+   dig @127.0.0.1 web.pti.test
+   dig @127.0.0.1 portal.pti.test
+   ```
+
+   Pastikan kedua domain mengarah ke alamat IP:
+
+   ```
+   192.168.56.10
+   ```
+
+### 8.3. Instalasi Apache Web Server (20 menit)
+
+Pada tahap ini, mahasiswa akan menginstalasi Apache sebagai web server.
+
+1. Memperbarui daftar paket
+
+   ```
+   sudo apt update
+   ```
+
+2. Menginstal Apache
+
+   ```
+   sudo apt install apache2 curl -y
+   ```
+
+3. Memeriksa status layanan Apache
+
+   ```
+   sudo systemctl status apache2
+   ```
+
+4. Mengaktifkan layanan Apache
+
+   ```
+   sudo systemctl enable --now apache2
+   ```
+
+5. Memeriksa status layanan
+
+   ```
+   systemctl is-active apache2
+   ```
+
+   Hasil yang diharapkan adalah `active`.
+
+6. Memeriksa port yang digunakan Apache
+
+   Jalankan:
+
+   ```
+   sudo ss -lntp | grep ':80'
+   ```
+
+   Pastikan Apache telah mendengarkan pada port 80.
+
+### 8.4. Membuat Website Pertama (30 menit)
+
+Pada tahap ini, mahasiswa akan membuat website pertama dengan nama domain `web.pti.test`.
+
+1. Membuat direktori website
+
+   Buat direktori untuk menyimpan berkas website:
+
+   ```
+   sudo mkdir -p /var/www/web.pti.test/public_html
+   ```
+
+2. Mengatur kepemilikan direktori
+
+   Gunakan akun administrator sebagai pemilik direktori:
+
+   ```
+   sudo chown -R root:root /var/www/web.pti.test
+   ```
+
+   Atur permission direktori dan berkas:
+
+   ```
+   sudo find /var/www/web.pti.test -type d -exec chmod 755 {} \;
+   sudo find /var/www/web.pti.test -type f -exec chmod 644 {} \;
+   ```
+
+3. Membuat halaman website
+
+   Buat berkas `index.html`:
+
+   ```
+   sudo nano /var/www/web.pti.test/public_html/index.html
+   ```
+
+   Masukkan kode HTML berikut:
+
+   ```
+   <!DOCTYPE html>
+   <html lang="id">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Website PTI</title>
+   </head>
+   <body>
+      <h1>Selamat Datang di Website PTI</h1>
+      <p>Website ini berjalan menggunakan Apache Web Server.</p>
+      <p>Domain: web.pti.test</p>
+      <p>Server IP: 192.168.56.10</p>
+   </body>
+   </html>
+   ```
+
+   Simpan berkas tersebut.
+
+4. Membuat konfigurasi virtual host
+
+   Buat berkas konfigurasi:
+
+   ```
+   sudo nano /etc/apache2/sites-available/web.pti.test.conf
+   ```
+
+   Masukkan konfigurasi berikut:
+
+   ```
+   <VirtualHost *:80>
+      ServerName web.pti.test
+      DocumentRoot /var/www/web.pti.test/public_html
+
+      <Directory /var/www/web.pti.test/public_html>
+         Options -Indexes
+         AllowOverride None
+         Require all granted
+      </Directory>
+
+      ErrorLog ${APACHE_LOG_DIR}/web-error.log
+      CustomLog ${APACHE_LOG_DIR}/web-access.log combined
+   </VirtualHost>
+   ```
+
+   Penjelasan konfigurasi:
+
+   | Parameter             | Fungsi                                                              |
+   | --------------------- | ------------------------------------------------------------------- |
+   | `VirtualHost *:80`    | Menentukan virtual host pada port 80                                |
+   | `ServerName`          | Menentukan nama domain website                                      |
+   | `DocumentRoot`        | Menentukan direktori utama website                                  |
+   | `Options -Indexes`    | Mencegah penampilan daftar isi direktori                            |
+   | `AllowOverride None`  | Menonaktifkan penggunaan aturan `.htaccess` pada direktori tersebut |
+   | `Require all granted` | Mengizinkan permintaan akses terhadap direktori                     |
+   | `ErrorLog`            | Menentukan lokasi log kesalahan                                     |
+   | `CustomLog`           | Menentukan lokasi log aktivitas akses                               |
+
+5. Mengaktifkan virtual host
+
+   Jalankan:
+
+   ```
+   sudo a2ensite web.pti.test.conf
+   ```
+
+6. Memeriksa konfigurasi Apache
+
+   ```
+   sudo apache2ctl configtest
+   ```
+
+   Pastikan hasil pemeriksaan menunjukkan:
+
+   ```
+   Syntax OK
+   ```
+
+7. Memuat ulang konfigurasi Apache
+
+   ```
+   sudo systemctl reload apache2
+   ```
+
+   :::tip
+   Jika terjadi masalah ketika menjalankan layanan Apache, gunakan perintah berikut untuk memeriksanya:
+
+   ```
+   sudo journalctl -u apache2 -n 50 --no-pager
+   ```
+   :::
+
+### 8.5. Membuat Virtual Host Kedua (25 menit)
+
+Pada tahap ini, mahasiswa akan membuat website kedua menggunakan domain `portal.pti.test`. Kedua website akan berjalan pada server dan alamat IP yang sama.
+
+1. Membuat direktori website kedua
+
+   ```
+   sudo mkdir -p /var/www/portal.pti.test/public_html
+   ```
+
+2. Membuat halaman website kedua
+
+   Buat berkas:
+
+   ```
+   sudo nano /var/www/portal.pti.test/public_html/index.html
+   ```
+
+   Masukkan kode berikut:
+
+   ```
+   <!DOCTYPE html>
+   <html lang="id">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Portal Akademik PTI</title>
+   </head>
+   <body>
+      <h1>Portal Akademik PTI</h1>
+      <p>Website kedua pada server praktikum.</p>
+      <p>Domain: portal.pti.test</p>
+      <p>Server IP: 192.168.56.10</p>
+   </body>
+   </html>
+   ```
+
+3. Mengatur permission direktori
+
+   ```
+   sudo chown -R root:root /var/www/portal.pti.test
+   sudo find /var/www/portal.pti.test -type d -exec chmod 755 {} \;
+   sudo find /var/www/portal.pti.test -type f -exec chmod 644 {} \;
+   ```
+
+4. Membuat konfigurasi virtual host kedua
+
+   Buat berkas konfigurasi:
+
+   ```
+   sudo nano /etc/apache2/sites-available/portal.pti.test.conf
+   ```
+
+   Masukkan konfigurasi berikut:
+
+   ```
+   <VirtualHost *:80>
+      ServerName portal.pti.test
+      DocumentRoot /var/www/portal.pti.test/public_html
+
+      <Directory /var/www/portal.pti.test/public_html>
+         Options -Indexes
+         AllowOverride None
+         Require all granted
+      </Directory>
+
+      ErrorLog ${APACHE_LOG_DIR}/portal-error.log
+      CustomLog ${APACHE_LOG_DIR}/portal-access.log combined
+   </VirtualHost>
+   ```
+
+5. Mengaktifkan virtual host kedua
+
+   ```
+   sudo a2ensite portal.pti.test.conf
+   ```
+
+6. Memeriksa seluruh konfigurasi
+
+   ```
+   sudo apache2ctl configtest
+   ```
+
+   Pastikan tidak terdapat kesalahan konfigurasi.
+
+7. Memuat ulang layanan Apache
+
+   ```
+   sudo systemctl reload apache2
+   ```
+
+8. Memeriksa daftar virtual host
+
+   Jalankan:
+
+   ```
+   sudo apache2ctl -S
+   ```
+
+   Periksa apakah kedua domain telah terdaftar sebagai virtual host pada port 80.
+
+### 8.6. Pengujian Website dan Virtual Hosting (25 menit)
+
+Pada tahap ini, mahasiswa akan melakukan pengujian untuk memastikan kedua website dapat diakses melalui nama domain masing-masing.
+
+1. Menguji website pertama dari server
+
+   Jalankan:
+
+   ```
+   curl http://web.pti.test
+   ```
+
+   Pastikan respons menampilkan konten website pertama.
+
+2. Menguji website kedua dari server
+
+   ```
+   curl http://portal.pti.test
+   ```
+
+   Pastikan respons menampilkan konten website kedua.
+
+3. Menguji berdasarkan alamat IP
+
+   Jalankan:
+
+   ```
+   curl http://192.168.56.10
+   ```
+
+   Perhatikan bahwa permintaan langsung menggunakan alamat IP tidak secara otomatis memilih salah satu website berdasarkan nama domain. Apache dapat menampilkan virtual host default apabila permintaan tidak menyertakan hostname yang sesuai.
+
+   Untuk menguji virtual host melalui alamat IP tetapi tetap menyertakan hostname, gunakan:
+
+   ```
+   curl -H "Host: web.pti.test" http://192.168.56.10
+   ```
+
+   Kemudian:
+
+   ```
+   curl -H "Host: portal.pti.test" http://192.168.56.10
+   ```
+
+   Periksa apakah masing-masing permintaan menampilkan konten website yang sesuai.
+
+   :::tip
+   Jika website tidak dapat diakses, periksa konektivitas jaringan, resolusi DNS, status Apache, konfigurasi virtual host, dan aturan firewall.
+   
+   Jika web tidak menampilkan hasil yang sesuai, periksa log kesalahan Apache:
+
+   ```
+   sudo tail -n 50 /var/log/apache2/error.log
+   ```
+   :::
+
+4. Menguji dari komputer klien
+
+   Pastikan komputer klien telah memperoleh konfigurasi jaringan dari DHCP dan menggunakan DNS server `192.168.56.10`.
+
+   Buka browser pada komputer klien, kemudian akses:
+
+   ```
+   http://web.pti.test
+   ```
+
+   Selanjutnya akses:
+
+   ```
+   http://portal.pti.test
+   ```
+
+   Pastikan kedua website menampilkan halaman yang berbeda meskipun menggunakan alamat IP server yang sama.
+
+5. Memeriksa log akses Apache
+
+   Pada server, jalankan:
+
+   ```
+   sudo tail -f /var/log/apache2/web-access.log
+   ```
+
+   Buka website pertama dari komputer klien dan perhatikan apakah permintaan tercatat pada log.
+
+   Lakukan pemeriksaan serupa untuk website kedua:
+
+   ```
+   sudo tail -f /var/log/apache2/portal-access.log
+   ```
+
+   Untuk menghentikan tampilan log secara langsung, tekan <kbd>Ctrl</kbd> + <kbd>C</kbd>.
+
+### 8.7. Pemeriksaan dan Dokumentasi (15 menit)
+
+Pada tahap terakhir, mahasiswa melakukan pemeriksaan keseluruhan konfigurasi web server. Jalankan perintah berikut:
+
+```
+systemctl is-active apache2
+sudo apache2ctl configtest
+sudo apache2ctl -S
+sudo ss -lntp | grep ':80'
+```
+
+Periksa juga status DNS:
+
+```
+systemctl is-active bind9
+dig @127.0.0.1 web.pti.test
+dig @127.0.0.1 portal.pti.test
+```
+
+Periksa struktur direktori website:
+
+```
+ls -l /var/www/web.pti.test/public_html
+ls -l /var/www/portal.pti.test/public_html
+```
+
+Dokumentasikan hasil pengujian dalam tabel berikut.
+
+| No. | Pengujian                      | Hasil yang Diharapkan | Hasil Aktual |
+| --- | ------------------------------ | --------------------- | ------------ |
+| 1   | Status layanan Apache          | Aktif                 | ...          |
+| 2   | Pemeriksaan konfigurasi Apache | Syntax OK             | ...          |
+| 3   | Virtual host pertama           | Terdaftar             | ...          |
+| 4   | Virtual host kedua             | Terdaftar             | ...          |
+| 5   | Resolusi `web.pti.test`        | 192.168.56.10         | ...          |
+| 6   | Resolusi `portal.pti.test`     | 192.168.56.10         | ...          |
+| 7   | Akses website pertama          | Berhasil              | ...          |
+| 8   | Akses website kedua            | Berhasil              | ...          |
+| 9   | Pemeriksaan log akses          | Permintaan tercatat   | ...          |
+
+## 9. Penugasan Praktikum
+
+Mahasiswa diwajibkan menyelesaikan beberapa tugas berikut.
+
+### 9.1. Tugas 1: Membuat Website Ketiga
+
+1. Buat website baru dengan nama domain `lab.pti.test`.
+2. Buat direktori website pada `/var/www/lab.pti.test/public_html`.
+3. Buat halaman utama `index.html` dengan informasi nama website, deskripsi layanan, dan identitas server.
+4. Atur permission direktori dan berkas website.
+5. Dokumentasikan struktur direktori website.
+
+### 9.2. Tugas 2: Konfigurasi DNS dan Virtual Host
+
+1. Tambahkan DNS record `lab` pada zona `pti.test`.
+2. Arahkan `lab.pti.test` ke alamat IP `192.168.56.10`.
+3. Buat konfigurasi virtual host Apache untuk `lab.pti.test`.
+4. Aktifkan konfigurasi virtual host.
+5. Periksa konfigurasi menggunakan `apache2ctl configtest`.
+6. Muat ulang layanan Apache.
+
+### 9.3. Tugas 3: Pengujian Website
+
+1. Uji resolusi DNS menggunakan `dig` atau `nslookup`.
+2. Uji akses website menggunakan `curl`.
+3. Akses website dari komputer klien melalui browser.
+4. Pastikan website dapat diakses menggunakan nama domain.
+5. Periksa log akses dan log kesalahan Apache.
+
+### 9.4. Tugas 4: Analisis Virtual Hosting
+
+Buat analisis singkat berdasarkan implementasi tiga website pada satu server. Analisis harus mencakup:
+
+1. Perbedaan alamat IP dan nama domain dalam proses akses website.
+2. Cara Apache membedakan permintaan untuk beberapa website.
+3. Manfaat virtual hosting dalam pengelolaan server.
+4. Risiko keamanan jika permission direktori website tidak dikonfigurasi dengan benar.
+5. Perbedaan penggunaan Apache dan Nginx sebagai web server.
+
+## 10. Pertanyaan Analisis
+
+Jawablah pertanyaan berikut berdasarkan hasil praktikum.
+
+1. Apa yang dimaksud dengan application services dalam lingkungan server?
+2. Jelaskan fungsi web server dalam komunikasi antara klien dan server.
+3. Apa perbedaan protokol HTTP dan HTTPS?
+4. Mengapa web server perlu diintegrasikan dengan DNS?
+5. Apa yang dimaksud dengan name-based virtual hosting?
+6. Bagaimana Apache dapat melayani beberapa website menggunakan satu alamat IP?
+7. Apa fungsi parameter `ServerName` dan `DocumentRoot` dalam konfigurasi virtual host?
+8. Mengapa konfigurasi virtual host harus diperiksa menggunakan `apache2ctl configtest` sebelum layanan dimuat ulang?
+9. Apa yang terjadi jika dua virtual host menggunakan `ServerName` yang sama?
+10. Jika domain dapat diterjemahkan menjadi alamat IP tetapi website tidak dapat diakses, komponen apa saja yang perlu diperiksa?
+11. Apa perbedaan Apache dan Nginx dari sisi konfigurasi virtual hosting?
+12. Mengapa administrator perlu memeriksa access log dan error log pada web server?
+
+## 11. Format Laporan Praktikum
+
+Laporan praktikum disusun secara sistematis dengan struktur sebagai berikut:
+
+### 11.1. Halaman Judul
+
+Memuat:
+
+1. Nama mata kuliah.
+2. Judul praktikum.
+3. Nama dan NIM mahasiswa.
+4. Program studi.
+
+### 11.2. Tujuan Praktikum
+
+Menjelaskan tujuan dan kompetensi yang ingin dicapai dalam kegiatan praktikum.
+
+### 11.3. Dasar Teori
+
+Memuat penjelasan mengenai:
+
+1. Application services.
+2. Konsep web server.
+3. Apache web server.
+4. Virtual hosting.
+5. Integrasi DNS dan web server.
+
+### 11.4. Alat dan Bahan
+
+Menjelaskan perangkat keras dan perangkat lunak yang digunakan.
+
+### 11.5. Langkah Kerja
+
+Memuat:
+
+1. Pemeriksaan dan persiapan DNS.
+2. Instalasi Apache.
+3. Pembuatan website pertama.
+4. Konfigurasi virtual host pertama.
+5. Pembuatan website kedua.
+6. Konfigurasi virtual host kedua.
+7. Pengujian website dari server dan klien.
+
+### 11.6. Hasil Praktikum
+
+Memuat:
+
+1. Hasil instalasi Apache.
+2. Hasil konfigurasi DNS untuk domain website.
+3. Hasil pembuatan direktori dan halaman website.
+4. Hasil konfigurasi virtual host.
+5. Hasil pengujian website melalui nama domain.
+6. Hasil pemeriksaan access log dan error log.
+
+### 11.7. Analisis dan Pembahasan
+
+Memuat analisis keberhasilan dan kegagalan konfigurasi, pembahasan mekanisme virtual hosting, integrasi DNS dengan web server, serta jawaban pertanyaan analisis.
+
+### 11.8. Kesimpulan
+
+Berisi ringkasan hasil praktikum dan kompetensi yang telah dicapai.
+
+### 11.9. Lampiran
+
+Memuat screenshot konfigurasi, struktur direktori website, berkas konfigurasi virtual host, hasil pengujian, dan dokumentasi log Apache.
+
+**Ketentuan penulisan:**
+
+1. Laporan menggunakan bahasa Indonesia formal dan akademik.
+2. Setiap screenshot harus disertai keterangan.
+3. Perintah Linux harus ditampilkan menggunakan format kode.
+4. Konfigurasi virtual host harus dilampirkan dalam laporan.
+5. Hasil pengujian harus sesuai dengan kondisi aktual, bukan sekadar hasil yang diharapkan.
+
+## 12. Penilaian Praktikum
+
+Penilaian dilakukan berdasarkan aspek keterampilan konfigurasi, ketepatan pengujian, analisis, dan dokumentasi.
+
+| No. | Aspek Penilaian                             | Bobot    |
+| --- | ------------------------------------------- | -------- |
+| 1   | Persiapan dan integrasi DNS                 | 10%      |
+| 2   | Instalasi dan konfigurasi Apache            | 20%      |
+| 3   | Pembuatan website dan pengaturan permission | 15%      |
+| 4   | Konfigurasi virtual hosting                 | 25%      |
+| 5   | Pengujian website dan pemeriksaan log       | 20%      |
+| 6   | Analisis dan kelengkapan laporan            | 10%      |
+|     | **Total**                                   | **100%** |
+
+## 13. Indikator Keberhasilan
+
+Praktikum dinyatakan berhasil apabila mahasiswa mampu memenuhi indikator berikut:
+
+1. Menginstalasi dan menjalankan Apache web server.
+2. Membuat direktori dan halaman website pada server.
+3. Mengatur kepemilikan dan permission direktori website.
+4. Mengonfigurasi virtual host pertama.
+5. Mengonfigurasi virtual host kedua.
+6. Mengintegrasikan domain website dengan DNS lokal.
+7. Mengakses beberapa website melalui satu alamat IP server menggunakan nama domain berbeda.
+8. Memeriksa konfigurasi Apache dan status layanan.
+9. Memeriksa access log dan error log.
+10. Mendokumentasikan seluruh konfigurasi dan hasil pengujian.
+
+## 14. Keterkaitan dengan Praktikum Pertemuan Berikutnya
+
+Praktikum pertemuan 4 menghasilkan server Linux yang telah dilengkapi dengan layanan web server Apache dan konfigurasi virtual hosting. Server mampu menyediakan beberapa website menggunakan satu alamat IP dengan nama domain yang berbeda. Konfigurasi tersebut akan menjadi dasar untuk praktikum pertemuan 5, yaitu **Keamanan dan Hardening Sistem Server**.
+
+Pada pertemuan berikutnya, mahasiswa akan menerapkan berbagai mekanisme pengamanan terhadap server yang telah dibangun, meliputi pengamanan akses SSH, pengaturan hak akses pengguna, konfigurasi firewall, pembaruan sistem, dan pemeriksaan log keamanan. Pengamanan tersebut diperlukan agar layanan yang telah dikonfigurasi pada pertemuan sebelumnya dapat berjalan dengan lebih aman dan terkontrol.
+
+## 15. Referensi
+
+1. Apache Software Foundation. *Apache HTTP Server Documentation*. [Apache HTTP Server Documentation](https://httpd.apache.org/docs/).
+2. Canonical. *Ubuntu Server Documentation*. [Ubuntu Server Documentation](https://documentation.ubuntu.com/server/).
+3. Internet Systems Consortium. *BIND 9 Administrator Reference Manual*. [BIND 9 Documentation](https://bind9.readthedocs.io/).
+4. Debian Project. *Debian Administrator's Handbook*. [Debian Administrator's Handbook](https://debian-handbook.info/).
+5. Nginx. *Nginx Documentation*. [Nginx Documentation](https://nginx.org/en/docs/).
