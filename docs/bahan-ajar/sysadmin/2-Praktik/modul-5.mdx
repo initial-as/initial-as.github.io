@@ -1,0 +1,646 @@
+---
+title: "5. Keamanan dan Hardening Server (Server Security and Hardening)"
+---
+
+# Keamanan dan Hardening Server (_Server Security and Hardening_)
+
+## 1. Identitas Praktikum
+
+| Komponen             | Keterangan                                |
+| -------------------- | ----------------------------------------- |
+| Program Studi        | Pendidikan Teknologi Informasi            |
+| Mata Kuliah          | Administrator Sistem                      |
+| Pertemuan            | 5                                         |
+| Topik Praktikum      | Keamanan dan Hardening Server             |
+| Alokasi Waktu        | 170 menit                                 |
+| Sistem Operasi       | Ubuntu Server LTS atau Debian             |
+| Bentuk Kegiatan      | Praktik individual atau berpasangan       |
+| Metode Pembelajaran  | Hands-on Practice dan demonstrasi         |
+| Lingkungan Praktikum | Oracle VirtualBox                         |
+| Perangkat Lunak      | UFW, OpenSSH, Apache2, dan utilitas Linux |
+| Prasyarat            | Telah menyelesaikan praktikum sebelumnya  |
+
+## 2. Deskripsi Praktikum
+
+Praktikum ini membahas penerapan keamanan dasar dan *hardening* pada server Linux yang telah dikonfigurasi pada pertemuan sebelumnya. Mahasiswa akan melakukan identifikasi potensi kerentanan, menerapkan pengamanan akses pengguna, mengatur firewall, mengamankan layanan SSH, serta melakukan pembaruan sistem dan pemeriksaan log keamanan.
+
+Praktikum dilaksanakan dengan melanjutkan konfigurasi server dari pertemuan 2 sampai dengan pertemuan 5. Server yang telah memiliki layanan berbagi berkas Samba, layanan jaringan, dan web server Apache akan diamankan agar hanya menyediakan akses dan layanan yang diperlukan.
+
+Melalui praktikum ini, mahasiswa diharapkan memahami bahwa keamanan server tidak hanya bergantung pada firewall, tetapi juga mencakup pengelolaan akun, hak akses, konfigurasi layanan, pembaruan sistem, serta pemantauan aktivitas server.
+
+## 3. Capaian Pembelajaran Praktikum
+
+Setelah menyelesaikan praktikum ini, mahasiswa diharapkan mampu:
+
+1. Mengidentifikasi potensi risiko keamanan pada server Linux.
+2. Memeriksa akun pengguna, grup, dan hak akses pada sistem.
+3. Mengamankan layanan SSH melalui konfigurasi akses yang sesuai.
+4. Mengonfigurasi firewall menggunakan UFW.
+5. Menerapkan prinsip *least privilege* dalam pengelolaan akses.
+6. Melakukan pembaruan sistem dan pemeriksaan layanan yang berjalan.
+7. Memeriksa log sistem untuk mengidentifikasi aktivitas yang berpotensi mengganggu keamanan.
+8. Melakukan pengujian terhadap konfigurasi keamanan yang telah diterapkan.
+
+## 4. Kompetensi yang Relevan
+
+Praktikum ini berkaitan dengan kompetensi administrator sistem, khususnya:
+
+1. Mengidentifikasi kebutuhan keamanan sistem.
+2. Mengimplementasikan pengamanan sistem operasi server.
+3. Mengelola akun pengguna dan hak akses.
+4. Mengamankan layanan jaringan dan aplikasi.
+5. Melakukan pemantauan serta pemeriksaan aktivitas sistem.
+
+## 5. Dasar Teori
+
+### 5.1. Keamanan Server
+
+Keamanan server merupakan serangkaian tindakan untuk melindungi sistem dari akses tidak sah, penyalahgunaan sumber daya, kehilangan data, dan gangguan layanan. Keamanan server perlu diterapkan sejak tahap instalasi hingga pemeliharaan sistem. Beberapa aspek utama keamanan server meliputi:
+
+- **Confidentiality:** memastikan informasi hanya dapat diakses oleh pihak yang berwenang.
+- **Integrity:** menjaga agar data tidak diubah secara tidak sah.
+- **Availability:** memastikan layanan tetap tersedia bagi pengguna yang berhak.
+
+Ketiga aspek tersebut dikenal sebagai prinsip CIA Triad.
+
+### 5.2. Server Hardening
+
+*Server hardening* adalah proses mengurangi potensi kerentanan dengan menonaktifkan fitur atau layanan yang tidak diperlukan serta menerapkan konfigurasi keamanan. Contoh penerapan server hardening:
+
+1. Menghapus atau menonaktifkan layanan yang tidak digunakan.
+2. Membatasi hak akses pengguna.
+3. Mengamankan layanan SSH.
+4. Mengaktifkan firewall.
+5. Melakukan pembaruan sistem secara berkala.
+6. Memantau log aktivitas sistem.
+
+### 5.3. Prinsip Least Privilege
+
+Prinsip *least privilege* menyatakan bahwa setiap pengguna atau layanan hanya diberikan hak akses minimum yang diperlukan untuk menjalankan tugasnya.
+
+Sebagai contoh, pengguna yang hanya bertugas mengakses berkas bersama tidak perlu diberikan hak akses administrator. Pada Linux, pengaturan hak akses dapat dilakukan melalui kepemilikan berkas, grup, dan permission.
+
+### 5.4. Keamanan SSH
+
+SSH (*Secure Shell*) merupakan protokol untuk mengakses dan mengelola server secara jarak jauh melalui koneksi terenkripsi. Beberapa pengaturan keamanan SSH antara lain:
+
+- Membatasi pengguna yang diperbolehkan melakukan koneksi.
+- Menonaktifkan login langsung menggunakan akun root.
+- Menggunakan autentikasi berbasis kunci SSH.
+- Menggunakan kata sandi yang kuat apabila autentikasi kata sandi masih diaktifkan.
+
+Konfigurasi layanan SSH pada Ubuntu Server atau Debian umumnya berada di:
+
+```
+/etc/ssh/sshd_config
+```
+
+### 5.5. Firewall dan UFW
+
+Firewall merupakan mekanisme untuk mengatur lalu lintas jaringan yang masuk dan keluar dari server. Pada Ubuntu dan Debian, salah satu perangkat yang dapat digunakan untuk mengelola firewall adalah UFW (*Uncomplicated Firewall*). Contoh aturan firewall:
+
+| Port | Protokol | Layanan | Keterangan                   |
+| ---- | -------- | ------- | ---------------------------- |
+| 22   | TCP      | SSH     | Akses administrasi           |
+| 53   | TCP/UDP  | DNS     | Layanan DNS                  |
+| 67   | UDP      | DHCP    | Layanan DHCP server          |
+| 80   | TCP      | HTTP    | Web server                   |
+| 445  | TCP      | SMB     | Berbagi berkas melalui Samba |
+
+Port yang dibuka harus disesuaikan dengan layanan yang benar-benar digunakan. Jangan membuka seluruh port tanpa kebutuhan yang jelas.
+
+### 5.6. Pembaruan Sistem
+
+Pembaruan sistem diperlukan untuk memperbaiki bug, meningkatkan stabilitas, dan menutup celah keamanan yang telah diketahui. Pada sistem berbasis Debian, pembaruan paket dapat dilakukan menggunakan:
+
+```
+sudo apt update
+sudo apt upgrade
+```
+
+Perintah `apt update` memperbarui daftar informasi paket, sedangkan `apt upgrade` memasang pembaruan paket yang tersedia.
+
+### 5.7. Monitoring Log Keamanan
+
+Log merupakan catatan aktivitas sistem dan layanan yang dapat digunakan untuk mengidentifikasi kesalahan maupun aktivitas mencurigakan. Beberapa log penting pada Linux:
+
+| Lokasi              | Keterangan                    |
+| ------------------- | ----------------------------- |
+| `/var/log/auth.log` | Aktivitas autentikasi dan SSH |
+| `/var/log/syslog`   | Aktivitas sistem              |
+| `/var/log/apache2/` | Log layanan Apache            |
+| `journalctl`        | Pemeriksaan log systemd       |
+
+Pemeriksaan log secara berkala membantu administrator mengidentifikasi kegagalan login, kesalahan konfigurasi, dan gangguan layanan.
+
+## 6. Alat dan Bahan Praktikum
+
+Perangkat dan bahan yang diperlukan:
+
+1. Komputer atau laptop dengan VirtualBox.
+2. Virtual Machine server dari praktikum pertemuan 2.
+3. Sistem operasi Ubuntu Server LTS atau Debian.
+4. Koneksi jaringan antara host dan virtual machine.
+5. Terminal Linux atau SSH client.
+6. Layanan OpenSSH.
+7. Layanan Apache2.
+8. Layanan Samba.
+9. UFW (*Uncomplicated Firewall*).
+10. Browser web untuk menguji akses layanan.
+
+**Catatan:** Praktikum dilakukan pada lingkungan virtualisasi milik sendiri. Jangan menerapkan konfigurasi firewall atau pembatasan SSH pada server produksi tanpa prosedur pengujian dan akses pemulihan yang memadai.
+
+## 7. Keselamatan dan Ketentuan Praktikum
+
+Sebelum memulai praktikum, mahasiswa wajib memperhatikan ketentuan berikut:
+
+1. Gunakan virtual machine yang telah dibuat pada praktikum sebelumnya.
+2. Buat snapshot virtual machine sebelum mengubah konfigurasi keamanan.
+3. Pastikan mahasiswa mengetahui alamat IP server dan akun administrator yang digunakan.
+4. Jangan menonaktifkan layanan SSH sebelum memastikan tersedia akses alternatif ke server melalui konsol VirtualBox.
+5. Jangan menerapkan aturan firewall yang dapat memutus koneksi administrasi sebelum aturan akses SSH ditambahkan.
+6. Jangan menggunakan server publik atau perangkat milik pihak lain sebagai objek pengujian.
+7. Dokumentasikan konfigurasi sebelum dan sesudah penerapan hardening.
+
+## 8. Langkah-Langkah Praktikum
+
+Praktikum dilakukan secara bertahap dengan melanjutkan server yang telah dikonfigurasi pada pertemuan sebelumnya.
+
+### 8.1. Pemeriksaan Kondisi Awal Server (15 Menit)
+
+Pada tahap ini, mahasiswa memeriksa kondisi server sebelum menerapkan konfigurasi keamanan. Langkah kerja:
+
+1. Jalankan virtual machine server.
+2. Login menggunakan akun administrator.
+3. Periksa informasi sistem:
+
+   ```
+   hostnamectl
+   cat /etc/os-release
+   ```
+
+4. Periksa alamat IP dan konfigurasi jaringan:
+
+   ```
+   ip -br address
+   ip route
+   ```
+
+5. Periksa layanan yang berjalan:
+
+   ```
+   systemctl is-active ssh
+   systemctl is-active smbd
+   systemctl is-active bind9
+   systemctl is-active apache2
+   ```
+
+6. Periksa port yang sedang digunakan:
+
+   ```
+   sudo ss -tulpn
+   ```
+
+7. Catat layanan dan port yang ditemukan.
+
+**Hasil yang diharapkan:** Mahasiswa memperoleh gambaran kondisi awal server, termasuk layanan aktif, port yang digunakan, dan konfigurasi jaringan.
+
+### 8.2. Pemeriksaan Akun Pengguna dan Hak Akses (20 Menit)
+
+Tahap ini bertujuan untuk mengidentifikasi akun pengguna serta memastikan hak akses diberikan sesuai kebutuhan. Langkah kerja:
+
+1. Tampilkan daftar pengguna yang terdaftar:
+
+   ```
+   cat /etc/passwd
+   ```
+
+2. Periksa daftar grup:
+
+   ```
+   cat /etc/group
+   ```
+
+3. Periksa pengguna yang sedang login:
+
+   ```
+   who
+   ```
+
+4. Periksa identitas pengguna saat ini:
+
+   ```
+   whoami
+   id
+   ```
+
+5. Periksa pengguna yang memiliki hak sudo:
+
+```
+getent group sudo
+```
+
+6. Periksa permission direktori layanan web:
+
+   ```
+   ls -ld /var/www
+   ls -l /var/www/
+   ```
+
+7. Periksa permission direktori Samba yang telah dibuat pada praktikum sebelumnya.
+
+**Hasil yang diharapkan:** Mahasiswa dapat mengidentifikasi akun administrator, akun pengguna biasa, grup, serta hak akses pada direktori layanan.
+
+### 8.3. Pengamanan Layanan SSH (30 Menit)
+
+Tahap ini bertujuan mengamankan akses administrasi jarak jauh melalui SSH. Langkah kerja:
+
+1. Pastikan layanan SSH aktif:
+
+   ```
+   sudo systemctl status ssh
+   ```
+
+2. Buat salinan konfigurasi SSH sebelum melakukan perubahan:
+
+   ```
+   sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
+   ```
+
+3. Buka file konfigurasi:
+
+   ```
+   sudo nano /etc/ssh/sshd_config
+   ```
+
+4. Cari dan sesuaikan parameter berikut:
+
+   ```
+   PermitRootLogin no
+   MaxAuthTries 3
+   AllowUsers nama_pengguna
+   ```
+
+   Ganti `nama_pengguna` dengan akun administrator yang digunakan untuk mengelola server.
+
+5. Pastikan parameter `PasswordAuthentication` tetap sesuai dengan metode autentikasi yang digunakan. Untuk praktikum ini, autentikasi kata sandi dapat tetap diaktifkan selama mahasiswa belum mengonfigurasi autentikasi kunci SSH.
+
+6. Simpan perubahan konfigurasi.
+
+7. Periksa validitas konfigurasi:
+
+   ```
+   sudo sshd -t
+   ```
+
+8. Jika tidak terdapat pesan kesalahan, muat ulang layanan SSH:
+
+   ```
+   sudo systemctl reload ssh
+   ```
+
+9. Periksa status layanan:
+
+   ```
+   sudo systemctl status ssh
+   ```
+
+10. Buka terminal baru dan lakukan pengujian koneksi SSH menggunakan akun yang diizinkan:
+
+      ```
+      ssh nama_pengguna@alamat_ip_server
+      ```
+
+11. Pastikan koneksi SSH berhasil sebelum menutup sesi administrasi sebelumnya. Hasil yang diharapkan:
+
+      - Login langsung menggunakan akun root dinonaktifkan.
+      - Percobaan autentikasi dibatasi.
+      - Akses SSH dibatasi untuk pengguna yang ditentukan.
+      - Pengguna yang diizinkan tetap dapat mengakses server.
+
+      :::warning
+      Jangan menutup sesi SSH yang sedang aktif sebelum koneksi baru berhasil diuji. Jika terjadi kesalahan konfigurasi, pulihkan file cadangan melalui konsol VirtualBox.
+      :::
+
+### 8.4. Konfigurasi Firewall Menggunakan UFW (30 Menit)
+
+Tahap ini bertujuan mengatur akses jaringan berdasarkan layanan yang dibutuhkan server. Langkah kerja:
+
+1. Periksa apakah UFW telah terpasang:
+
+   ```
+   sudo ufw version
+   ```
+
+2. Jika belum tersedia, instal UFW:
+
+   ```
+   sudo apt update
+   sudo apt install ufw -y
+   ```
+
+3. Periksa status firewall:
+
+   ```
+   sudo ufw status verbose
+   ```
+
+4. Atur kebijakan default untuk koneksi masuk dan keluar:
+
+   ```
+   sudo ufw default deny incoming
+   sudo ufw default allow outgoing
+   ```
+
+5. Izinkan koneksi SSH:
+
+   ```
+   sudo ufw allow 22/tcp
+   ```
+
+6. Izinkan layanan DNS:
+
+   ```
+   sudo ufw allow 53/tcp
+   sudo ufw allow 53/udp
+   ```
+
+7. Izinkan layanan DHCP apabila server menjalankan DHCP server:
+
+   ```
+   sudo ufw allow 67/udp
+   ```
+
+8. Izinkan layanan web:
+
+   ```
+   sudo ufw allow 80/tcp
+   ```
+
+9. Izinkan layanan Samba apabila server menyediakan layanan berbagi berkas:
+
+   ```
+   sudo ufw allow 445/tcp
+   ```
+
+10. Aktifkan firewall:
+
+      ```
+      sudo ufw enable
+      ```
+
+11. Periksa aturan firewall:
+
+      ```
+      sudo ufw status numbered
+      ```
+
+12. Pastikan aturan yang dibuat sesuai dengan layanan yang digunakan.
+
+**Hasil yang diharapkan:** Firewall aktif dan hanya mengizinkan port yang dibutuhkan oleh layanan server.
+
+:::info
+- Port 67/UDP diperlukan apabila server menjalankan DHCP server.
+- Port 445/TCP diperlukan untuk akses SMB, tetapi konfigurasi Samba juga dapat menggunakan port lain sesuai kebutuhan dan lingkungan jaringan.
+- Jika server menggunakan layanan tambahan, mahasiswa harus mengidentifikasi port yang diperlukan sebelum menerapkan kebijakan firewall.
+- Pada lingkungan VirtualBox dengan konfigurasi NAT, pengujian akses dari komputer host juga harus memperhatikan pengaturan port forwarding atau mode jaringan yang digunakan.
+:::
+
+### 8.5. Pemeriksaan Pembaruan Sistem dan Layanan (20 Menit)
+
+Tahap ini bertujuan memastikan sistem operasi dan paket yang digunakan berada dalam kondisi terbaru. Langkah kerja:
+
+1. Perbarui daftar paket:
+
+   ```
+   sudo apt update
+   ```
+
+2. Periksa paket yang memiliki pembaruan:
+
+   ```
+   apt list --upgradable
+   ```
+
+3. Lakukan pembaruan paket:
+
+   ```
+   sudo apt upgrade
+   ```
+
+4. Periksa layanan yang aktif:
+
+   ```
+   systemctl --type=service --state=running
+   ```
+
+5. Identifikasi layanan yang tidak diperlukan.
+6. Jika terdapat layanan yang benar-benar tidak digunakan, mahasiswa dapat mendiskusikan tindakan penonaktifan dengan dosen sebelum menerapkannya.
+7. Periksa kembali layanan utama:
+
+   ```
+   systemctl is-active ssh
+   systemctl is-active smbd
+   systemctl is-active bind9
+   systemctl is-active apache2
+   ```
+
+**Hasil yang diharapkan:** Sistem telah diperbarui dan mahasiswa mampu mengidentifikasi layanan yang perlu dipertahankan maupun yang tidak diperlukan.
+
+### 8.6. Pemeriksaan Log Keamanan (20 Menit)
+
+Tahap ini bertujuan memahami cara administrator memantau aktivitas autentikasi dan layanan server. Langkah kerja:
+
+1. Periksa log autentikasi:
+
+   ```
+   sudo tail -n 30 /var/log/auth.log
+   ```
+
+2. Tampilkan aktivitas login SSH:
+
+   ```
+   sudo grep "sshd" /var/log/auth.log | tail -n 20
+   ```
+
+3. Periksa log sistem:
+
+   ```
+   sudo journalctl -p warning -n 30
+   ```
+
+4. Periksa log Apache:
+
+   ```
+   sudo tail -n 20 /var/log/apache2/access.log
+   sudo tail -n 20 /var/log/apache2/error.log
+   ```
+
+5. Lakukan satu pengujian koneksi SSH dari komputer lain atau terminal baru.
+6. Periksa kembali log autentikasi untuk melihat catatan koneksi tersebut.
+7. Identifikasi informasi berikut dari log:
+   - Waktu aktivitas.
+   - Nama pengguna.
+   - Alamat IP sumber.
+   - Status keberhasilan atau kegagalan autentikasi.
+8. Dokumentasikan temuan yang diperoleh.
+
+**Hasil yang diharapkan:** Mahasiswa mampu membaca log autentikasi dan layanan serta mengidentifikasi aktivitas yang relevan untuk pemeriksaan keamanan.
+
+### 8.7. Pengujian dan Dokumentasi Konfigurasi Keamanan (15 Menit)
+
+Tahap terakhir dilakukan untuk memastikan konfigurasi keamanan tidak mengganggu layanan server. Langkah kerja:
+
+1. Periksa status firewall:
+
+   ```
+   sudo ufw status verbose
+   ```
+
+2. Periksa konfigurasi SSH:
+
+   ```
+   sudo sshd -t
+   ```
+
+3. Periksa status layanan:
+
+   ```
+   systemctl is-active ssh
+   systemctl is-active smbd
+   systemctl is-active bind9
+   systemctl is-active apache2
+   ```
+
+4. Periksa port yang terbuka:
+
+   ```
+   sudo ss -tulpn
+   ```
+
+5. Uji koneksi SSH menggunakan akun yang diizinkan.
+6. Uji akses website melalui browser atau menggunakan:
+
+   ```
+   curl http://alamat_ip_server
+   ```
+
+7. Uji akses layanan Samba dari komputer klien apabila tersedia.
+8. Dokumentasikan hasil pengujian dalam tabel berikut.
+
+   | No. | Komponen                | Kondisi Sebelum | Kondisi Sesudah | Status |
+   | --- | ----------------------- | --------------- | --------------- | ------ |
+   | 1   | Login root SSH          |                 |                 |        |
+   | 2   | Pembatasan pengguna SSH |                 |                 |        |
+   | 3   | Firewall UFW            |                 |                 |        |
+   | 4   | Port yang diizinkan     |                 |                 |        |
+   | 5   | Pembaruan sistem        |                 |                 |        |
+   | 6   | Pemeriksaan log         |                 |                 |        |
+   | 7   | Akses web server        |                 |                 |        |
+   | 8   | Akses Samba             |                 |                 |        |
+
+**Hasil yang diharapkan:** Mahasiswa memiliki dokumentasi kondisi keamanan server setelah penerapan hardening dan dapat memastikan layanan utama tetap berfungsi.
+
+## 9. Tugas Praktikum
+
+Setelah menyelesaikan seluruh tahapan praktikum, mahasiswa diberikan tugas sebagai berikut:
+
+1. Lakukan pemeriksaan akun pengguna dan grup pada server. Identifikasi akun yang memiliki hak administrator dan jelaskan alasan pemberian hak tersebut.
+2. Terapkan pengamanan SSH dengan menonaktifkan login root dan membatasi pengguna yang dapat melakukan koneksi.
+3. Konfigurasikan UFW dengan hanya mengizinkan port yang dibutuhkan oleh layanan server.
+4. Lakukan pembaruan sistem operasi dan identifikasi paket yang diperbarui.
+5. Periksa log autentikasi dan temukan minimal satu aktivitas koneksi SSH yang tercatat.
+6. Buat tabel perbandingan kondisi server sebelum dan sesudah penerapan hardening.
+7. Buat rekomendasi tambahan untuk meningkatkan keamanan server yang telah dikonfigurasi.
+
+## 10. Pertanyaan Analisis
+
+Jawablah pertanyaan berikut berdasarkan hasil praktikum dan pemahaman terhadap konsep keamanan server.
+
+1. Mengapa keamanan server perlu diterapkan sejak tahap instalasi sistem operasi?
+2. Apa perbedaan antara keamanan sistem operasi dan keamanan layanan aplikasi?
+3. Mengapa login langsung menggunakan akun root melalui SSH sebaiknya dinonaktifkan?
+4. Apa fungsi parameter `AllowUsers` pada konfigurasi SSH?
+5. Mengapa administrator perlu membuat salinan konfigurasi sebelum melakukan perubahan?
+6. Apa risiko yang dapat terjadi apabila firewall mengizinkan seluruh koneksi masuk?
+7. Mengapa port yang dibuka pada firewall harus disesuaikan dengan layanan yang digunakan?
+8. Apa perbedaan antara `ufw allow` dan `ufw deny`?
+9. Mengapa pembaruan sistem operasi penting dalam menjaga keamanan server?
+10. Bagaimana administrator dapat mengetahui adanya percobaan login SSH yang gagal?
+11. Apa risiko apabila direktori website atau direktori berbagi berkas diberikan permission terlalu luas?
+12. Jika firewall telah diaktifkan tetapi website tidak dapat diakses, langkah pemeriksaan apa saja yang perlu dilakukan?
+
+## 11. Format Laporan Praktikum
+
+Laporan praktikum disusun secara sistematis dengan struktur berikut:
+
+1. **Halaman Judul**
+   - Nama praktikum.
+   - Nama mata kuliah.
+   - Nama dan NIM mahasiswa.
+   - Program studi.
+   - Tanggal pelaksanaan.
+2. **Tujuan Praktikum**
+   - Menjelaskan tujuan kegiatan praktikum.
+3. **Dasar Teori**
+   - Keamanan server.
+   - Server hardening.
+   - Pengamanan SSH.
+   - Firewall.
+   - Monitoring log.
+4. **Alat dan Bahan**
+   - Perangkat keras dan perangkat lunak yang digunakan.
+5. **Langkah Kerja**
+   - Menjelaskan setiap tahapan praktikum.
+   - Menyertakan perintah yang digunakan.
+   - Menyertakan tangkapan layar konfigurasi.
+6. **Hasil dan Pembahasan**
+   - Hasil pemeriksaan kondisi awal.
+   - Hasil konfigurasi SSH.
+   - Hasil konfigurasi UFW.
+   - Hasil pembaruan sistem.
+   - Hasil pemeriksaan log.
+   - Hasil pengujian layanan.
+7. **Jawaban Pertanyaan Analisis**
+   - Jawaban seluruh pertanyaan pada bagian 10.
+8. **Kesimpulan**
+   - Menjelaskan hasil dan pemahaman yang diperoleh dari praktikum.
+
+## 12. Kriteria Penilaian
+
+| No. | Komponen Penilaian                         | Bobot    |
+| --- | ------------------------------------------ | -------- |
+| 1   | Pemeriksaan kondisi awal dan akun pengguna | 15%      |
+| 2   | Konfigurasi dan pengujian keamanan SSH     | 20%      |
+| 3   | Konfigurasi firewall menggunakan UFW       | 25%      |
+| 4   | Pembaruan sistem dan pemeriksaan layanan   | 10%      |
+| 5   | Pemeriksaan serta analisis log keamanan    | 15%      |
+| 6   | Pengujian layanan dan dokumentasi          | 10%      |
+| 7   | Jawaban pertanyaan analisis                | 5%       |
+|     | **Total**                                  | **100%** |
+
+## 13. Indikator Keberhasilan
+
+Praktikum dinyatakan berhasil apabila mahasiswa mampu:
+
+1. Mengidentifikasi akun pengguna dan hak akses pada server.
+2. Mengamankan SSH sesuai konfigurasi yang ditentukan.
+3. Mengaktifkan UFW dan menerapkan aturan firewall sesuai kebutuhan layanan.
+4. Melakukan pembaruan sistem operasi.
+5. Membaca dan mengidentifikasi aktivitas autentikasi melalui log.
+6. Memastikan layanan SSH, Samba, DNS, dan Apache tetap berfungsi sesuai konfigurasi yang digunakan.
+7. Menyusun laporan dan memberikan rekomendasi peningkatan keamanan server.
+
+## 14. Keterkaitan dengan Praktikum Pertemuan Berikutnya
+
+Pada pertemuan 6, mahasiswa akan mempelajari **Monitoring, Troubleshooting, dan Maintenance Server**. Konfigurasi keamanan yang telah diterapkan pada pertemuan ini menjadi dasar untuk melakukan pemantauan kondisi server, mengidentifikasi gangguan layanan, serta melakukan pemeliharaan sistem secara berkala.
+
+Mahasiswa akan menggunakan layanan yang telah dikonfigurasi pada pertemuan sebelumnya untuk melakukan pemeriksaan kinerja, analisis penggunaan sumber daya, identifikasi permasalahan, dan penanganan gangguan server.
+
+## 15. Referensi
+
+1. Ubuntu. *Ubuntu Server Documentation*. [https://documentation.ubuntu.com/server/](https://documentation.ubuntu.com/server/)
+2. Debian Project. *Debian Administrator's Handbook*. [https://www.debian.org/doc/](https://www.debian.org/doc/)
+3. OpenSSH. *OpenSSH Manual Pages*. [https://www.openssh.com/manual.html](https://www.openssh.com/manual.html)
+4. Ubuntu. *UFW – Uncomplicated Firewall*. [https://help.ubuntu.com/community/UFW](https://help.ubuntu.com/community/UFW)
+5. Linux man-pages project. *Linux Manual Pages*. [https://man7.org/linux/man-pages/](https://man7.org/linux/man-pages/)
