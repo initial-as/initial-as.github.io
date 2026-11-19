@@ -296,7 +296,7 @@ Masuk ke Dashboard SafeLine. Di sidebar kiri, klik **Applications**, kemudian kl
 | Listening Port   | 80                      |
 | Protocol         | HTTP                    |
 | Metode           | Reverse Proxy           |
-| Upstream         | `http://127.0.0.1:4280` |
+| Upstream         | `http://192.168.56.10:4280` |
 | Website Name     | DVWA                    |
 
 :::warning
@@ -378,6 +378,16 @@ Amati apakah SafeLine:
 * mengizinkan request,
 * memberikan peringatan,
 * atau memblokir request.
+
+Coba juga payload alternatif berikut:
+
+```text
+127.0.0.1; id
+127.0.0.1 && whoami
+127.0.0.1 \| whoami
+127.0.0.1; uname -a
+127.0.0.1 && pwd
+```
 
 ---
 
