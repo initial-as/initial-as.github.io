@@ -260,7 +260,9 @@ Tambahkan
     sudo bash -c "$(curl -fsSLk https://waf.chaitin.com/release/latest/manager.sh)" -- --en
     ```
 
-    Metode ini merupakan metode deployment yang direkomendasikan pada dokumentasi resmi SafeLine. Setelah menjalankan perintah di atas, tekan `1` untuk instalasi. Jika terjadi error akibat kekurangan ukuran media penyimpanan, jalankan perintah berikut:
+    Metode ini merupakan metode deployment yang direkomendasikan pada dokumentasi resmi SafeLine. Setelah menjalankan perintah di atas, tekan `1` untuk instalasi.
+    
+    Jika terjadi error akibat kekurangan ukuran media penyimpanan, jalankan perintah berikut:
     
     ```bash
     sudo lvextend -l +100%FREE -r /dev/ubuntu-vg/ubuntu-lv
@@ -276,13 +278,9 @@ Tambahkan
     https://192.168.56.10:9443
     ```
 
-    Jika lupa password, reset akun administrator dengan perintah:
-
-    ```bash
-    docker exec safeline-mgt resetadmin
-    ```
-
-    Perintah tersebut akan menampilkan username dan password administrator. Gunakan username dan password tersebut untuk login di dashboard SafeLine.
+    :::tip
+    Untuk mengatur ulang password admin SafeLine, gunakan perintah `docker exec safeline-mgt resetadmin`
+    :::
 
 ---
 
@@ -300,7 +298,7 @@ Masuk ke Dashboard SafeLine. Di sidebar kiri, klik **Applications**, kemudian kl
 | Website Name     | DVWA                    |
 
 :::warning
-Pastikan konfigurasi yang dimasukkan sesuai dengan alamat container DVWA pada hasil inspeksi Docker: `docker ps`.
+Pastikan konfigurasi yang dimasukkan sudah sesuai dengan alamat IP Ubuntu Server dan port container DVWA yang terlihat pada hasil inspeksi Docker: `docker ps`.
 :::
 
 ---
