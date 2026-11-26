@@ -1,0 +1,798 @@
+---
+title: "2. Dasar-dasar Sistem Operasi Ubuntu"
+---
+
+# Dasar-dasar Sistem Operasi Ubuntu
+
+## A. Identitas Modul
+
+| Komponen            | Keterangan                                 |
+| ------------------- | ------------------------------------------ |
+| Program Studi       | Pendidikan Teknologi Informasi             |
+| Mata Kuliah         | Sistem Operasi dan Perakitan Komputer      |
+| Materi              | Dasar-Dasar Sistem Operasi Linux Ubuntu    |
+| Alokasi Waktu       | 2 × 50 menit                               |
+| Bentuk Pembelajaran | Teori dan demonstrasi                      |
+| Metode Pembelajaran | Ceramah, diskusi, demonstrasi, dan praktik |
+
+## B. Deskripsi Modul
+
+Modul ini membahas konsep dasar sistem operasi Linux dengan fokus pada distribusi Ubuntu. Pembahasan mencakup pengertian dan karakteristik Linux, sejarah dan perkembangan Ubuntu, arsitektur dasar sistem operasi Linux, antarmuka pengguna, struktur direktori, manajemen file dan folder, pengelolaan pengguna dan hak akses, manajemen aplikasi, serta pengaturan sistem.
+
+Mahasiswa juga diperkenalkan dengan penggunaan terminal Linux sebagai salah satu sarana utama untuk berinteraksi dan mengelola sistem operasi. Pemahaman terhadap konsep dan perintah dasar Linux diharapkan menjadi landasan bagi mahasiswa untuk mempelajari instalasi, administrasi, konfigurasi, dan pemeliharaan sistem operasi pada pertemuan berikutnya.
+
+## C. Capaian Pembelajaran
+
+Setelah mempelajari modul ini, mahasiswa diharapkan mampu:
+
+1. Menjelaskan pengertian, tujuan, dan karakteristik sistem operasi Linux.
+2. Mengidentifikasi sejarah dan perkembangan distribusi Ubuntu.
+3. Menjelaskan arsitektur dasar sistem operasi Linux.
+4. Mengidentifikasi komponen antarmuka pengguna Ubuntu.
+5. Menjelaskan struktur direktori dan sistem file Linux.
+6. Melakukan operasi dasar pengelolaan file dan folder melalui terminal.
+7. Menjelaskan konsep pengguna, grup, dan hak akses pada Linux.
+8. Mengidentifikasi fasilitas pengelolaan perangkat keras dan aplikasi pada Ubuntu.
+
+## D. Materi Pembelajaran
+
+### 1. Pengertian Sistem Operasi Linux
+
+Linux merupakan keluarga sistem operasi berbasis kernel Linux yang bersifat *open source* dan dikembangkan melalui kontribusi komunitas serta berbagai organisasi di seluruh dunia.
+
+Kernel Linux pertama kali dikembangkan oleh Linus Torvalds pada tahun 1991. Linux kemudian berkembang menjadi fondasi berbagai distribusi sistem operasi yang digunakan pada komputer personal, server, perangkat jaringan, perangkat embedded, hingga superkomputer.
+
+Secara teknis, Linux merupakan kernel, yaitu komponen inti yang mengelola sumber daya perangkat keras. Sistem operasi Linux yang digunakan sehari-hari biasanya terdiri atas kernel, utilitas sistem, pustaka, aplikasi, dan antarmuka pengguna yang dikemas dalam sebuah distribusi (*distribution* atau distro).
+
+Salah satu distribusi Linux yang populer adalah Ubuntu.
+
+**Fungsi utama sistem operasi Linux:**
+
+1. Manajemen proses (Process Management)
+
+Mengelola proses yang berjalan, termasuk pembuatan, penjadwalan, pemantauan, dan penghentian proses.
+
+2. Manajemen memori (Memory Management)
+
+Mengatur penggunaan RAM oleh kernel dan aplikasi, termasuk mekanisme virtual memory dan swap.
+
+3. Manajemen file (File Management)
+
+Mengelola penyimpanan, pengorganisasian, akses, dan penghapusan file maupun direktori.
+
+4. Manajemen perangkat keras (Device Management)
+
+Mengelola komunikasi antara sistem operasi dan perangkat keras melalui driver serta subsistem kernel.
+
+5. Manajemen pengguna dan hak akses (User and Permission Management)
+
+Mengatur akun pengguna, grup, autentikasi, serta hak akses terhadap file dan sumber daya sistem.
+
+6. Manajemen jaringan (Network Management)
+
+Menyediakan layanan dan fasilitas untuk mengelola koneksi jaringan, komunikasi antarkomputer, dan layanan berbasis jaringan.
+
+7. Keamanan sistem (Security Management)
+
+Melindungi sistem melalui mekanisme autentikasi, hak akses, firewall, pembaruan keamanan, dan berbagai mekanisme perlindungan lainnya.
+
+### 2. Mengenal Sistem Operasi Ubuntu
+
+**Ubuntu**
+
+Ubuntu merupakan distribusi Linux berbasis Debian yang dikembangkan dan didistribusikan oleh Canonical. Ubuntu dirancang agar mudah digunakan, memiliki dukungan perangkat keras yang luas, serta dapat digunakan untuk kebutuhan desktop maupun server.
+
+Ubuntu tersedia dalam beberapa varian penggunaan, di antaranya:
+
+- **Ubuntu Desktop:** Digunakan pada komputer personal dan laptop dengan antarmuka grafis.
+- **Ubuntu Server:** Digunakan untuk menjalankan layanan server dengan penggunaan antarmuka grafis yang tidak menjadi kebutuhan utama.
+- **Ubuntu Core:** Sistem operasi minimal untuk perangkat embedded dan IoT.
+
+**Karakteristik sistem operasi Ubuntu:**
+
+1. Bersifat open source dan menyediakan akses terhadap kode sumber komponen perangkat lunak yang relevan.
+2. Berbasis kernel Linux.
+3. Memiliki dukungan antarmuka grafis dan terminal.
+4. Mendukung multitasking dan multiuser.
+5. Memiliki sistem manajemen paket untuk instalasi dan pembaruan aplikasi.
+6. Mendukung berbagai sistem file, seperti ext4, XFS, dan Btrfs.
+7. Memiliki sistem pengelolaan hak akses pengguna.
+8. Menyediakan versi LTS (*Long Term Support*) dengan masa dukungan yang lebih panjang dibandingkan rilis reguler.
+
+**Ubuntu LTS dan rilis reguler**
+
+Ubuntu memiliki dua jenis siklus rilis utama:
+
+- **LTS (Long Term Support):** Dirancang untuk penggunaan jangka panjang dan memperoleh dukungan pembaruan keamanan serta pemeliharaan dalam periode yang lebih lama.
+- **Interim Release:** Rilis reguler dengan siklus dukungan yang lebih singkat dan menghadirkan fitur serta pembaruan lebih cepat.
+
+Untuk kebutuhan laboratorium komputer, pembelajaran administrasi sistem, dan penggunaan server, versi LTS umumnya lebih direkomendasikan karena stabilitas dan masa dukungannya.
+
+### 3. Perkembangan Sistem Operasi Linux Ubuntu
+
+Ubuntu pertama kali dirilis pada tahun 2004 dengan tujuan menyediakan distribusi Linux yang mudah digunakan dan dapat diakses oleh berbagai kalangan.
+
+Nama Ubuntu berasal dari filosofi Afrika Selatan yang menggambarkan nilai kemanusiaan dan kebersamaan.
+
+[7 Years of Ubuntu: Ubuntu Then and Now - Linux.com](https://images.openai.com/static-rsc-4/M-NoQKCesNrjLYf1lHE5YszXxwnQAoGchM99yBq6mrD22RsphD200l7wAZUYhCy2hozbVC62lXYs-9jXfzJT620ScRy590ktzvwXY3W-kgmP-2EWEH2YcvukL3Tu-MfaSP5YCQ7ukXpZFfLuwFRm3NEqlgD9xeG6A1k1RUfwRWg?purpose=inline)
+
+[FREE OS: Screenshots 1: Ubuntu 10.04 (Lucid Lynx) LTS - Final Release](https://images.openai.com/static-rsc-4/cHHT5XR7ujn2FjAj3kZEXf086b54anrFet7U4BQHdp_9K52OWlOPdQ7B4wjINOwP5eKmfP7YHqt_-LJ7sDKa4ajiivR9Oxxj_ABBz0VSR5OK0LA79_u0AcGLLi7b6IvM14Ec2z7LWIBnVu0-wAYonqY0atS2VKTExf4lifok0qk?purpose=inline)
+
+[Ubuntu 16.04 new features, now with Unity offline! – Marksei](https://images.openai.com/static-rsc-4/0wxHoR8J2R-4RqGsTE7X-lFVRqjiEIFJWMA6WDUNv3BwEbZD1f1nQKcbREMhf23IWJbzgnfDeDaC8mtCmhX7I4U-TQIcBKiaxNvEt0FV26ZplpAqUaCIeySnUzlL_dwexmtgD-XhjpHFJAOWAbfqKErxF9QVWvIKe8hUdMnrE_Y?purpose=inline)
+
+6
+
+Beberapa perkembangan penting Ubuntu dapat dilihat pada tabel berikut.
+
+| Versi            | Tahun | Karakteristik                                             |
+| ---------------- | ----- | --------------------------------------------------------- |
+| Ubuntu 4.10      | 2004  | Rilis pertama Ubuntu                                      |
+| Ubuntu 6.06 LTS  | 2006  | LTS pertama dengan dukungan jangka panjang                |
+| Ubuntu 10.04 LTS | 2010  | Peningkatan tampilan dan integrasi layanan                |
+| Ubuntu 12.04 LTS | 2012  | Menggunakan Unity sebagai antarmuka desktop utama         |
+| Ubuntu 16.04 LTS | 2016  | Peningkatan dukungan perangkat keras dan sistem           |
+| Ubuntu 18.04 LTS | 2018  | Menggunakan GNOME sebagai lingkungan desktop utama        |
+| Ubuntu 20.04 LTS | 2020  | Peningkatan stabilitas dan keamanan                       |
+| Ubuntu 22.04 LTS | 2022  | Peningkatan pengalaman desktop dan dukungan perangkat     |
+| Ubuntu 24.04 LTS | 2024  | Pembaruan lingkungan desktop, kernel, dan komponen sistem |
+
+**Catatan:** Ubuntu menggunakan penamaan versi berdasarkan tahun dan bulan rilis. Sebagai contoh, Ubuntu 24.04 menunjukkan rilis pada April 2024. Setiap versi juga memiliki nama kode, seperti Noble Numbat untuk Ubuntu 24.04 LTS.
+
+### 4. Arsitektur Dasar Linux Ubuntu
+
+Sistem operasi Linux memiliki arsitektur berlapis yang memungkinkan interaksi antara aplikasi, komponen sistem, kernel, dan perangkat keras.
+
+Secara umum, arsitektur Linux dapat dibagi menjadi beberapa komponen berikut.
+
+**a. User Applications**
+
+Merupakan aplikasi yang digunakan pengguna untuk menjalankan berbagai aktivitas, seperti:
+
+- LibreOffice.
+- Mozilla Firefox.
+- VLC Media Player.
+- Text Editor.
+- Terminal.
+
+Aplikasi berjalan dengan memanfaatkan layanan yang disediakan oleh sistem operasi.
+
+**b. Shell**
+
+Shell merupakan program yang menyediakan antarmuka untuk berinteraksi dengan sistem operasi melalui perintah teks.
+
+Pada Ubuntu, salah satu shell yang umum digunakan adalah Bash (*Bourne Again Shell*).
+
+Contoh perintah:
+
+```
+pwd
+ls
+whoami
+```
+
+Ketiga perintah tersebut digunakan untuk menampilkan lokasi direktori aktif, melihat isi direktori, dan mengetahui nama pengguna yang sedang aktif.
+
+**c. System Libraries**
+
+Merupakan kumpulan pustaka perangkat lunak yang menyediakan fungsi-fungsi tertentu agar aplikasi dapat berinteraksi dengan kernel melalui antarmuka yang telah disediakan.
+
+Salah satu pustaka penting dalam ekosistem Linux adalah GNU C Library (glibc).
+
+**d. Kernel**
+
+Kernel merupakan inti dari sistem operasi Linux. Kernel bertanggung jawab mengelola sumber daya perangkat keras dan menyediakan layanan dasar bagi aplikasi.
+
+Fungsi kernel antara lain:
+
+- Mengelola proses dan penjadwalan CPU.
+- Mengelola memori.
+- Mengelola perangkat input dan output.
+- Menangani sistem file.
+- Mengelola komunikasi jaringan.
+- Menyediakan mekanisme keamanan dan hak akses.
+
+**e. Hardware**
+
+Merupakan perangkat fisik komputer yang dikelola oleh kernel Linux, seperti:
+
+- Processor (CPU).
+- Memori (RAM).
+- Media penyimpanan (HDD/SSD).
+- Kartu jaringan.
+- Keyboard dan mouse.
+- Perangkat audio dan grafis.
+
+### 5. Antarmuka Pengguna Ubuntu
+
+Ubuntu Desktop secara default menggunakan lingkungan desktop GNOME. Lingkungan desktop menyediakan antarmuka grafis agar pengguna dapat mengoperasikan sistem tanpa harus selalu menggunakan terminal.
+
+Beberapa komponen antarmuka Ubuntu yang perlu dipahami:
+
+**a. Desktop**
+
+Area utama tempat pengguna bekerja. Desktop menyediakan tampilan latar belakang dan elemen antarmuka lainnya.
+
+**b. Activities Overview**
+
+Fitur untuk melihat aplikasi yang sedang berjalan, berpindah antar-*workspace*, dan mencari aplikasi.
+
+**c. Dock**
+
+Bilah yang menampilkan aplikasi favorit atau aplikasi yang sedang berjalan. Dock digunakan untuk mengakses aplikasi dengan cepat.
+
+**d. Application Grid**
+
+Menu yang menampilkan daftar aplikasi yang terpasang pada sistem.
+
+**e. Top Bar**
+
+Bilah bagian atas yang menampilkan informasi aktivitas sistem, waktu, kalender, dan status konektivitas.
+
+**f. Settings**
+
+Aplikasi untuk mengelola konfigurasi sistem, seperti tampilan, jaringan, perangkat, akun pengguna, dan pengaturan lainnya.
+
+**g. File Manager**
+
+Ubuntu menggunakan aplikasi pengelola file yang dikenal dengan nama Files (berbasis Nautilus). Aplikasi ini digunakan untuk mengelola file, direktori, dan media penyimpanan.
+
+**h. Terminal**
+
+Terminal merupakan aplikasi yang digunakan untuk menjalankan perintah teks. Terminal menjadi salah satu fasilitas penting dalam administrasi Linux karena menyediakan akses terhadap berbagai fungsi sistem.
+
+Terminal dapat dibuka menggunakan shortcut:
+
+`Ctrl + Alt + T`
+
+### 6. Manajemen File dan Direktori
+
+Linux menggunakan struktur direktori berbentuk hierarki yang berawal dari direktori root (`/`). Berbeda dengan Windows yang menggunakan drive seperti `C:` dan `D:`, Linux mengorganisasikan seluruh file dan direktori dalam satu struktur pohon.
+
+**a. Struktur Direktori Linux**
+
+Berikut beberapa direktori penting pada Ubuntu:
+
+| Direktori | Fungsi                                                                           |
+| --------- | -------------------------------------------------------------------------------- |
+| `/`       | Direktori utama atau root filesystem                                             |
+| `/bin`    | Perintah dasar sistem; pada Ubuntu modern umumnya merupakan tautan ke `/usr/bin` |
+| `/boot`   | Menyimpan file yang dibutuhkan untuk proses boot                                 |
+| `/dev`    | Representasi perangkat keras dan perangkat virtual                               |
+| `/etc`    | Menyimpan file konfigurasi sistem                                                |
+| `/home`   | Menyimpan direktori pribadi pengguna                                             |
+| `/lib`    | Pustaka penting sistem; pada Ubuntu modern umumnya terkait dengan `/usr/lib`     |
+| `/media`  | Lokasi pemasangan media eksternal secara otomatis                                |
+| `/mnt`    | Lokasi yang umum digunakan untuk pemasangan filesystem sementara                 |
+| `/opt`    | Lokasi untuk perangkat lunak tambahan tertentu                                   |
+| `/proc`   | Filesystem virtual yang menyediakan informasi proses dan kernel                  |
+| `/root`   | Direktori pribadi pengguna root                                                  |
+| `/tmp`    | Menyimpan file sementara                                                         |
+| `/usr`    | Menyimpan program, pustaka, dan data pendukung sistem                            |
+| `/var`    | Menyimpan data yang berubah, seperti log dan cache                               |
+
+**b. Perintah Dasar Manajemen File dan Direktori**
+
+Linux menyediakan berbagai perintah untuk mengelola file dan direktori melalui terminal.
+
+| Perintah | Fungsi                               | Contoh              |
+| -------- | ------------------------------------ | ------------------- |
+| `pwd`    | Menampilkan direktori aktif          | `pwd`               |
+| `ls`     | Melihat isi direktori                | `ls -l`             |
+| `cd`     | Berpindah direktori                  | `cd Documents`      |
+| `mkdir`  | Membuat direktori                    | `mkdir praktikum`   |
+| `touch`  | Membuat file kosong                  | `touch catatan.txt` |
+| `cp`     | Menyalin file                        | `cp a.txt b.txt`    |
+| `mv`     | Memindahkan atau mengganti nama file | `mv a.txt b.txt`    |
+| `rm`     | Menghapus file                       | `rm catatan.txt`    |
+| `rmdir`  | Menghapus direktori kosong           | `rmdir praktikum`   |
+| `cat`    | Menampilkan isi file teks            | `cat catatan.txt`   |
+
+**c. Contoh Pengelolaan File dan Direktori**
+
+Misalnya pengguna ingin membuat struktur direktori praktikum dengan nama `Praktikum_Sistem_Operasi`.
+
+Jalankan perintah berikut:
+
+```
+# Membuat direktori utama
+mkdir Praktikum_Sistem_Operasi
+
+# Masuk ke direktori
+cd Praktikum_Sistem_Operasi
+
+# Membuat subdirektori
+mkdir Dokumen Gambar Aplikasi
+
+# Membuat file catatan
+touch catatan.txt
+
+# Melihat struktur direktori
+ls -l
+```
+
+Hasil struktur direktori yang diharapkan:
+
+```
+Praktikum_Sistem_Operasi/
+├── Dokumen/
+├── Gambar/
+├── Aplikasi/
+└── catatan.txt
+```
+
+**d. Konsep Path pada Linux**
+
+Linux mengenal dua jenis path atau lokasi file:
+
+- **Absolute Path:** Lokasi file yang dituliskan mulai dari direktori root (`/`).
+- **Relative Path:** Lokasi file yang dituliskan berdasarkan direktori aktif.
+
+Contoh:
+
+```
+# Absolute path
+/home/mahasiswa/Documents
+
+# Relative path
+Documents
+```
+
+Perlu diperhatikan bahwa Linux membedakan huruf besar dan kecil (*case-sensitive*). Dengan demikian, `Dokumen`, `dokumen`, dan `DOKUMEN` dianggap sebagai nama direktori yang berbeda.
+
+### 7. Manajemen Pengguna dan Hak Akses
+
+Linux merupakan sistem operasi multiuser yang memungkinkan beberapa pengguna menggunakan komputer yang sama dengan hak akses berbeda.
+
+Setiap pengguna memiliki identitas dan hak akses tertentu untuk mengakses sumber daya sistem.
+
+**a. Jenis Pengguna Linux**
+
+Secara umum, pengguna Linux dapat dibedakan menjadi:
+
+1. **Root User**
+
+   Pengguna dengan hak akses administratif tertinggi pada sistem. Root memiliki kewenangan untuk mengelola hampir seluruh sumber daya sistem.
+2. **Regular User**
+
+   Pengguna biasa yang memiliki hak akses terbatas sesuai dengan izin yang diberikan.
+3. **System User**
+
+   Akun yang digunakan oleh layanan atau proses sistem untuk menjalankan fungsi tertentu.
+
+Pada Ubuntu, pengguna biasa dapat menjalankan perintah administratif menggunakan `sudo` apabila telah diberikan hak yang sesuai.
+
+Contoh:
+
+```
+sudo apt update
+```
+
+Perintah tersebut menjalankan pembaruan informasi paket menggunakan hak akses administratif.
+
+**b. Manajemen Pengguna dan Grup**
+
+Linux menyediakan sejumlah perintah untuk mengelola pengguna dan grup.
+
+| Perintah             | Fungsi                                     |
+| -------------------- | ------------------------------------------ |
+| `whoami`             | Menampilkan nama pengguna aktif            |
+| `id`                 | Menampilkan UID, GID, dan grup pengguna    |
+| `who`                | Menampilkan pengguna yang sedang login     |
+| `groups`             | Menampilkan grup pengguna                  |
+| `sudo adduser nama`  | Membuat pengguna baru                      |
+| `sudo usermod`       | Mengubah konfigurasi pengguna              |
+| `sudo passwd nama`   | Mengatur atau mengubah kata sandi pengguna |
+| `sudo groupadd nama` | Membuat grup baru                          |
+
+Contoh melihat identitas pengguna:
+
+```
+whoami
+id
+groups
+```
+
+**c. Hak Akses File dan Direktori**
+
+Linux menggunakan sistem permission untuk mengatur siapa yang dapat membaca, mengubah, dan menjalankan file.
+
+Terdapat tiga kategori utama pengguna dalam pengaturan permission:
+
+- **User (u):** Pemilik file atau direktori.
+- **Group (g):** Anggota grup pemilik file.
+- **Others (o):** Pengguna lainnya.
+
+Terdapat tiga jenis hak akses dasar:
+
+| Simbol | Hak Akses                                      | Nilai |
+| ------ | ---------------------------------------------- | ----- |
+| r      | Read (membaca)                                 | 4     |
+| w      | Write (menulis atau mengubah)                  | 2     |
+| x      | Execute (menjalankan atau mengakses direktori) | 1     |
+
+Contoh tampilan permission:
+
+```
+-rwxr-xr--
+```
+
+Artinya:
+
+- Pemilik file memiliki hak membaca, menulis, dan menjalankan.
+- Grup memiliki hak membaca dan menjalankan.
+- Pengguna lainnya hanya memiliki hak membaca.
+
+**d. Mengatur Hak Akses**
+
+Perintah `chmod` digunakan untuk mengubah permission file atau direktori.
+
+Contoh:
+
+```
+chmod 755 script.sh
+chmod 644 catatan.txt
+```
+
+Keterangan:
+
+- `755`: Pemilik memiliki hak penuh, sedangkan grup dan pengguna lainnya dapat membaca serta menjalankan.
+- `644`: Pemilik dapat membaca dan menulis, sedangkan grup dan pengguna lainnya hanya dapat membaca.
+
+Perintah `chown` digunakan untuk mengubah kepemilikan file atau direktori.
+
+Contoh:
+
+```
+sudo chown mahasiswa catatan.txt
+```
+
+Pemahaman terhadap permission sangat penting dalam administrasi Linux karena berkaitan langsung dengan keamanan sistem.
+
+### 8. Manajemen Perangkat Keras dan Proses Sistem
+
+Ubuntu menyediakan berbagai fasilitas untuk mengenali, memeriksa, dan mengelola perangkat keras serta proses yang sedang berjalan.
+
+**a. Identifikasi Perangkat Keras**
+
+Beberapa perintah yang dapat digunakan untuk mengetahui informasi perangkat keras:
+
+| Perintah   | Fungsi                                  |
+| ---------- | --------------------------------------- |
+| `lscpu`    | Menampilkan informasi CPU               |
+| `free -h`  | Menampilkan penggunaan RAM              |
+| `lsblk`    | Menampilkan perangkat penyimpanan       |
+| `lspci`    | Menampilkan perangkat PCI               |
+| `lsusb`    | Menampilkan perangkat USB               |
+| `uname -a` | Menampilkan informasi kernel dan sistem |
+| `df -h`    | Menampilkan penggunaan ruang filesystem |
+
+Contoh:
+
+```
+lscpu
+free -h
+lsblk
+```
+
+**b. Manajemen Proses**
+
+Linux menggunakan proses untuk merepresentasikan program yang sedang berjalan.
+
+Beberapa perintah untuk mengelola proses:
+
+| Perintah  | Fungsi                                                       |
+| --------- | ------------------------------------------------------------ |
+| `ps`      | Menampilkan proses                                           |
+| `ps aux`  | Menampilkan proses secara lebih lengkap                      |
+| `top`     | Memantau proses secara real-time                             |
+| `htop`    | Memantau proses dengan antarmuka interaktif (jika terpasang) |
+| `kill`    | Mengirim sinyal kepada proses                                |
+| `killall` | Mengirim sinyal berdasarkan nama proses                      |
+
+Contoh:
+
+```
+# Melihat proses yang berjalan
+ps aux
+
+# Memantau penggunaan sumber daya
+top
+```
+
+Pada Ubuntu Desktop, pengguna juga dapat memanfaatkan System Monitor untuk melihat penggunaan CPU, memori, dan proses yang berjalan.
+
+### 9. Sistem File pada Ubuntu
+
+Sistem file merupakan mekanisme yang digunakan sistem operasi untuk menyimpan, mengatur, dan mengakses data pada media penyimpanan.
+
+Linux mendukung berbagai jenis sistem file, di antaranya:
+
+| Sistem File | Karakteristik                                                                         |
+| ----------- | ------------------------------------------------------------------------------------- |
+| ext4        | Sistem file journaling yang umum digunakan pada Ubuntu                                |
+| ext3        | Sistem file Linux generasi sebelumnya dengan journaling                               |
+| ext2        | Sistem file Linux tanpa journaling                                                    |
+| XFS         | Sistem file journaling yang dirancang untuk menangani volume dan file berukuran besar |
+| Btrfs       | Sistem file dengan fitur snapshot, checksum, dan subvolume                            |
+| FAT32       | Sistem file yang kompatibel dengan banyak perangkat                                   |
+| exFAT       | Sistem file yang umum digunakan pada media penyimpanan eksternal                      |
+
+**ext4 (Fourth Extended Filesystem)** merupakan salah satu sistem file yang banyak digunakan pada instalasi Ubuntu.
+
+Keunggulan ext4 antara lain:
+
+1. Mendukung journaling untuk membantu menjaga konsistensi filesystem.
+2. Mendukung ukuran file dan volume penyimpanan yang besar.
+3. Memiliki performa yang baik untuk berbagai kebutuhan.
+4. Mendukung mekanisme pengelolaan ruang penyimpanan yang efisien.
+5. Memiliki kompatibilitas yang luas dalam ekosistem Linux.
+
+**Perbedaan sistem file Linux dan Windows**
+
+Salah satu perbedaan mendasar adalah cara sistem operasi mengorganisasikan struktur penyimpanan.
+
+- Windows umumnya menggunakan NTFS pada partisi sistem.
+- Ubuntu umumnya menggunakan ext4 pada partisi sistem.
+- Linux menggunakan satu struktur direktori yang berawal dari `/`.
+- Windows umumnya menggunakan identitas drive seperti `C:` dan `D:`.
+
+Linux juga mendukung mekanisme *mounting*, yaitu menghubungkan suatu filesystem atau perangkat penyimpanan ke direktori tertentu dalam struktur direktori utama.
+
+Contoh melihat filesystem yang terpasang:
+
+```
+df -h
+```
+
+### 10. Manajemen Aplikasi dan Paket pada Ubuntu
+
+Ubuntu menyediakan sistem manajemen paket untuk memudahkan pengguna memasang, memperbarui, dan menghapus aplikasi.
+
+Salah satu sistem manajemen paket yang digunakan Ubuntu adalah APT (*Advanced Package Tool*).
+
+**a. APT (Advanced Package Tool)**
+
+APT digunakan untuk mengelola paket perangkat lunak yang tersedia melalui repositori.
+
+Beberapa perintah dasar APT:
+
+| Perintah                      | Fungsi                                          |
+| ----------------------------- | ----------------------------------------------- |
+| `sudo apt update`             | Memperbarui informasi daftar paket              |
+| `sudo apt upgrade`            | Memperbarui paket yang terpasang                |
+| `sudo apt install nama-paket` | Memasang aplikasi                               |
+| `sudo apt remove nama-paket`  | Menghapus aplikasi                              |
+| `sudo apt purge nama-paket`   | Menghapus aplikasi beserta konfigurasi paketnya |
+| `apt search nama-paket`       | Mencari paket                                   |
+| `apt show nama-paket`         | Menampilkan informasi paket                     |
+
+Contoh memasang aplikasi:
+
+```
+sudo apt update
+sudo apt install vlc
+```
+
+Perintah pertama memperbarui informasi repositori, sedangkan perintah kedua memasang aplikasi VLC.
+
+**b. Ubuntu Software / App Center**
+
+Ubuntu Desktop menyediakan aplikasi grafis untuk mencari, memasang, dan mengelola perangkat lunak.
+
+Pengguna dapat mencari aplikasi melalui antarmuka tersebut tanpa harus mengetikkan perintah di terminal.
+
+**c. Snap**
+
+Snap merupakan sistem pengemasan aplikasi yang dikembangkan oleh Canonical. Paket Snap dapat membawa sebagian besar dependensi yang diperlukan aplikasi dan dijalankan dalam lingkungan dengan mekanisme pembatasan akses tertentu.
+
+Contoh perintah:
+
+```
+snap list
+```
+
+Perintah tersebut digunakan untuk melihat daftar paket Snap yang terpasang.
+
+**d. Perbedaan APT dan Snap**
+
+| Aspek           | APT                                        | Snap                                |
+| --------------- | ------------------------------------------ | ----------------------------------- |
+| Format paket    | `.deb`                                     | Paket Snap                          |
+| Sumber aplikasi | Repositori APT                             | Snap Store                          |
+| Pengelolaan     | APT                                        | snapd                               |
+| Dependensi      | Umumnya menggunakan pustaka sistem bersama | Umumnya membawa dependensi aplikasi |
+| Pembaruan       | Melalui perintah APT                       | Dikelola oleh snapd                 |
+
+Kedua mekanisme tersebut dapat digunakan pada Ubuntu sesuai kebutuhan dan ketersediaan aplikasi.
+
+## E. Kegiatan Pembelajaran
+
+### **Aktivitas 1. Identifikasi Sistem Operasi Ubuntu**
+
+Mahasiswa diminta mengidentifikasi sistem operasi Ubuntu yang digunakan pada komputer atau mesin virtual masing-masing.
+
+**Langkah kerja:**
+
+1. Nyalakan komputer atau mesin virtual yang telah terpasang Ubuntu.
+2. Masuk ke desktop Ubuntu.
+3. Buka Settings.
+4. Pilih menu About.
+5. Identifikasi informasi sistem operasi.
+6. Buka Terminal menggunakan shortcut `Ctrl + Alt + T`.
+7. Jalankan perintah berikut:
+
+```
+lsb_release -a
+uname -a
+lscpu
+free -h
+```
+
+8. Catat informasi berikut:
+
+- Distribusi Linux.
+- Versi Ubuntu.
+- Versi kernel.
+- Arsitektur sistem.
+- Model prosesor.
+- Kapasitas RAM.
+
+### Aktivitas 2. Eksplorasi Fitur dan Perintah Dasar Ubuntu
+
+Mahasiswa melakukan eksplorasi terhadap antarmuka grafis dan terminal Ubuntu.
+
+**Langkah kerja:**
+
+1. Identifikasi bagian-bagian desktop Ubuntu.
+2. Buka Application Grid dan identifikasi aplikasi yang tersedia.
+3. Buka File Manager dan amati struktur direktori.
+4. Buka Terminal.
+5. Jalankan perintah `pwd` untuk melihat direktori aktif.
+6. Jalankan perintah `ls -l` untuk melihat isi direktori.
+7. Buat direktori baru dengan nama `Praktikum_Sistem_Operasi`.
+8. Masuk ke direktori tersebut.
+9. Buat tiga subdirektori: `Dokumen`, `Gambar`, dan `Aplikasi`.
+10. Buat file bernama `catatan.txt`.
+11. Tampilkan isi direktori menggunakan perintah `ls -l`.
+
+Perintah yang dapat digunakan:
+
+```
+mkdir Praktikum_Sistem_Operasi
+cd Praktikum_Sistem_Operasi
+mkdir Dokumen Gambar Aplikasi
+touch catatan.txt
+ls -l
+```
+
+### Aktivitas 3. Eksplorasi Sistem dan Penggunaan Sumber Daya
+
+Mahasiswa diminta mengamati informasi perangkat keras dan penggunaan sumber daya komputer melalui terminal.
+
+**Langkah kerja:**
+
+1. Jalankan perintah `lscpu` untuk melihat informasi prosesor.
+2. Jalankan perintah `free -h` untuk melihat penggunaan RAM.
+3. Jalankan perintah `lsblk` untuk melihat perangkat penyimpanan.
+4. Jalankan perintah `df -h` untuk melihat penggunaan kapasitas filesystem.
+5. Jalankan perintah `ps aux` untuk melihat proses yang berjalan.
+6. Jalankan perintah `top` untuk memantau penggunaan sumber daya secara langsung.
+7. Catat hasil pengamatan dan identifikasi komponen yang memiliki penggunaan sumber daya paling tinggi.
+
+### Aktivitas 4. Eksplorasi Manajemen Hak Akses
+
+Mahasiswa diminta memahami mekanisme pengaturan permission pada Linux.
+
+**Langkah kerja:**
+
+1. Masuk ke direktori `Praktikum_Sistem_Operasi`.
+2. Buat file bernama `akses.txt`.
+3. Tampilkan permission file menggunakan perintah `ls -l`.
+4. Ubah permission file menggunakan perintah `chmod`.
+5. Tampilkan kembali permission setelah perubahan.
+6. Bandingkan hasil sebelum dan sesudah perubahan.
+
+Gunakan perintah berikut:
+
+```
+touch akses.txt
+
+# Melihat permission awal
+ls -l akses.txt
+
+# Mengubah permission menjadi 644
+chmod 644 akses.txt
+
+# Melihat permission setelah perubahan
+ls -l akses.txt
+
+# Mengubah permission menjadi 755
+chmod 755 akses.txt
+
+# Melihat hasil akhir
+ls -l akses.txt
+```
+
+Perhatikan perbedaan hak akses pemilik file, grup, dan pengguna lainnya.
+
+## F. Tugas Mahasiswa
+
+Berdasarkan materi dan aktivitas pembelajaran, kerjakan tugas berikut.
+
+**Tugas 1 – Analisis Sistem Operasi**
+
+Jelaskan perbedaan antara Linux sebagai kernel dan Ubuntu sebagai distribusi Linux. Mengapa Ubuntu tidak dapat disebut sebagai kernel Linux?
+
+**Tugas 2 – Identifikasi Sistem**
+
+Lakukan identifikasi spesifikasi komputer atau mesin virtual yang menggunakan Ubuntu. Sajikan informasi dalam bentuk tabel yang memuat:
+
+- Distribusi dan versi Ubuntu.
+- Versi kernel Linux.
+- Arsitektur sistem.
+- Model prosesor.
+- Kapasitas RAM.
+- Kapasitas media penyimpanan.
+- Jenis sistem file partisi utama.
+
+**Tugas 3 – Eksplorasi Fitur**
+
+Lakukan eksplorasi terhadap File Manager, Terminal, dan System Monitor atau perintah pemantauan sistem.
+
+Dokumentasikan setiap aktivitas menggunakan tangkapan layar dan berikan penjelasan singkat mengenai fungsi setiap fitur.
+
+**Tugas 4 – Praktik Manajemen File dan Direktori**
+
+Buat struktur direktori menggunakan terminal dengan ketentuan berikut:
+
+```
+Praktikum_Linux/
+├── Dokumen/
+│   ├── Laporan/
+│   └── Materi/
+├── Gambar/
+└── Data/
+```
+
+Ketentuan:
+
+1. Buat seluruh direktori menggunakan perintah terminal.
+2. Buat file `identitas.txt` di dalam direktori `Dokumen`.
+3. Salin file tersebut ke direktori `Data`.
+4. Ubah nama file hasil salinan menjadi `identitas_backup.txt`.
+5. Tampilkan struktur direktori dan file yang telah dibuat.
+
+**Tugas 5 – Analisis Hak Akses**
+
+Jelaskan makna permission `754` pada Linux. Uraikan hak akses yang dimiliki oleh pemilik file, grup, dan pengguna lainnya.
+
+Kemudian, jelaskan mengapa pengaturan hak akses penting dalam menjaga keamanan sistem operasi Linux.
+
+**Tugas 6 – Analisis**
+
+Ubuntu menyediakan antarmuka grafis dan terminal untuk mengelola sistem operasi.
+
+Menurut pendapat Anda, mengapa seorang administrator sistem Linux perlu memahami penggunaan terminal meskipun Ubuntu telah menyediakan antarmuka grafis? Berikan minimal tiga alasan beserta contoh penerapannya.
+
+## G. Rangkuman
+
+1. Linux merupakan kernel sistem operasi yang bersifat open source dan menjadi fondasi berbagai distribusi sistem operasi.
+2. Ubuntu merupakan distribusi Linux berbasis Debian yang dikembangkan oleh Canonical dan tersedia untuk kebutuhan desktop maupun server.
+3. Fungsi utama sistem operasi Linux meliputi manajemen proses, memori, file, perangkat keras, jaringan, pengguna, dan keamanan.
+4. Arsitektur Linux terdiri atas beberapa komponen utama, yaitu aplikasi, shell, system libraries, kernel, dan perangkat keras.
+5. Ubuntu Desktop menggunakan GNOME sebagai lingkungan desktop yang menyediakan antarmuka grafis bagi pengguna.
+6. Linux menggunakan struktur direktori hierarkis yang berawal dari direktori root (`/`).
+7. Terminal merupakan fasilitas penting dalam administrasi Linux karena memungkinkan pengguna menjalankan berbagai perintah untuk mengelola sistem.
+8. Linux menerapkan mekanisme multiuser dan permission untuk mengatur hak akses terhadap file maupun direktori.
+9. Ubuntu menyediakan fasilitas manajemen paket melalui APT dan Snap untuk memasang, memperbarui, serta menghapus aplikasi.
+10. ext4 merupakan salah satu sistem file yang umum digunakan pada Ubuntu.
+11. Pemahaman dasar terhadap Linux dan Ubuntu menjadi landasan untuk mempelajari instalasi, administrasi, konfigurasi, pemeliharaan, dan troubleshooting sistem operasi.
+
+## **I. Referensi Pembelajaran**
+
+1. Ubuntu. *Ubuntu Desktop Guide*. [Ubuntu Documentation](https://help.ubuntu.com/).
+2. Canonical. *Ubuntu Server Documentation*. [Ubuntu Server Documentation](https://documentation.ubuntu.com/server/).
+3. The Linux Foundation. *Introduction to Linux*. [Introduction to Linux Training](https://training.linuxfoundation.org/training/introduction-to-linux/).
+4. Shotts, W. E. (2019). *The Linux Command Line: A Complete Introduction* (2nd Edition). No Starch Press.
+5. Nemeth, E., Snyder, G., Hein, T. R., Whaley, B., & Mackin, D. (2017). *UNIX and Linux System Administration Handbook* (5th Edition). Addison-Wesley.
+6. Silberschatz, A., Galvin, P. B., & Gagne, G. (2018). *Operating System Concepts* (10th Edition). Wiley.
