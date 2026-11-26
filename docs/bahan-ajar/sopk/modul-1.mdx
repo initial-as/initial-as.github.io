@@ -1,0 +1,450 @@
+---
+title: "1. Dasar-dasar Sistem Operasi Windows"
+---
+
+# Dasar-dasar Sistem Operasi Windows
+
+## A. Identitas Modul
+
+| Komponen            | Keterangan                                 |
+| ------------------- | ------------------------------------------ |
+| Program Studi       | Pendidikan Teknologi Informasi             |
+| Mata Kuliah         | Sistem Operasi dan Perakitan Komputer Komputer |
+| Materi              | Dasar-Dasar Sistem Operasi Windows         |
+| Alokasi Waktu       | 2 × 50 menit                               |
+| Bentuk Pembelajaran | Teori dan demonstrasi                      |
+| Metode Pembelajaran | Ceramah, diskusi, demonstrasi, dan praktik |
+
+## B. Deskripsi Modul
+
+Modul ini membahas konsep dasar sistem operasi Windows sebagai salah satu sistem operasi yang banyak digunakan pada komputer personal. Pembahasan mencakup pengertian dan fungsi sistem operasi, perkembangan Windows, arsitektur dasar, antarmuka pengguna, manajemen file dan folder, manajemen perangkat keras, pengaturan sistem, serta pengelolaan aplikasi.
+
+Mahasiswa diharapkan memahami peran sistem operasi Windows dalam mengelola sumber daya komputer dan mampu melakukan konfigurasi serta pengelolaan sistem operasi untuk mendukung penggunaan komputer secara efektif.
+
+## C. Capaian Pembelajaran
+
+Setelah mempelajari modul ini, mahasiswa diharapkan mampu:
+
+1. Menjelaskan pengertian, tujuan, dan fungsi sistem operasi.
+2. Mengidentifikasi perkembangan dan karakteristik sistem operasi Windows.
+3. Menjelaskan komponen dan arsitektur dasar Windows.
+4. Mengidentifikasi bagian-bagian antarmuka Windows dan fungsinya.
+5. Melakukan pengelolaan file, folder, dan aplikasi.
+6. Melakukan konfigurasi dasar sistem operasi Windows.
+7. Mengidentifikasi informasi perangkat keras dan perangkat lunak melalui fitur bawaan Windows.
+
+## D. Materi Pembelajaran
+
+### 1. Pengertian Sistem Operasi
+
+Sistem operasi (*Operating System* atau OS) merupakan perangkat lunak sistem yang berfungsi sebagai penghubung antara pengguna, aplikasi, dan perangkat keras komputer. Sistem operasi bertanggung jawab mengelola sumber daya komputer agar dapat digunakan secara terstruktur dan efisien.
+
+Tanpa sistem operasi, pengguna akan mengalami kesulitan dalam berinteraksi langsung dengan perangkat keras komputer maupun menjalankan aplikasi.
+
+Secara umum, sistem operasi memiliki beberapa fungsi utama:
+
+1\. Manajemen proses (Process Management)
+
+Mengatur proses yang sedang berjalan, termasuk pembuatan, penjadwalan, dan penghentian proses.
+
+2\. Manajemen memori (Memory Management)
+
+Mengelola penggunaan memori utama (RAM) oleh sistem operasi dan aplikasi yang sedang berjalan.
+
+3\. Manajemen file (File Management)
+
+Mengatur penyimpanan, pengorganisasian, pemindahan, penghapusan, dan akses terhadap file dan folder.
+
+4\. Manajemen perangkat keras (Device Management)
+
+Mengelola komunikasi antara sistem operasi dengan perangkat keras melalui driver.
+
+5\. Manajemen penyimpanan (Storage Management)
+
+Mengatur penggunaan media penyimpanan seperti HDD, SSD, dan perangkat penyimpanan eksternal.
+
+6\. Keamanan sistem (Security Management)
+
+Mengatur hak akses pengguna, autentikasi, perlindungan data, dan keamanan sistem.
+
+7\. Antarmuka pengguna (User Interface)
+
+Menyediakan sarana interaksi antara pengguna dengan komputer, baik melalui antarmuka grafis (GUI) maupun baris perintah (CLI).
+
+### 2. Mengenal Sistem Operasi Windows
+
+**Microsoft Windows**
+
+Windows merupakan keluarga sistem operasi yang dikembangkan oleh Microsoft. Windows dirancang untuk komputer personal, laptop, workstation, dan perangkat komputasi lainnya.
+
+Windows menyediakan antarmuka grafis yang memungkinkan pengguna berinteraksi dengan komputer melalui jendela, ikon, menu, dan perangkat penunjuk seperti mouse.
+
+Beberapa karakteristik Windows antara lain:
+
+- Mendukung antarmuka grafis (GUI).
+- Mendukung multitasking atau menjalankan beberapa aplikasi secara bersamaan.
+- Memiliki dukungan perangkat keras yang luas melalui driver.
+- Mendukung berbagai sistem file, seperti NTFS, FAT32, dan exFAT.
+- Menyediakan pengelolaan akun dan hak akses pengguna.
+- Mendukung konektivitas jaringan dan berbagi sumber daya.
+- Memiliki ekosistem aplikasi yang luas.
+
+### 3. Perkembangan Sistem Operasi Windows
+
+Windows telah mengalami perkembangan dari sistem operasi berbasis antarmuka grafis sederhana hingga sistem operasi modern dengan dukungan keamanan, jaringan, dan komputasi yang lebih kompleks.
+
+Berikut beberapa versi Windows yang penting untuk diketahui:
+
+| Versi         | Tahun | Karakteristik                                                    |
+| ------------- | ----- | ---------------------------------------------------------------- |
+| Windows 1.0   | 1985  | Antarmuka grafis awal Windows                                    |
+| Windows 95    | 1995  | Memperkenalkan Start Menu dan Taskbar                            |
+| Windows 98    | 1998  | Peningkatan dukungan perangkat keras dan internet                |
+| Windows XP    | 2001  | Antarmuka lebih modern dan stabilitas meningkat                  |
+| Windows Vista | 2007  | Memperkenalkan Windows Aero dan UAC                              |
+| Windows 7     | 2009  | Peningkatan performa dan pengalaman pengguna                     |
+| Windows 8     | 2012  | Antarmuka berbasis tile dan dukungan layar sentuh                |
+| Windows 10    | 2015  | Integrasi Start Menu dan peningkatan fitur keamanan              |
+| Windows 11    | 2021  | Antarmuka modern dan persyaratan perangkat keras yang lebih baru |
+
+**Catatan:** Tabel tersebut merupakan ringkasan perkembangan versi utama Windows untuk komputer personal, bukan daftar seluruh edisi Windows.
+
+### 4. Arsitektur Dasar Windows
+
+Windows memiliki arsitektur yang terdiri atas beberapa komponen yang saling berinteraksi untuk menjalankan fungsi sistem operasi.
+
+Secara konseptual, arsitektur Windows dapat dikelompokkan menjadi beberapa bagian berikut.
+
+**a. User Mode**
+
+User Mode merupakan lingkungan tempat aplikasi dan sejumlah layanan sistem berjalan. Aplikasi yang digunakan pengguna, seperti browser, pengolah kata, dan pemutar media, umumnya berjalan pada mode ini.
+
+Komponen pentingnya meliputi:
+
+- Aplikasi pengguna.
+- Windows Services.
+- Subsystem dan lingkungan pendukung aplikasi.
+
+**b. Kernel Mode**
+
+Kernel Mode merupakan lingkungan dengan hak akses tinggi yang digunakan oleh komponen inti sistem operasi.
+
+Komponen utamanya meliputi:
+
+- **Kernel:** Mengelola penjadwalan thread, interupsi, dan sinkronisasi.
+- **Executive:** Menyediakan layanan inti seperti manajemen proses, memori, I/O, dan objek sistem.
+- **Device Drivers:** Menjembatani komunikasi antara sistem operasi dan perangkat keras.
+- **HAL (Hardware Abstraction Layer):** Menyediakan abstraksi terhadap karakteristik perangkat keras.
+
+c. Hardware
+
+Merupakan perangkat fisik komputer yang dikelola oleh sistem operasi, seperti:
+
+- Processor (CPU).
+- Memori (RAM).
+- Media penyimpanan (HDD/SSD).
+- Kartu jaringan.
+- Perangkat input dan output.
+
+### 5. Antarmuka Pengguna Windows
+
+Antarmuka pengguna merupakan bagian sistem operasi yang memungkinkan pengguna menjalankan perintah dan mengelola komputer.
+
+Beberapa komponen antarmuka Windows yang perlu dipahami:
+
+**a. Desktop**
+
+Area utama yang ditampilkan setelah pengguna masuk ke sistem operasi. Desktop dapat berisi ikon aplikasi, shortcut, file, dan folder.
+
+**b. Start Menu**
+
+Menu utama untuk mengakses aplikasi, melakukan pencarian, membuka pengaturan, dan mengakses opsi daya.
+
+**c. Taskbar**
+
+Bilah yang biasanya berada di bagian bawah layar. Taskbar digunakan untuk mengakses aplikasi yang disematkan, aplikasi yang sedang berjalan, serta area notifikasi.
+
+**d. File Explorer**
+
+Aplikasi untuk mengelola file, folder, dan media penyimpanan.
+
+**e. Settings**
+
+Aplikasi pengaturan untuk mengelola konfigurasi sistem, perangkat, jaringan, akun, personalisasi, dan pembaruan Windows.
+
+**f. Notification Area / System Tray**
+
+Bagian taskbar yang menampilkan informasi status sistem, seperti koneksi jaringan, volume, baterai, dan jam.
+
+**g. Recycle Bin**
+
+Tempat penampungan sementara file yang dihapus melalui mekanisme penghapusan biasa. File dapat dipulihkan sebelum Recycle Bin dikosongkan, selama file tersebut masih tersedia di dalamnya.
+
+### 6. Manajemen File dan Folder
+
+Manajemen file merupakan salah satu fungsi penting sistem operasi. Windows menyediakan File Explorer untuk membantu pengguna mengorganisasikan data.
+
+Beberapa operasi dasar pengelolaan file:
+
+| Operasi    | Fungsi                        | Shortcut                    |
+| ---------- | ----------------------------- | --------------------------- |
+| Copy       | Menyalin file/folder          | Ctrl + C                    |
+| Cut        | Memindahkan melalui clipboard | Ctrl + X                    |
+| Paste      | Menempelkan hasil copy/cut    | Ctrl + V                    |
+| Rename     | Mengubah nama                 | F2                          |
+| Delete     | Menghapus file/folder         | Delete                      |
+| Select All | Memilih seluruh item          | Ctrl + A                    |
+| Search     | Mencari file                  | Ctrl + F (di File Explorer) |
+
+**Struktur direktori Windows**
+
+Windows menggunakan struktur direktori yang dimulai dari drive, misalnya `C:`.
+
+Contoh struktur direktori:
+
+```
+C:\
+├── Windows\
+├── Program Files\
+├── Program Files (x86)\
+├── Users\
+│   ├── Mahasiswa\
+│   │   ├── Desktop\
+│   │   ├── Documents\
+│   │   ├── Downloads\
+│   │   └── Pictures\
+└── ProgramData\
+```
+
+Keterangan:
+
+- `Windows`: Menyimpan file sistem operasi.
+- `Program Files`: Menyimpan aplikasi 64-bit yang terpasang secara umum.
+- `Program Files (x86)`: Umumnya digunakan untuk aplikasi 32-bit pada Windows 64-bit.
+- `Users`: Menyimpan profil dan data pengguna.
+- `ProgramData`: Menyimpan data aplikasi yang digunakan bersama oleh pengguna.
+
+### 7. Manajemen Perangkat Keras
+
+Windows menyediakan fasilitas untuk mengenali, mengelola, dan mengonfigurasi perangkat keras yang terpasang pada komputer.
+
+Salah satu fasilitas penting adalah Device Manager.
+
+**Device Manager** digunakan untuk:
+
+1. Melihat daftar perangkat keras yang terdeteksi.
+2. Memeriksa status perangkat.
+3. Memperbarui driver.
+4. Mengaktifkan atau menonaktifkan perangkat.
+5. Mengidentifikasi perangkat yang mengalami masalah.
+
+Untuk membuka Device Manager:
+
+1. Klik kanan tombol Start.
+2. Pilih Device Manager.
+3. Perhatikan daftar kategori perangkat keras.
+4. Buka kategori untuk melihat perangkat yang terpasang.
+
+Beberapa kategori perangkat yang dapat ditemukan:
+
+- Display adapters.
+- Network adapters.
+- Disk drives.
+- Processors.
+- Keyboards.
+- Mice and other pointing devices.
+- Sound, video and game controllers.
+
+**Driver** merupakan perangkat lunak yang memungkinkan sistem operasi berkomunikasi dengan perangkat keras tertentu. Tanpa driver yang sesuai, perangkat keras mungkin tidak dapat berfungsi secara optimal.
+
+### 8. Pengaturan dan Konfigurasi Sistem Windows
+
+Windows menyediakan sejumlah fasilitas untuk mengelola konfigurasi sistem.
+
+Beberapa pengaturan yang penting dipahami:
+
+| Fitur               | Fungsi                                                 |
+| ------------------- | ------------------------------------------------------ |
+| System              | Mengatur display, sound, storage, dan informasi sistem |
+| Bluetooth & devices | Mengelola perangkat yang terhubung                     |
+| Network & internet  | Mengatur koneksi jaringan                              |
+| Personalization     | Mengatur tampilan desktop                              |
+| Apps                | Mengelola aplikasi terpasang                           |
+| Accounts            | Mengelola akun pengguna                                |
+| Windows Update      | Mengelola pembaruan sistem                             |
+| Privacy & security  | Mengatur privasi dan keamanan                          |
+
+**a. System Information**
+
+Digunakan untuk mengetahui informasi spesifikasi komputer, seperti:
+
+- Nama komputer.
+- Model prosesor.
+- Kapasitas RAM.
+- Jenis sistem operasi.
+- Arsitektur sistem (32-bit atau 64-bit).
+
+Untuk melihat informasi sistem:
+
+1. Buka Settings.
+2. Pilih System.
+3. Pilih About.
+4. Amati bagian Device specifications dan Windows specifications.
+
+**b. Task Manager**
+
+Task Manager digunakan untuk memantau dan mengelola proses yang berjalan di komputer.
+
+Informasi yang ditampilkan antara lain:
+
+- Penggunaan CPU.
+- Penggunaan Memory.
+- Penggunaan Disk.
+- Penggunaan Network.
+- Daftar aplikasi dan proses yang berjalan.
+
+Task Manager dapat dibuka menggunakan shortcut:
+
+`Ctrl + Shift + Esc`
+
+**c. Windows Update**
+
+Windows Update digunakan untuk memperoleh pembaruan sistem operasi, termasuk pembaruan keamanan, perbaikan bug, dan peningkatan fitur.
+
+**d. Windows Security**
+
+Windows Security menyediakan fasilitas perlindungan sistem, termasuk Microsoft Defender Antivirus, Firewall, dan berbagai fitur keamanan lainnya.
+
+### 9. Sistem File pada Windows
+
+Sistem file merupakan mekanisme yang digunakan sistem operasi untuk mengatur penyimpanan dan pengambilan data pada media penyimpanan.
+
+Beberapa sistem file yang umum dijumpai pada Windows:
+
+| Sistem File | Karakteristik                                                    |
+| ----------- | ---------------------------------------------------------------- |
+| FAT32       | Kompatibilitas luas, tetapi ukuran satu file maksimal 4 GB       |
+| exFAT       | Cocok untuk media penyimpanan eksternal dan file berukuran besar |
+| NTFS        | Mendukung permission, journaling, dan fitur keamanan Windows     |
+
+**NTFS (New Technology File System)** merupakan sistem file yang umum digunakan pada partisi sistem Windows modern.
+
+Keunggulan NTFS antara lain:
+
+1. Mendukung pengaturan hak akses file dan folder (ACL).
+2. Mendukung journaling untuk membantu menjaga konsistensi sistem file.
+3. Mendukung file berukuran besar.
+4. Mendukung fitur kompresi dan enkripsi tertentu.
+5. Mendukung pengelolaan kuota penyimpanan.
+
+### 10. Instalasi dan Pengelolaan Aplikasi
+
+Windows menyediakan beberapa mekanisme untuk memasang aplikasi, antara lain:
+
+- Installer berbentuk `.exe`.
+- Installer berbentuk `.msi`.
+- Microsoft Store.
+- Windows Package Manager (winget).
+
+Setelah aplikasi terpasang, pengguna dapat melakukan pengelolaan melalui Settings → Apps → Installed apps.
+
+Beberapa aktivitas pengelolaan aplikasi:
+
+1. Memasang aplikasi.
+2. Memperbarui aplikasi.
+3. Menghapus aplikasi.
+4. Mengatur aplikasi bawaan.
+5. Memeriksa aplikasi yang berjalan saat startup.
+
+Penting untuk mengunduh aplikasi dari sumber resmi atau terpercaya guna mengurangi risiko malware dan perangkat lunak berbahaya.
+
+## E. Kegiatan Pembelajaran
+
+### Aktivitas 1. Identifikasi Sistem Operasi Windows
+
+Mahasiswa diminta mengidentifikasi sistem operasi Windows yang digunakan pada komputer atau laptop masing-masing.
+
+Langkah kerja:
+
+1. Nyalakan komputer dan masuk ke Windows.
+2. Buka Settings.
+3. Pilih System → About.
+4. Catat informasi berikut:
+   - Edisi Windows.
+   - Versi Windows.
+   - Build sistem operasi.
+   - Jenis sistem (32-bit atau 64-bit).
+   - Kapasitas RAM.
+   - Model prosesor.
+
+### Aktivitas 2. Eksplorasi Fitur Windows
+
+Mahasiswa melakukan eksplorasi terhadap fitur bawaan Windows.
+
+Langkah kerja:
+
+1. Buka File Explorer dan identifikasi partisi penyimpanan.
+2. Buat folder baru bernama `Praktikum_Sistem_Operasi`.
+3. Buat tiga subfolder: `Dokumen`, `Gambar`, dan `Aplikasi`.
+4. Lakukan operasi copy, cut, paste, rename, dan delete.
+5. Buka Device Manager dan identifikasi perangkat keras.
+6. Buka Task Manager dan amati penggunaan CPU, RAM, dan Disk.
+7. Buka Windows Security dan identifikasi fitur perlindungan yang tersedia.
+
+### Aktivitas 3. Analisis Penggunaan Sumber Daya
+
+Mahasiswa diminta mengamati kinerja komputer melalui Task Manager.
+
+Langkah kerja:
+
+1. Buka Task Manager.
+2. Pilih tab Performance.
+3. Amati penggunaan CPU, Memory, dan Disk.
+4. Jalankan beberapa aplikasi secara bersamaan.
+5. Amati perubahan penggunaan sumber daya.
+6. Catat hasil pengamatan dan berikan analisis singkat.
+
+## F. Tugas Mahasiswa
+
+Berdasarkan materi dan aktivitas pembelajaran, kerjakan tugas berikut.
+
+**Tugas 1 – Analisis Sistem Operasi**
+
+Jelaskan perbedaan antara sistem operasi dan aplikasi. Berikan masing-masing tiga contoh.
+
+**Tugas 2 – Identifikasi Sistem**
+
+Lakukan identifikasi spesifikasi komputer atau laptop yang digunakan. Sajikan informasi dalam bentuk tabel yang memuat:
+
+- Versi dan edisi Windows.
+- Jenis arsitektur sistem.
+- Processor.
+- Kapasitas RAM.
+- Kapasitas dan jenis media penyimpanan.
+- Sistem file partisi sistem.
+
+**Tugas 3 – Eksplorasi Fitur**
+
+Lakukan eksplorasi File Explorer, Device Manager, dan Task Manager. Dokumentasikan setiap aktivitas menggunakan tangkapan layar dan berikan penjelasan singkat mengenai fungsi setiap fitur.
+
+**Tugas 4 – Analisis**
+
+Mengapa sistem operasi perlu mengelola penggunaan CPU dan RAM ketika beberapa aplikasi dijalankan secara bersamaan? Jelaskan dampak yang mungkin terjadi apabila pengelolaan sumber daya tersebut tidak berjalan dengan baik.
+
+## G. Rangkuman
+
+1. Sistem operasi merupakan perangkat lunak sistem yang mengelola sumber daya komputer dan menyediakan layanan bagi aplikasi.
+2. Windows merupakan sistem operasi yang dikembangkan oleh Microsoft dan banyak digunakan pada komputer personal.
+3. Fungsi utama sistem operasi meliputi manajemen proses, memori, file, perangkat keras, penyimpanan, dan keamanan.
+4. Windows memiliki arsitektur yang melibatkan User Mode, Kernel Mode, dan perangkat keras.
+5. Antarmuka Windows menyediakan berbagai fasilitas, seperti Desktop, Start Menu, Taskbar, File Explorer, dan Settings.
+6. Windows menyediakan fasilitas pengelolaan perangkat keras melalui Device Manager dan pemantauan sumber daya melalui Task Manager.
+7. NTFS merupakan sistem file yang umum digunakan pada partisi sistem Windows modern.
+8. Pemahaman dasar terhadap Windows menjadi landasan untuk mempelajari instalasi, konfigurasi, pemeliharaan, dan troubleshooting sistem operasi.
+
+## I. Referensi Pembelajaran
+
+1. Microsoft Learn. *Windows Documentation*. [Windows Technical Documentation](https://learn.microsoft.com/en-us/windows/).
+2. Microsoft. *Windows 11 Help and Learning*. [Windows Support](https://support.microsoft.com/en-us/windows).
+3. Tanenbaum, A. S., & Bos, H. (2015). *Modern Operating Systems* (4th Edition). Pearson.
+4. Silberschatz, A., Galvin, P. B., & Gagne, G. (2018). *Operating System Concepts* (10th Edition). Wiley.
